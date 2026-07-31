@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "609398900609",
+    "project_id": "mottainai-operacional",
+    "storage_bucket": "mottainai-operacional.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:609398900609:android:e497bda02a7bd88cc70a80",
+        "android_client_info": {
+          "package_name": "com.mottainai.operacional"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMqdp7VexK4pF9XgEtyzaCLyYCLg4nX10"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
