@@ -73,4 +73,11 @@ dependencies {
     //Material Components
     implementation("com.google.android.material:material:1.12.0")
 
+    //Navigation Component
+    implementation("androidx.navigation:navigation-fragment:2.8.9")
+    implementation("androidx.navigation:navigation-ui:2.8.9")
+
+    //OSMDroid
+    implementation("org.osmdroid:osmdroid-android:6.1.18")
+
 }

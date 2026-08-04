@@ -1,0 +1,109 @@
+package com.mottainai.operacional.activities;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import com.mottainai.operacional.MainActivity;
+import com.mottainai.operacional.R;
+import com.mottainai.operacional.utils.SessionManager;
+
+public class LoginActivity extends AppCompatActivity {
+
+    private EditText etEmail;
+    private EditText etPassword;
+    private Button btnLogin;
+
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
+    private SessionManager session;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_login);
+
+        etEmail = findViewById(R.id.et_email);
+        etPassword = findViewById(R.id.et_password);
+        btnLogin = findViewById(R.id.btn_login);
+
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+        session = new SessionManager(this);
+
+        btnLogin.setOnClickListener(v -> login());
+    }
+
+    private void login() {
+        String email = etEmail.getText().toString().trim();
+        String password = etPassword.getText().toString().trim();
+
+        if (email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(this, "Preencha email e senha", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        btnLogin.setEnabled(false);
+        btnLogin.setText("Entrando...");
+
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            if (user != null) {
+                                loadUserProfile(user.getUid());
+                            }
+                        } else {
+                            btnLogin.setEnabled(true);
+                            btnLogin.setText("Entrar");
+                            Toast.makeText(LoginActivity.this,
+                                    "Erro no login: " + task.getException().getMessage(),
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+    }
+
+    private void loadUserProfile(String uid) {
+        db.collection("users").document(uid)
+                .get()
+                .addOnCompleteListener(this, new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful() && task.getResult() != null && task.getResult().exists()) {
+                            DocumentSnapshot doc = task.getResult();
+
+                            String role = doc.getString("role");
+                            String storeId = doc.getString("storeId");
+
+                            session.saveSession(uid, role, storeId);
+
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            btnLogin.setEnabled(true);
+                            btnLogin.setText("Entrar");
+                            Toast.makeText(LoginActivity.this,
+                                    "Perfil não encontrado no Firestore",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+    }
+}
