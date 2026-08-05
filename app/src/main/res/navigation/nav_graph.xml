@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.mottainai.operacional.fragments.HomeFragment"
+        android:label="Home" />
+
+    <fragment
+        android:id="@+id/productsListFragment"
+        android:name="com.mottainai.operacional.fragments.ProductsListFragment"
+        android:label="Produtos" />
+
+    <fragment
+        android:id="@+id/scannerFragment"
+        android:name="com.mottainai.operacional.fragments.ScannerFragment"
+        android:label="Scanner" />
+
+    <fragment
+        android:id="@+id/iaAlertsFragment"
+        android:name="com.mottainai.operacional.fragments.IaAlertsFragment"
+        android:label="IA" />
+
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.mottainai.operacional.fragments.ProfileFragment"
+        android:label="Perfil" />
+</navigation>
