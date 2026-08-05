@@ -11,9 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -21,14 +19,14 @@ import com.mottainai.operacional.MainActivity;
 import com.mottainai.operacional.R;
 import com.mottainai.operacional.utils.SessionManager;
 import com.mottainai.operacional.models.User;
+import com.mottainai.operacional.repository.AuthRepository;
 
 public class LoginActivity extends AppCompatActivity {
 
     private EditText etEmail;
     private EditText etPassword;
     private Button btnLogin;
-
-    private FirebaseAuth mAuth;
+    private AuthRepository authRepository;
     private FirebaseFirestore db;
     private SessionManager session;
 
@@ -41,14 +39,14 @@ public class LoginActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.et_password);
         btnLogin = findViewById(R.id.btn_login);
 
-        mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         session = new SessionManager(this);
+        authRepository = new AuthRepository();
 
         btnLogin.setOnClickListener(v -> login());
     }
 
-    // Realiza o login
+    // Realiza o login na activity
     private void login() {
         String email = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
@@ -57,28 +55,23 @@ public class LoginActivity extends AppCompatActivity {
             Toast.makeText(this, "Preencha email e senha", Toast.LENGTH_SHORT).show();
             return;
         }
-
         btnLogin.setEnabled(false);
         btnLogin.setText("Entrando...");
 
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            if (user != null) {
-                                loadUserProfile(user.getUid());
-                            }
-                        } else {
-                            btnLogin.setEnabled(true);
-                            btnLogin.setText("Entrar");
-                            Toast.makeText(LoginActivity.this,
-                                    "Erro no login: " + task.getException().getMessage(),
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
+        authRepository.login(email, password, new AuthRepository.AuthCallback() {
+            @Override
+            public void onSuccess(String uid) {
+                loadUserProfile(uid);
+            }
+
+            @Override
+            public void onError(Exception e) {
+                btnLogin.setEnabled(true);
+                btnLogin.setText("Entrar");
+                Toast.makeText(LoginActivity.this,
+                        "Erro: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     // Carrega o perfil do usuário
