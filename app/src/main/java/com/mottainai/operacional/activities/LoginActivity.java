@@ -6,20 +6,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import com.mottainai.operacional.MainActivity;
 import com.mottainai.operacional.R;
 import com.mottainai.operacional.utils.SessionManager;
 import com.mottainai.operacional.models.User;
 import com.mottainai.operacional.repository.AuthRepository;
+import com.mottainai.operacional.repository.UserRepository;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -27,7 +21,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText etPassword;
     private Button btnLogin;
     private AuthRepository authRepository;
-    private FirebaseFirestore db;
+    private UserRepository userRepository;
     private SessionManager session;
 
     @Override
@@ -39,9 +33,9 @@ public class LoginActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.et_password);
         btnLogin = findViewById(R.id.btn_login);
 
-        db = FirebaseFirestore.getInstance();
         session = new SessionManager(this);
         authRepository = new AuthRepository();
+        userRepository = new UserRepository();
 
         btnLogin.setOnClickListener(v -> login());
     }
@@ -76,33 +70,28 @@ public class LoginActivity extends AppCompatActivity {
 
     // Carrega o perfil do usuário
     private void loadUserProfile(String uid) {
-        db.collection("users").document(uid)
-                .get()
-                .addOnCompleteListener(this, new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful() && task.getResult() != null && task.getResult().exists()) {
-                            DocumentSnapshot doc = task.getResult();
+        userRepository.getUserProfile(uid, new UserRepository.UserCallback() {
+            @Override
+            public void onSuccess(User user) {
+                session.saveSession(user);
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
 
-                            String nome = doc.getString("name");
-                            String role = doc.getString("role");
-                            String storeId = doc.getString("storeId");
+            @Override
+            public void onError(Exception e) {
+                btnLogin.setEnabled(true);
+                btnLogin.setText("Entrar");
+                Toast.makeText(LoginActivity.this, "Erro: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
 
-                            User user = new User(uid, nome, role, storeId);
-
-                            session.saveSession(user);
-
-                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                            startActivity(intent);
-                            finish();
-                        } else {
-                            btnLogin.setEnabled(true);
-                            btnLogin.setText("Entrar");
-                            Toast.makeText(LoginActivity.this,
-                                    "Perfil não encontrado no Firestore",
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
+            @Override
+            public void onNotFound() {
+                btnLogin.setEnabled(true);
+                btnLogin.setText("Entrar");
+                Toast.makeText(LoginActivity.this, "Perfil não encontrado no Firestore", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }
