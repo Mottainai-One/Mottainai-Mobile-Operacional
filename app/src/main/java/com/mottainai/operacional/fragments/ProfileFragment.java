@@ -16,8 +16,8 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import com.mottainai.operacional.R;
 import com.mottainai.operacional.activities.LoginActivity;
-import com.mottainai.operacional.utils.Constants;
 import com.mottainai.operacional.utils.SessionManager;
+import com.mottainai.operacional.utils.RoleHelper;
 
 public class ProfileFragment extends Fragment {
 
@@ -40,12 +40,10 @@ public class ProfileFragment extends Fragment {
 
         SessionManager session = new SessionManager(requireContext());
 
-        //mostra role e storeId salvos na sessão
-        String roleLabel = roleToLabel(session.getRole());
+        String roleLabel = RoleHelper.roleToLabel(session.getRole());  // <- único lugar
         String store = session.getStoreId() != null ? session.getStoreId() : "—";
         tvUserInfo.setText("Perfil: " + roleLabel + "\nLoja: " + store);
 
-        //logout
         btnLogout.setOnClickListener(v -> {
             FirebaseAuth.getInstance().signOut();
             session.clearSession();
@@ -54,15 +52,5 @@ public class ProfileFragment extends Fragment {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         });
-    }
-
-    private String roleToLabel(String role) {
-        if (role == null) return "—";
-        switch (role) {
-            case Constants.ROLE_ESTOQUISTA: return "Estoquista";
-            case Constants.ROLE_GERENTE:    return "Gerente";
-            case Constants.ROLE_DONO:       return "Dono";
-            default: return role;
-        }
     }
 }
