@@ -20,6 +20,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.mottainai.operacional.MainActivity;
 import com.mottainai.operacional.R;
 import com.mottainai.operacional.utils.SessionManager;
+import com.mottainai.operacional.models.User;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -47,6 +48,7 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(v -> login());
     }
 
+    // Realiza o login
     private void login() {
         String email = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
@@ -79,6 +81,7 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
+    // Carrega o perfil do usuário
     private void loadUserProfile(String uid) {
         db.collection("users").document(uid)
                 .get()
@@ -88,10 +91,13 @@ public class LoginActivity extends AppCompatActivity {
                         if (task.isSuccessful() && task.getResult() != null && task.getResult().exists()) {
                             DocumentSnapshot doc = task.getResult();
 
+                            String nome = doc.getString("name");
                             String role = doc.getString("role");
                             String storeId = doc.getString("storeId");
 
-                            session.saveSession(uid, role, storeId);
+                            User user = new User(uid, nome, role, storeId);
+
+                            session.saveSession(user);
 
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(intent);
