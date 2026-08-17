@@ -1,0 +1,56 @@
+rules_version = '2.0';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Usuários só leem/escrevem seus próprios dados
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Alertas: só a loja do usuário
+    match /alerts/{alertId} {
+      allow read: if request.auth != null 
+        && resource.data.storeId == request.auth.token.storeId;
+      allow write: if request.auth != null 
+        && request.resource.data.storeId == request.auth.token.storeId;
+    }
+
+    // Sugestões: só a loja do usuário
+    match /suggestions/{suggestionId} {
+      allow read: if request.auth != null 
+        && resource.data.storeId == request.auth.token.storeId;
+      allow write: if request.auth != null 
+        && request.resource.data.storeId == request.auth.token.storeId;
+    }
+
+    // Produtos: por loja (leitura para todos da loja, escrita só gerente/dono)
+    match /products/{productId} {
+      allow read: if request.auth != null 
+        && resource.data.storeId == request.auth.token.storeId;
+      allow write: if request.auth != null 
+        && request.auth.token.role in ['gerente', 'dono']
+        && request.resource.data.storeId == request.auth.token.storeId;
+    }
+
+    // Avaria/Danos: por loja
+    match /damages/{damageId} {
+      allow read: if request.auth != null 
+        && resource.data.storeId == request.auth.token.storeId;
+      allow write: if request.auth != null 
+        && request.resource.data.storeId == request.auth.token.storeId;
+    }
+
+    // Inventário: por loja
+    match /inventory/{inventoryId} {
+      allow read, write: if request.auth != null 
+        && resource.data.storeId == request.auth.token.storeId;
+    }
+
+    // Usuários da loja (para Dono gerenciar equipe)
+    match /storeUsers/{storeUserId} {
+      allow read, write: if request.auth != null 
+        && request.auth.token.storeId == resource.data.storeId
+        && request.auth.token.role == 'dono';
+    }
+  }
+}
