@@ -2,16 +2,13 @@ package com.mottainai.operacional.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-
 import com.mottainai.operacional.models.User;
-
 public class SessionManager {
 
     private static final String PREFS_NAME = "mottainai_session";
     private static final String KEY_UID = "uid";
     private static final String KEY_ROLE = "role";
     private static final String KEY_STORE_ID = "storeId";
-
     private final SharedPreferences prefs;
 
     public SessionManager(Context context) {

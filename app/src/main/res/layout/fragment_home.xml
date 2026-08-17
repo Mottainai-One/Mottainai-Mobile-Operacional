@@ -62,7 +62,7 @@
                 android:textColor="@color/text_secondary" />
         </LinearLayout>
 
-        <!-- Cards de indicadores (Estoquista) -->
+        <!-- Cards de indicadores (visíveis conforme role) -->
         <LinearLayout
             android:id="@+id/layout_cards_estoque"
             android:layout_width="match_parent"
