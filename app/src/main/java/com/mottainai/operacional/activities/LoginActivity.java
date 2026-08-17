@@ -37,6 +37,14 @@ public class LoginActivity extends AppCompatActivity {
         authRepository = new AuthRepository();
         userRepository = new UserRepository();
 
+        // Verifica se o usuário já está logado, se estiver leva para home
+        if (session.isLoggedIn()) {
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
+
         btnLogin.setOnClickListener(v -> login());
     }
 
