@@ -13,8 +13,8 @@ public class User {
         this.storeId = storeId;
     }
 
-    public String getUid()      { return uid; }
-    public String getName()     { return name; }
-    public String getRole()     { return role; }
-    public String getStoreId()  { return storeId; }
+    public String getUid() { return uid; }
+    public String getName() { return name; }
+    public String getRole() { return role; }
+    public String getStoreId() { return storeId; }
 }

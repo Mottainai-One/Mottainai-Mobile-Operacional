@@ -1,0 +1,49 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper: pega storeId/role do documento do usuário logado
+    function getStoreId() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.storeId;
+    }
+    function getRole() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+
+    // Usuários só leem/escrevem seus próprios dados
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Alertas: só a loja do usuário
+    match /alerts/{alertId} {
+      allow read: if request.auth != null && resource.data.storeId == getStoreId();
+      allow write: if request.auth != null && request.resource.data.storeId == getStoreId();
+    }
+
+    // Sugestões: só a loja do usuário
+    match /suggestions/{suggestionId} {
+      allow read: if request.auth != null && resource.data.storeId == getStoreId();
+      allow write: if request.auth != null && resource.data.storeId == getStoreId();
+    }
+
+    // Produtos: por loja (leitura para todos da loja, escrita só gerente/dono)
+    match /products/{productId} {
+      allow read: if request.auth != null && resource.data.storeId == getStoreId();
+      allow write: if request.auth != null 
+        && getRole() in ['gerente', 'dono']
+        && request.resource.data.storeId == getStoreId();
+    }
+
+    // Avaria/Danos: por loja
+    match /damages/{damageId} {
+      allow read: if request.auth != null && resource.data.storeId == getStoreId();
+      allow write: if request.auth != null && request.resource.data.storeId == getStoreId();
+    }
+
+    // Inventário: por loja
+    match /inventory/{inventoryId} {
+      allow read, write: if request.auth != null && resource.data.storeId == getStoreId();
+    }
+  }
+}

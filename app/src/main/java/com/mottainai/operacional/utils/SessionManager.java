@@ -23,11 +23,21 @@ public class SessionManager {
                 .apply();
     }
 
-    public String getUid()    { return prefs.getString(KEY_UID, null); }
-    public String getRole()   { return prefs.getString(KEY_ROLE, null); }
-    public String getStoreId(){ return prefs.getString(KEY_STORE_ID, null); }
+    public String getUid() {
+        return prefs.getString(KEY_UID, null);
+    }
 
-    public boolean isLoggedIn() { return getUid() != null; }
+    public String getRole() {
+        return prefs.getString(KEY_ROLE, null);
+    }
+
+    public String getStoreId() {
+        return prefs.getString(KEY_STORE_ID, null);
+    }
+
+    public boolean isLoggedIn() {
+        return getUid() != null;
+    }
 
     public void clearSession() {
         prefs.edit().clear().apply();
