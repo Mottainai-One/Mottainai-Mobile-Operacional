@@ -2,12 +2,18 @@ package com.mottainai.operacional.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.GetTokenResult;
 import com.mottainai.operacional.MainActivity;
 import com.mottainai.operacional.R;
 import com.mottainai.operacional.utils.SessionManager;
@@ -92,10 +98,7 @@ public class LoginActivity extends AppCompatActivity {
                             Toast.LENGTH_LONG).show();
                     return;
                 }
-                session.saveSession(user);
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
+                refreshTokenAndProceed(user);
             }
 
             @Override
@@ -112,5 +115,50 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(LoginActivity.this, "Perfil não encontrado no Firestore", Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    // Renova o ID token para que as custom claims (storeID, role) entrem no token
+    // antes do Firestore validar as security rules. Só abre a MainActivity após o
+    // refresh terminar. Se falhar, mostra erro e mantém o usuário no login.
+    private void refreshTokenAndProceed(User user) {
+        FirebaseAuth.getInstance().getCurrentUser()
+                .getIdToken(true)
+                .addOnSuccessListener(new OnSuccessListener<GetTokenResult>() {
+                    @Override
+                    public void onSuccess(@NonNull GetTokenResult result) {
+                        // DEBUG temporário — inspecionar custom claims do token
+                        Object storeID = result.getClaims().get("storeID");
+                        Object role = result.getClaims().get("role");
+                        Log.d("AUTH_CLAIMS", "storeID=" + storeID + ", role=" + role);
+
+                        if (storeID == null || role == null) {
+                            btnLogin.setEnabled(true);
+                            btnLogin.setText("Entrar");
+                            Toast.makeText(LoginActivity.this,
+                                    "Token sem storeID/role. Logout e login novamente.",
+                                    Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                        // Só salva a sessão após a renovação do token com as claims confirmadas
+                        session.saveSession(user);
+                        goToMain();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("AUTH_CLAIMS", "Falha ao renovar token", e);
+                        btnLogin.setEnabled(true);
+                        btnLogin.setText("Entrar");
+                        Toast.makeText(LoginActivity.this,
+                                "Erro ao renovar sessão: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
+    }
+
+    private void goToMain() {
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

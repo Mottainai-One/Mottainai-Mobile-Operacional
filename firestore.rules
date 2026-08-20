@@ -2,61 +2,96 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Helper: pega storeId/role do documento do usuário logado (aceita storeId ou storeID)
-    function getStoreId() {
-      let userDoc = get(/databases/$(database)/documents/users/$(request.auth.uid));
-      return userDoc.data.storeID || userDoc.data.storeId;
-    }
-    function getRole() {
-      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
-    }
-
-    // Helper: pega storeId do recurso (aceita storeId ou storeID)
-    function getResourceStoreId(resource) {
-      return resource.data.storeID || resource.data.storeId;
-    }
-
-    // Usuários só leem/escrevem seus próprios dados
+    // Usuários: leem/seu próprio doc; create/update NÃO permite definir role/storeID
+    // (esses campos são gerenciados pelo backend via Admin SDK / Cloud Functions).
     match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null
+        && request.auth.uid == userId
+        && request.resource.data.role == null
+        && request.resource.data.storeID == null;
+      allow update: if request.auth != null
+        && request.auth.uid == userId
+        // campo role/storeID são imutáveis pelo cliente (não podem mudar e não podem surgir em create)
+        && request.resource.data.role == resource.data.role
+        && request.resource.data.storeID == resource.data.storeID;
+      allow delete: if false;
     }
 
-    // Alertas: só a loja do usuário
+    // Alertas: só a loja do usuário (custom claim storeID)
     match /alerts/{alertId} {
-      allow read, listen: if request.auth != null && getResourceStoreId(resource) == getStoreId();
-      allow write: if request.auth != null && getResourceStoreId(request.resource) == getStoreId();
+      allow read: if request.auth != null && resource.data.storeID == request.auth.token.storeID;
+      allow create: if request.auth != null
+        && request.resource.data.storeID == request.auth.token.storeID;
+      allow update: if request.auth != null
+        && resource.data.storeID == request.auth.token.storeID
+        && request.resource.data.storeID == request.auth.token.storeID;
+      allow delete: if request.auth != null && resource.data.storeID == request.auth.token.storeID;
     }
 
     // Sugestões: só a loja do usuário
     match /suggestions/{suggestionId} {
-      allow read: if request.auth != null && getResourceStoreId(resource) == getStoreId();
-      allow write: if request.auth != null && getResourceStoreId(request.resource) == getStoreId();
+      allow read: if request.auth != null && resource.data.storeID == request.auth.token.storeID;
+      allow create: if request.auth != null
+        && request.resource.data.storeID == request.auth.token.storeID;
+      allow update: if request.auth != null
+        && resource.data.storeID == request.auth.token.storeID
+        && request.resource.data.storeID == request.auth.token.storeID;
+      allow delete: if request.auth != null && resource.data.storeID == request.auth.token.storeID;
     }
 
-    // Produtos: por loja (leitura para todos da loja, escrita só gerente/dono)
+    // Produtos: por loja (leitura para todos, escrita só gerente/dono)
     match /products/{productId} {
-      allow read: if request.auth != null && getResourceStoreId(resource) == getStoreId();
-      allow write: if request.auth != null 
-        && getRole() in ['gerente', 'dono']
-        && getResourceStoreId(request.resource) == getStoreId();
+      allow read: if request.auth != null
+        && resource.data.storeID == request.auth.token.storeID;
+      allow create: if request.auth != null
+        && request.auth.token.role in ['GERENTE', 'DONO']
+        && request.resource.data.storeID == request.auth.token.storeID;
+      allow update: if request.auth != null
+        && request.auth.token.role in ['GERENTE', 'DONO']
+        && resource.data.storeID == request.auth.token.storeID
+        && request.resource.data.storeID == request.auth.token.storeID;
+      allow delete: if request.auth != null
+        && request.auth.token.role in ['GERENTE', 'DONO']
+        && resource.data.storeID == request.auth.token.storeID;
     }
 
     // Avaria/Danos: por loja
     match /damages/{damageId} {
-      allow read: if request.auth != null && getResourceStoreId(resource) == getStoreId();
-      allow write: if request.auth != null && getResourceStoreId(request.resource) == getStoreId();
+      allow read: if request.auth != null && resource.data.storeID == request.auth.token.storeID;
+      allow create: if request.auth != null && request.resource.data.storeID == request.auth.token.storeID;
+      allow update: if request.auth != null
+        && resource.data.storeID == request.auth.token.storeID
+        && request.resource.data.storeID == request.auth.token.storeID;
+      allow delete: if request.auth != null && resource.data.storeID == request.auth.token.storeID;
     }
 
-    // Inventário: por loja
+    // Inventário: por loja (create usa request.resource; update valida ambos; delete usa resource)
     match /inventory/{inventoryId} {
-      allow read, write: if request.auth != null && getResourceStoreId(resource) == getStoreId();
+      allow read: if request.auth != null && resource.data.storeID == request.auth.token.storeID;
+      allow create: if request.auth != null
+        && request.resource.data.storeID == request.auth.token.storeID;
+      allow update: if request.auth != null
+        && resource.data.storeID == request.auth.token.storeID
+        && request.resource.data.storeID == request.auth.token.storeID;
+      allow delete: if request.auth != null && resource.data.storeID == request.auth.token.storeID;
     }
 
-    // Usuários da loja (para Dono gerenciar equipe)
+    // storeUsers: DONO pode gerenciar; create usa request.resource; update valida ambos
     match /storeUsers/{storeUserId} {
-      allow read, write: if request.auth != null 
-        && getResourceStoreId(resource) == getStoreId()
-        && getRole() == 'dono';
+      allow read: if request.auth != null
+        && resource.data.storeID == request.auth.token.storeID
+        && request.auth.token.role == 'DONO';
+      allow create: if request.auth != null
+        && request.resource.data.storeID == request.auth.token.storeID
+        && request.auth.token.role == 'DONO';
+      allow update: if request.auth != null
+        && resource.data.storeID == request.auth.token.storeID
+        && request.resource.data.storeID == request.auth.token.storeID
+        && request.auth.token.role == 'DONO';
+      allow delete: if request.auth != null
+        && resource.data.storeID == request.auth.token.storeID
+        && request.auth.token.role == 'DONO';
     }
   }
 }
