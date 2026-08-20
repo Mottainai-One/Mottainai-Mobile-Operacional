@@ -21,7 +21,7 @@ public class SuggestionRepository {
 
     public ListenerRegistration listenSuggestions(String storeId, SuggestionCallback callback) {
         return db.collection("suggestions")
-                .whereEqualTo("storeId", storeId)
+                .whereEqualTo("storeID", storeId)
                 .whereEqualTo("status", "pending")
                 .addSnapshotListener((snapshots, error) -> {
                     if (error != null) {

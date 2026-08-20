@@ -2,12 +2,18 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Helper: pega storeId/role do documento do usuário logado
+    // Helper: pega storeId/role do documento do usuário logado (aceita storeId ou storeID)
     function getStoreId() {
-      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.storeId;
+      let userDoc = get(/databases/$(database)/documents/users/$(request.auth.uid));
+      return userDoc.data.storeID || userDoc.data.storeId;
     }
     function getRole() {
       return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+
+    // Helper: pega storeId do recurso (aceita storeId ou storeID)
+    function getResourceStoreId(resource) {
+      return resource.data.storeID || resource.data.storeId;
     }
 
     // Usuários só leem/escrevem seus próprios dados
@@ -17,33 +23,40 @@ service cloud.firestore {
 
     // Alertas: só a loja do usuário
     match /alerts/{alertId} {
-      allow read: if request.auth != null && resource.data.storeId == getStoreId();
-      allow write: if request.auth != null && request.resource.data.storeId == getStoreId();
+      allow read, listen: if request.auth != null && getResourceStoreId(resource) == getStoreId();
+      allow write: if request.auth != null && getResourceStoreId(request.resource) == getStoreId();
     }
 
     // Sugestões: só a loja do usuário
     match /suggestions/{suggestionId} {
-      allow read: if request.auth != null && resource.data.storeId == getStoreId();
-      allow write: if request.auth != null && resource.data.storeId == getStoreId();
+      allow read: if request.auth != null && getResourceStoreId(resource) == getStoreId();
+      allow write: if request.auth != null && getResourceStoreId(request.resource) == getStoreId();
     }
 
     // Produtos: por loja (leitura para todos da loja, escrita só gerente/dono)
     match /products/{productId} {
-      allow read: if request.auth != null && resource.data.storeId == getStoreId();
+      allow read: if request.auth != null && getResourceStoreId(resource) == getStoreId();
       allow write: if request.auth != null 
         && getRole() in ['gerente', 'dono']
-        && request.resource.data.storeId == getStoreId();
+        && getResourceStoreId(request.resource) == getStoreId();
     }
 
     // Avaria/Danos: por loja
     match /damages/{damageId} {
-      allow read: if request.auth != null && resource.data.storeId == getStoreId();
-      allow write: if request.auth != null && request.resource.data.storeId == getStoreId();
+      allow read: if request.auth != null && getResourceStoreId(resource) == getStoreId();
+      allow write: if request.auth != null && getResourceStoreId(request.resource) == getStoreId();
     }
 
     // Inventário: por loja
     match /inventory/{inventoryId} {
-      allow read, write: if request.auth != null && resource.data.storeId == getStoreId();
+      allow read, write: if request.auth != null && getResourceStoreId(resource) == getStoreId();
+    }
+
+    // Usuários da loja (para Dono gerenciar equipe)
+    match /storeUsers/{storeUserId} {
+      allow read, write: if request.auth != null 
+        && getResourceStoreId(resource) == getStoreId()
+        && getRole() == 'dono';
     }
   }
 }

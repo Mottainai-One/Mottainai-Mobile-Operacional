@@ -20,10 +20,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //bloqueia acesso se não estiver logado
+        // bloqueia acesso se não estiver logado OU sessão incompleta
         SessionManager session = new SessionManager(this);
-        if (!session.isLoggedIn()) {
+        if (!session.isLoggedIn() 
+                || session.getStoreId() == null || session.getStoreId().isEmpty()
+                || session.getRole() == null || session.getRole().isEmpty()) {
             Intent intent = new Intent(this, LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
             finish();
             return;

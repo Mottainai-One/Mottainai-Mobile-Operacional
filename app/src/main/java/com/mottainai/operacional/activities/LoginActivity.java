@@ -37,8 +37,10 @@ public class LoginActivity extends AppCompatActivity {
         authRepository = new AuthRepository();
         userRepository = new UserRepository();
 
-        // Verifica se o usuário já está logado, se estiver leva para home
-        if (session.isLoggedIn()) {
+        // Verifica se o usuário já está logado COM SESSÃO COMPLETA, se estiver leva para home
+        if (session.isLoggedIn() 
+                && session.getStoreId() != null && !session.getStoreId().isEmpty()
+                && session.getRole() != null && !session.getRole().isEmpty()) {
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
@@ -81,6 +83,15 @@ public class LoginActivity extends AppCompatActivity {
         userRepository.getUserProfile(uid, new UserRepository.UserCallback() {
             @Override
             public void onSuccess(User user) {
+                if (user.getStoreId() == null || user.getStoreId().isEmpty()
+                        || user.getRole() == null || user.getRole().isEmpty()) {
+                    btnLogin.setEnabled(true);
+                    btnLogin.setText("Entrar");
+                    Toast.makeText(LoginActivity.this,
+                            "Usuário sem loja ou perfil configurado. Contate o administrador.",
+                            Toast.LENGTH_LONG).show();
+                    return;
+                }
                 session.saveSession(user);
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);

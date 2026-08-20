@@ -1,5 +1,6 @@
 package com.mottainai.operacional.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +17,11 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuth.AuthStateListener;
+
 import com.mottainai.operacional.R;
+import com.mottainai.operacional.activities.LoginActivity;
 import com.mottainai.operacional.adapters.AlertAdapter;
 import com.mottainai.operacional.adapters.SuggestionAdapter;
 import com.mottainai.operacional.utils.RoleHelper;
@@ -27,6 +32,8 @@ public class HomeFragment extends Fragment {
 
     private HomeViewModel viewModel;
     private SessionManager sessionManager;
+    private FirebaseAuth.AuthStateListener authStateListener;
+    private boolean isRedirecting = false;
 
     // Views
     private ProgressBar progressBar;
@@ -95,6 +102,29 @@ public class HomeFragment extends Fragment {
         viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
         sessionManager = new SessionManager(requireContext());
 
+        // AuthStateListener: redireciona pro login se usuário deslogar/token expirar
+        authStateListener = new AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                // Só redireciona se NÃO estamos já redirecionando E usuário ficou null
+                if (firebaseAuth.getCurrentUser() == null && !isRedirecting) {
+                    isRedirecting = true;
+                    // REMOVE listener ANTES de redirecionar para evitar loop
+                    FirebaseAuth.getInstance().removeAuthStateListener(authStateListener);
+                    authStateListener = null;
+                    isRedirecting = true;
+                    Intent intent = new Intent(requireContext(), LoginActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    requireActivity().finish();
+                }
+            }
+        };
+        FirebaseAuth.getInstance().addAuthStateListener(authStateListener);
+
+        viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+        sessionManager = new SessionManager(requireContext());
+
         viewModel.getLoading().observe(getViewLifecycleOwner(), isLoading -> {
             progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
             if (isLoading) {
@@ -112,7 +142,10 @@ public class HomeFragment extends Fragment {
         viewModel.getAlerts().observe(getViewLifecycleOwner(), alerts -> {
             alertAdapter.setAlerts(alerts);
             checkEmptyState();
-            applyRoleRules(sessionManager.getRole());
+            String role = sessionManager.getRole();
+            if (role != null) {
+                applyRoleRules(role);
+            }
         });
 
         viewModel.getSuggestions().observe(getViewLifecycleOwner(), suggestions -> {
@@ -124,7 +157,10 @@ public class HomeFragment extends Fragment {
         if (storeId != null) {
             viewModel.loadData(storeId);
         } else {
-            showError("Store ID não encontrado na sessão");
+            // Sessão inválida -> volta pro login
+            Intent intent = new Intent(requireContext(), LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
         }
     }
 
@@ -215,5 +251,14 @@ public class HomeFragment extends Fragment {
         boolean showSuggestions = RoleHelper.canViewSuggestions(role);
         rvSuggestions.setVisibility(showSuggestions ? View.VISIBLE : View.GONE);
         tvSuggestionsTitle.setVisibility(showSuggestions ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (authStateListener != null) {
+            FirebaseAuth.getInstance().removeAuthStateListener(authStateListener);
+            authStateListener = null;
+        }
     }
 }
