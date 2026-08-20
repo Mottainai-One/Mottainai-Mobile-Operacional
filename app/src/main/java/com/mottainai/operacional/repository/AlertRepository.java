@@ -21,7 +21,7 @@ public class AlertRepository {
 
     public ListenerRegistration listenAlerts(String storeId, int days, AlertCallback callback) {
         return db.collection("alerts")
-                .whereEqualTo("storeID", storeId)
+.whereEqualTo("storeID", storeId)
                 .whereLessThanOrEqualTo("days", days)
                 .addSnapshotListener((snapshots, error) -> {
                     if (error != null) {
