@@ -3,43 +3,32 @@ package com.mottainai.operacional.adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.mottainai.operacional.R;
 import com.mottainai.operacional.models.Product;
 
-public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductViewHolder> {
+import java.util.ArrayList;
+import java.util.List;
 
+public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> implements Filterable {
+
+    private final List<Product> fullList = new ArrayList<>();
+    private List<Product> filteredList = new ArrayList<>();
     private OnProductClickListener listener;
 
     public interface OnProductClickListener {
         void onProductClick(Product product);
     }
 
-    public ProductAdapter() {
-        super(DIFF_CALLBACK);
-    }
-
-    private static final DiffUtil.ItemCallback<Product> DIFF_CALLBACK = new DiffUtil.ItemCallback<Product>() {
-        @Override
-        public boolean areItemsTheSame(@NonNull Product oldItem, @NonNull Product newItem) {
-            return oldItem.getId().equals(newItem.getId());
-        }
-
-        @Override
-        public boolean areContentsTheSame(@NonNull Product oldItem, @NonNull Product newItem) {
-            return oldItem.getName().equals(newItem.getName())
-                    && oldItem.getQuantity() == newItem.getQuantity()
-                    && oldItem.getSku().equals(newItem.getSku());
-        }
-    };
+    public ProductAdapter() {}
 
     public void setOnProductClickListener(OnProductClickListener listener) {
         this.listener = listener;
@@ -54,8 +43,59 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
 
     @Override
     public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
-        Product product = getItem(position);
+        Product product = filteredList.get(position);
         holder.bind(product);
+    }
+
+    @Override
+    public int getItemCount() {
+        return filteredList.size();
+    }
+
+    public void submitList(List<Product> products) {
+        fullList.clear();
+        if (products != null) {
+            fullList.addAll(products);
+        }
+        getFilter().filter("");
+    }
+
+    public List<Product> getCurrentList() {
+        return new ArrayList<>(fullList);
+    }
+
+    @NonNull
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                String query = constraint.toString().toLowerCase().trim();
+                List<Product> result = new ArrayList<>();
+
+                if (query.isEmpty()) {
+                    result.addAll(fullList);
+                } else {
+                    for (Product product : fullList) {
+                        if (product.getName() != null && product.getName().toLowerCase().contains(query)
+                                || product.getSku() != null && product.getSku().toLowerCase().contains(query)) {
+                            result.add(product);
+                        }
+                    }
+                }
+
+                FilterResults results = new FilterResults();
+                results.values = result;
+                return results;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                filteredList.clear();
+                filteredList.addAll((List<Product>) results.values);
+                notifyDataSetChanged();
+            }
+        };
     }
 
     public class ProductViewHolder extends RecyclerView.ViewHolder {
@@ -78,8 +118,8 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
 
             itemView.setOnClickListener(v -> {
                 int position = getBindingAdapterPosition();
-                if (position != RecyclerView.NO_POSITION && listener != null) {
-                    listener.onProductClick(getItem(position));
+                if (position != RecyclerView.NO_POSITION && listener != null && position < filteredList.size()) {
+                    listener.onProductClick(filteredList.get(position));
                 }
             });
         }
@@ -112,10 +152,6 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
             } else {
                 ivProductImage.setImageResource(R.drawable.ic_product_placeholder);
             }
-        }
-    }
-
-    public void setOnProductClickListener(OnProductClickListener listener) {
-        this.listener = listener;
-    }
+}
+}
 }
