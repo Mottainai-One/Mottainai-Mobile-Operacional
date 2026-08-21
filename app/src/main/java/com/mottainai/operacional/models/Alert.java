@@ -20,7 +20,7 @@ public class Alert {
         a.title = doc.getString("title");
         a.message = doc.getString("message");
         a.severity = doc.getString("severity");
-        a.storeId = doc.getString("storeId");
+a.storeId = doc.getString("storeID");
         Long d = doc.getLong("days");
         a.days = d != null ? d.intValue() : 0;
         Timestamp ts = doc.getTimestamp("createdAt");

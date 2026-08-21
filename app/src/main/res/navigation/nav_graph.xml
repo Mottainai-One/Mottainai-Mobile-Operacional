@@ -28,4 +28,18 @@
         android:id="@+id/profileFragment"
         android:name="com.mottainai.operacional.fragments.ProfileFragment"
         android:label="Perfil" />
+
+    <activity
+        android:id="@+id/productDetailActivity"
+        android:name="com.mottainai.operacional.activities.ProductDetailActivity"
+        android:label="Detalhes do Produto"
+        app:actionBarHidden="false">
+        <argument
+            android:name="product_id"
+            app:argType="string" />
+        <argument
+            android:name="is_new_product"
+            app:argType="boolean" />
+    </activity>
+
 </navigation>

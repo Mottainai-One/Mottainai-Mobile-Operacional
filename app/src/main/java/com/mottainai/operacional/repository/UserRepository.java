@@ -38,7 +38,7 @@ public class UserRepository {
 
                         String name = doc.getString("name");
                         String role = doc.getString("role");
-                        String storeId = doc.getString("storeId");
+                        String storeId = doc.getString("storeID");
 
                         User user = new User(uid, name, role, storeId);
                         callback.onSuccess(user);

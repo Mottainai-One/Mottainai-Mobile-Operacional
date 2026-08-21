@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Material3 required colors (Dark theme) -->
+    <color name="colorPrimary">#A5D6A7</color>
+    <color name="colorPrimaryContainer">#1B5E20</color>
+    <color name="colorSecondary">#C8E6C9</color>
+    <color name="colorSecondaryContainer">#1B5E20</color>
+    <color name="colorTertiary">#FFE0B2</color>
+    <color name="colorTertiaryContainer">#2E1500</color>
+    <color name="colorSurface">#1E1E1E</color>
+    <color name="colorSurfaceVariant">#2C2C2C</color>
+    <color name="colorBackground">#121212</color>
+    <color name="colorError">#F44336</color>
+    <color name="colorErrorContainer">#4D0000</color>
+    <color name="colorOnPrimary">#002E04</color>
+    <color name="colorOnPrimaryContainer">#A5D6A7</color>
+    <color name="colorOnSecondary">#001F00</color>
+    <color name="colorOnSecondaryContainer">#C8E6C9</color>
+    <color name="colorOnTertiary">#2E1500</color>
+    <color name="colorOnTertiaryContainer">#FFE0B2</color>
+    <color name="colorOnSurface">#FFFFFF</color>
+    <color name="colorOnSurfaceVariant">#CAC4D0</color>
+    <color name="colorOnBackground">#FFFFFF</color>
+    <color name="colorOnError">#FFFFFF</color>
+    <color name="colorOnErrorContainer">#FCEEEE</color>
+    <color name="colorOutline">#909090</color>
+    <color name="colorOutlineVariant">#4A4A4A</color>
+    <color name="colorInverseSurface">#FFFFFF</color>
+    <color name="colorInversePrimary">#A5D6A7</color>
+    <color name="colorShadow">#000000</color>
+    <color name="colorScrim">#000000</color>
+
+    <!-- Severidades -->
+    <color name="severity_critico">#EF5350</color>
+    <color name="severity_atencao">#FF9800</color>
+    <color name="severity_monitor">#64B5F6</color>
+
+    <!-- UI geral -->
+    <color name="surface_card">#2C2C2C</color>
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#B0B0B0</color>
+    <color name="accent">#81C784</color>
+</resources>
