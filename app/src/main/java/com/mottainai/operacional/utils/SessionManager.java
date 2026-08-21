@@ -42,4 +42,12 @@ public class SessionManager {
     public void clearSession() {
         prefs.edit().clear().apply();
     }
+
+    public String getToken() {
+        return prefs.getString("token", null);
+    }
+
+    public void saveToken(String token) {
+        prefs.edit().putString("token", token).apply();
+    }
 }
