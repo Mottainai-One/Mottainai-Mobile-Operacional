@@ -112,7 +112,10 @@ public class HomeFragment extends Fragment {
         viewModel.getAlerts().observe(getViewLifecycleOwner(), alerts -> {
             alertAdapter.setAlerts(alerts);
             checkEmptyState();
-            applyRoleRules(sessionManager.getRole());
+            String role = sessionManager.getRole();
+            if (role != null) {
+                applyRoleRules(role);
+            }
         });
 
         viewModel.getSuggestions().observe(getViewLifecycleOwner(), suggestions -> {
@@ -124,7 +127,7 @@ public class HomeFragment extends Fragment {
         if (storeId != null) {
             viewModel.loadData(storeId);
         } else {
-            showError("Store ID não encontrado na sessão");
+            showError("Sessão inválida. Faça login novamente.");
         }
     }
 

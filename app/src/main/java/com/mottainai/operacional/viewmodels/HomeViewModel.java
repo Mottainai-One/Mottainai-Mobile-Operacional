@@ -23,6 +23,11 @@ public class HomeViewModel extends AndroidViewModel {
     private ListenerRegistration alertListener;
     private ListenerRegistration suggestionListener;
 
+    // Flags síncronas para saber quando cada fonte terminou de carregar.
+    // (Não confiar em LiveData.getValue() logo após postValue(), que é assíncrono.)
+    private boolean alertsLoaded = false;
+    private boolean suggestionsLoaded = false;
+
     private final MutableLiveData<Boolean> loading = new MutableLiveData<>(false);
     private final MutableLiveData<String> error = new MutableLiveData<>();
     private final MutableLiveData<List<com.mottainai.operacional.models.Alert>> alerts = new MutableLiveData<>();
@@ -51,18 +56,22 @@ public class HomeViewModel extends AndroidViewModel {
     public void loadData(String storeId) {
         loading.setValue(true);
         error.setValue(null);
+        alertsLoaded = false;
+        suggestionsLoaded = false;
 
         // Alertas
         alertRepository.listenAlerts(storeId, 7, new AlertRepository.AlertCallback() {
             @Override
             public void onSuccess(List<com.mottainai.operacional.models.Alert> alertList) {
                 alerts.postValue(alertList);
+                alertsLoaded = true;
                 checkLoadingDone();
             }
 
             @Override
             public void onError(Exception e) {
                 error.postValue(e.getMessage());
+                alertsLoaded = true;
                 loading.postValue(false);
             }
         });
@@ -72,19 +81,21 @@ public class HomeViewModel extends AndroidViewModel {
             @Override
             public void onSuccess(List<com.mottainai.operacional.models.Suggestion> suggestionList) {
                 suggestions.postValue(suggestionList);
+                suggestionsLoaded = true;
                 checkLoadingDone();
             }
 
             @Override
             public void onError(Exception e) {
                 error.postValue(e.getMessage());
+                suggestionsLoaded = true;
                 loading.postValue(false);
             }
         });
     }
 
     private void checkLoadingDone() {
-        if (alerts.getValue() != null && suggestions.getValue() != null) {
+        if (alertsLoaded && suggestionsLoaded) {
             loading.postValue(false);
         }
     }

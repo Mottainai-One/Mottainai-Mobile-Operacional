@@ -1,3 +1,23 @@
 <resources>
     <string name="app_name">Mottainai - Operacional</string>
+    <string name="product_image">Imagem do produto</string>
+    <string name="navigate_to_detail">Ir para detalhes</string>
+    <string name="add_product">Adicionar produto</string>
+    <string name="search_hint">Buscar por nome ou SKU</string>
+    <string name="error_load_products">Erro ao carregar produtos</string>
+    <string name="retry">Tentar novamente</string>
+    <string name="empty_products">Nenhum produto encontrado</string>
+    <string name="product_detail_title">Detalhes do Produto</string>
+    <string name="register_damage">Registrar Avaria</string>
+    <string name="edit_product">Editar Produto</string>
+    <string name="product_name">Nome</string>
+    <string name="product_sku">SKU</string>
+    <string name="product_quantity">Quantidade</string>
+    <string name="product_min_quantity">Quantidade Mínima</string>
+    <string name="product_batch">Lote</string>
+    <string name="product_expiry">Validade</string>
+    <string name="product_supplier">Fornecedor</string>
+    <string name="product_store">Loja</string>
+    <string name="save">Salvar</string>
+    <string name="cancel">Cancelar</string>
 </resources>

@@ -19,7 +19,7 @@ public class Suggestion {
         s.title = doc.getString("title");
         s.description = doc.getString("description");
         s.status = doc.getString("status");
-        s.storeId = doc.getString("storeId");
+s.storeId = doc.getString("storeID");
         Timestamp ts = doc.getTimestamp("createdAt");
         s.createdAt = ts != null ? ts.getSeconds() * 1000 : System.currentTimeMillis();
         return s;
