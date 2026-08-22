@@ -7,6 +7,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
 import com.mottainai.operacional.models.Product;
+import com.mottainai.operacional.repository.MockProductRepository;
 import com.mottainai.operacional.repository.ProductRepository;
 
 import java.util.List;
@@ -21,7 +22,13 @@ public class ProductListViewModel extends AndroidViewModel {
 
     public ProductListViewModel(@NonNull Application application) {
         super(application);
-        productRepository = new ProductRepository(application);
+        // Usa mock em debug (sem backend) - controlar via flag
+        boolean useMock = true; // TODO: trocar para false quando backend estiver pronto
+        if (useMock) {
+            productRepository = new MockProductRepository(application);
+        } else {
+            productRepository = new ProductRepository(application);
+        }
     }
 
     public MutableLiveData<Boolean> getLoading() {
@@ -38,7 +45,7 @@ public class ProductListViewModel extends AndroidViewModel {
 
     public void loadProducts(String storeId) {
         loading.setValue(true);
-        new com.mottainai.operacional.repository.ProductRepository(getApplication()).fetchProducts(storeId, new com.mottainai.operacional.repository.ProductRepository.ProductListCallback() {
+        productRepository.fetchProducts(storeId, new ProductRepository.ProductListCallback() {
             @Override
             public void onSuccess(List<Product> productList) {
                 products.postValue(productList);
