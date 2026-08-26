@@ -6,4 +6,8 @@
     </style>
 
     <style name="Theme.MottainaiOperacional" parent="Base.Theme.MottainaiOperacional" />
+
+    <!-- Overlay themes for Toolbar -->
+    <style name="Theme.MottainaiOperacional.AppBarOverlay" parent="ThemeOverlay.Material3.Dark.ActionBar" />
+    <style name="Theme.MottainaiOperacional.PopupOverlay" parent="ThemeOverlay.Material3.Light" />
 </resources>
