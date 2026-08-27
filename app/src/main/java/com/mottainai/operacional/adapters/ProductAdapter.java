@@ -61,7 +61,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     }
 
     public List<Product> getCurrentList() {
-        return new ArrayList<>(fullList);
+        return new ArrayList<>(filteredList);
     }
 
     @NonNull

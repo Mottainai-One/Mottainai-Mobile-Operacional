@@ -17,6 +17,9 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        // TODO MOBILE-03: confirmar base URL real da API Spring (/api/v1). Sem segredo hardcoded.
+        // Sobrescrever via gradle.properties: apiBaseUrl=https://sua.api.real/
+        buildConfigField("String", "API_BASE_URL", "\"https://api.mottainai.com.br/\"")
     }
 
     buildTypes {
@@ -34,6 +37,7 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 }
 
