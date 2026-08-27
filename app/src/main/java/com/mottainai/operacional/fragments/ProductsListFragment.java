@@ -15,6 +15,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import androidx.activity.result.contract.ActivityResultContracts;
+
 import com.mottainai.operacional.R;
 import com.mottainai.operacional.activities.ProductDetailActivity;
 import com.mottainai.operacional.adapters.ProductAdapter;
@@ -30,6 +32,10 @@ public class ProductsListFragment extends Fragment {
     private ProductAdapter adapter;
     private SessionManager sessionManager;
     private long lastClickTime = 0;
+    private final androidx.activity.result.ActivityResultLauncher<Intent> formLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() == android.app.Activity.RESULT_OK) loadProducts();
+            });
 
     @Nullable
     @Override
@@ -122,9 +128,8 @@ public class ProductsListFragment extends Fragment {
                 Toast.makeText(requireContext(), "Sem permissão para criar produto", Toast.LENGTH_SHORT).show();
                 return;
             }
-            Intent intent = new Intent(requireContext(), ProductDetailActivity.class);
-            intent.putExtra("is_new_product", true);
-            startActivity(intent);
+            Intent intent = new Intent(requireContext(), com.mottainai.operacional.activities.ProductFormActivity.class);
+            formLauncher.launch(intent);
         });
     }
 

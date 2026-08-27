@@ -23,6 +23,10 @@ public class ProductDetailActivity extends AppCompatActivity {
     private SessionManager sessionManager;
     private String productId;
     private boolean isNewProduct;
+    private final androidx.activity.result.ActivityResultLauncher<android.content.Intent> formLauncher =
+            registerForActivityResult(new androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult(), r -> {
+                if (r.getResultCode() == RESULT_OK && productId != null) viewModel.loadProduct(productId);
+            });
 
     // Views
     private ImageView ivProductImage;
@@ -103,7 +107,6 @@ public class ProductDetailActivity extends AppCompatActivity {
 
     private void setupButtons() {
         btnRegisterDamage.setOnClickListener(v -> {
-            // TODO MOBILE-03: contrato /api/v1/damage pendente. Manter desabilitado com mensagem clara.
             Toast.makeText(this, "Registrar avaria — funcionalidade pendente (aguarda endpoint)", Toast.LENGTH_SHORT).show();
         });
 
@@ -114,8 +117,10 @@ public class ProductDetailActivity extends AppCompatActivity {
                 Toast.makeText(this, "Sem permissão para editar", Toast.LENGTH_SHORT).show();
                 return;
             }
-            // TODO MOBILE-03: tela de edição pendente. Não simular sucesso.
-            Toast.makeText(this, "Editar produto — em implementação", Toast.LENGTH_SHORT).show();
+            if (productId == null) return;
+            android.content.Intent intent = new android.content.Intent(this, ProductFormActivity.class);
+            intent.putExtra("product_id", productId);
+            formLauncher.launch(intent);
         });
     }
 
@@ -125,15 +130,16 @@ public class ProductDetailActivity extends AppCompatActivity {
     }
 
     private void setupNewProduct() {
-        progressContainer.setVisibility(View.GONE);
+        // Redireciona para ProductFormActivity para criação real
         boolean canCreate = RoleHelper.canRegisterProduct(sessionManager.getRole());
         if (!canCreate) {
             showError("Sem permissão para criar produto");
             btnEditProduct.setVisibility(View.GONE);
             return;
         }
-        // TODO MOBILE-03: formulário de criação pendente (campos: barcode, name, category, etc.)
-        Toast.makeText(this, "Novo produto — formulário pendente", Toast.LENGTH_SHORT).show();
+        android.content.Intent intent = new android.content.Intent(this, ProductFormActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     private void bindProduct(Product product) {
