@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:background="@color/colorBackground">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -41,7 +42,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:text="Tentar novamente" />
+                android:text="@string/retry" />
         </LinearLayout>
 
         <!-- Empty -->
@@ -62,7 +63,34 @@
                 android:textColor="@color/text_secondary" />
         </LinearLayout>
 
-        <!-- Cards de indicadores (visíveis conforme role) -->
+        <!-- Cabeçalho: saudação + info loja/role -->
+        <LinearLayout
+            android:id="@+id/header_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:id="@+id/tv_welcome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bem-vindo,"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="@color/colorPrimary" />
+
+            <TextView
+                android:id="@+id/tv_store_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Loja — Papel"
+                android:textSize="14sp"
+                android:textColor="@color/text_secondary" />
+        </LinearLayout>
+
+        <!-- Cards de indicadores - Estoquista -->
         <LinearLayout
             android:id="@+id/layout_cards_estoque"
             android:layout_width="match_parent"
@@ -73,8 +101,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Alerta de estoque"
-                android:textStyle="bold" />
+                android:text="Resumo de estoque"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"
+                android:textColor="@color/text_primary" />
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
@@ -120,7 +150,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="16dp"
-                    android:text="Promoções: 0"
+                    android:text="Promoções ativas: 0"
                     android:textColor="@color/text_primary" />
             </androidx.cardview.widget.CardView>
         </LinearLayout>
@@ -137,7 +167,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Gestão"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"
+                android:textColor="@color/text_primary" />
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
@@ -184,7 +216,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Financeiro"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"
+                android:textColor="@color/text_primary" />
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
@@ -235,13 +269,14 @@
             </androidx.cardview.widget.CardView>
         </LinearLayout>
 
-        <!-- Atalhos rápidos (Estoquista) -->
+        <!-- Atalhos rápidos - Estoquista -->
         <LinearLayout
             android:id="@+id/layout_shortcuts"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:visibility="gone">
+            android:visibility="gone"
+            android:layout_marginTop="16dp">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_shortcut_products"
@@ -270,13 +305,78 @@
                 android:text="Avaria" />
         </LinearLayout>
 
+        <!-- Atalhos Gestão - Gerente/Dono -->
+        <LinearLayout
+            android:id="@+id/layout_shortcuts_gestao"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            android:layout_marginTop="16dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_shortcut_inventario"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:layout_weight="1"
+                android:text="Inventário" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_shortcut_avarias"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:layout_weight="1"
+                android:text="Avarias" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_shortcut_fornecedores"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Fornecedores" />
+        </LinearLayout>
+
+        <!-- Atalhos Dono -->
+        <LinearLayout
+            android:id="@+id/layout_shortcuts_dono"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            android:layout_marginTop="16dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_shortcut_equipe"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:layout_weight="1"
+                android:text="Equipe" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_shortcut_config"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Configuração" />
+        </LinearLayout>
+
         <!-- Alertas críticos -->
         <TextView
+            android:id="@+id/tv_alerts_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Alertas críticos"
-            android:textStyle="bold" />
+            android:text="Alertas"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_alerts"
@@ -291,13 +391,16 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="Sugestões aguardando aprovação"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="@color/text_primary"
+            android:visibility="gone" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_suggestions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false" />
+            android:nestedScrollingEnabled="false"
+            android:visibility="gone" />
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

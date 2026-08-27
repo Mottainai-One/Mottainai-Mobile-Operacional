@@ -7,10 +7,17 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
 import com.mottainai.operacional.models.Product;
+import com.mottainai.operacional.repository.MockProductRepository;
 import com.mottainai.operacional.repository.ProductRepository;
+import com.mottainai.operacional.utils.Constants;
 
 import java.util.List;
 
+/**
+ * ViewModel para lista de produtos.
+ * O modo mock é controlado por Constants.USE_MOCK_REPOSITORY.
+ * Em produção, deve ser false para usar a API real.
+ */
 public class ProductListViewModel extends AndroidViewModel {
 
     private final ProductRepository productRepository;
@@ -21,7 +28,13 @@ public class ProductListViewModel extends AndroidViewModel {
 
     public ProductListViewModel(@NonNull Application application) {
         super(application);
-        productRepository = new ProductRepository(application);
+        // Modo mock controlado por constante - alterar para false quando API estiver pronta
+        boolean useMock = Constants.USE_MOCK_REPOSITORY;
+        if (useMock) {
+            productRepository = new MockProductRepository(application);
+        } else {
+            productRepository = new ProductRepository(application);
+        }
     }
 
     public MutableLiveData<Boolean> getLoading() {
@@ -38,7 +51,7 @@ public class ProductListViewModel extends AndroidViewModel {
 
     public void loadProducts(String storeId) {
         loading.setValue(true);
-        new com.mottainai.operacional.repository.ProductRepository(getApplication()).fetchProducts(storeId, new com.mottainai.operacional.repository.ProductRepository.ProductListCallback() {
+        productRepository.fetchProducts(storeId, new ProductRepository.ProductListCallback() {
             @Override
             public void onSuccess(List<Product> productList) {
                 products.postValue(productList);

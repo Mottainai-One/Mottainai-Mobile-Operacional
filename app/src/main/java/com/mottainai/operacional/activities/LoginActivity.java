@@ -141,6 +141,8 @@ public class LoginActivity extends AppCompatActivity {
                         }
                         // Só salva a sessão após a renovação do token com as claims confirmadas
                         session.saveSession(user);
+                        // Salva o Firebase ID token para usar como Authorization: Bearer nas chamadas de API
+                        session.saveToken(result.getToken());
                         goToMain();
                     }
                 })

@@ -7,8 +7,10 @@ public class SessionManager {
 
     private static final String PREFS_NAME = "mottainai_session";
     private static final String KEY_UID = "uid";
+    private static final String KEY_NAME = "name";
     private static final String KEY_ROLE = "role";
     private static final String KEY_STORE_ID = "storeId";
+    private static final String KEY_TOKEN = "token";
     private final SharedPreferences prefs;
 
     public SessionManager(Context context) {
@@ -18,6 +20,7 @@ public class SessionManager {
     public void saveSession(User user) {
         prefs.edit()
                 .putString(KEY_UID, user.getUid())
+                .putString(KEY_NAME, user.getName())
                 .putString(KEY_ROLE, user.getRole())
                 .putString(KEY_STORE_ID, user.getStoreId())
                 .apply();
@@ -25,6 +28,10 @@ public class SessionManager {
 
     public String getUid() {
         return prefs.getString(KEY_UID, null);
+    }
+
+    public String getName() {
+        return prefs.getString(KEY_NAME, null);
     }
 
     public String getRole() {
@@ -39,15 +46,21 @@ public class SessionManager {
         return getUid() != null;
     }
 
+    public boolean hasCompleteProfile() {
+        return getUid() != null
+                && getStoreId() != null && !getStoreId().isEmpty()
+                && getRole() != null && !getRole().isEmpty();
+    }
+
     public void clearSession() {
         prefs.edit().clear().apply();
     }
 
     public String getToken() {
-        return prefs.getString("token", null);
+        return prefs.getString(KEY_TOKEN, null);
     }
 
     public void saveToken(String token) {
-        prefs.edit().putString("token", token).apply();
+        prefs.edit().putString(KEY_TOKEN, token).apply();
     }
 }

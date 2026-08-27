@@ -29,11 +29,15 @@
         android:name="com.mottainai.operacional.fragments.ProfileFragment"
         android:label="Perfil" />
 
+    <fragment
+        android:id="@+id/configFragment"
+        android:name="com.mottainai.operacional.fragments.ConfigFragment"
+        android:label="Configuração" />
+
     <activity
         android:id="@+id/productDetailActivity"
         android:name="com.mottainai.operacional.activities.ProductDetailActivity"
-        android:label="Detalhes do Produto"
-        app:actionBarHidden="false">
+        android:label="Detalhes do Produto">
         <argument
             android:name="product_id"
             app:argType="string" />

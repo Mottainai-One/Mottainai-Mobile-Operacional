@@ -14,6 +14,8 @@ import retrofit2.http.Query;
 
 public interface ApiService {
 
+    //Alterar de acordo com a API do Kevin Jun
+
     @GET("products")
     Call<List<Product>> getProducts(@Query("store_id") String storeId);
 
