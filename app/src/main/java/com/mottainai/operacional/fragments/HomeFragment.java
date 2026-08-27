@@ -251,7 +251,7 @@ public class HomeFragment extends Fragment {
             btnShortcutScan.setOnClickListener(v -> navigateTo(R.id.scannerFragment));
         }
         if (btnShortcutDamage != null) {
-            btnShortcutDamage.setOnClickListener(v -> navigateTo(R.id.registerDamageFragment));
+            btnShortcutDamage.setOnClickListener(v -> showComingSoon());
         }
 
         // Gerente - atalhos de gestão (apenas Config existe; demais mostram toast)
