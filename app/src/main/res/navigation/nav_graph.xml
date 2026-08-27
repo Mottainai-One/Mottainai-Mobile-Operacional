@@ -29,32 +29,6 @@
         android:name="com.mottainai.operacional.fragments.ProfileFragment"
         android:label="Perfil" />
 
-    <!-- Placeholders para destinos futuros (MOBILE-03, MOBILE-04, etc.) -->
-    <fragment
-        android:id="@+id/registerDamageFragment"
-        android:name="com.mottainai.operacional.fragments.RegisterDamageFragment"
-        android:label="Registrar Avaria" />
-
-    <fragment
-        android:id="@+id/inventoryFragment"
-        android:name="com.mottainai.operacional.fragments.InventoryFragment"
-        android:label="Inventário" />
-
-    <fragment
-        android:id="@+id/damageListFragment"
-        android:name="com.mottainai.operacional.fragments.DamageListFragment"
-        android:label="Avarias" />
-
-    <fragment
-        android:id="@+id/suppliersFragment"
-        android:name="com.mottainai.operacional.fragments.SuppliersFragment"
-        android:label="Fornecedores" />
-
-    <fragment
-        android:id="@+id/teamFragment"
-        android:name="com.mottainai.operacional.fragments.TeamFragment"
-        android:label="Equipe" />
-
     <fragment
         android:id="@+id/configFragment"
         android:name="com.mottainai.operacional.fragments.ConfigFragment"

@@ -9,9 +9,15 @@ import androidx.lifecycle.MutableLiveData;
 import com.mottainai.operacional.models.Product;
 import com.mottainai.operacional.repository.MockProductRepository;
 import com.mottainai.operacional.repository.ProductRepository;
+import com.mottainai.operacional.utils.Constants;
 
 import java.util.List;
 
+/**
+ * ViewModel para lista de produtos.
+ * O modo mock é controlado por Constants.USE_MOCK_REPOSITORY.
+ * Em produção, deve ser false para usar a API real.
+ */
 public class ProductListViewModel extends AndroidViewModel {
 
     private final ProductRepository productRepository;
@@ -22,8 +28,8 @@ public class ProductListViewModel extends AndroidViewModel {
 
     public ProductListViewModel(@NonNull Application application) {
         super(application);
-        // Usa mock em debug (sem backend) - controlar via flag
-        boolean useMock = true; // TODO: trocar para false quando backend estiver pronto
+        // Modo mock controlado por constante - alterar para false quando API estiver pronta
+        boolean useMock = Constants.USE_MOCK_REPOSITORY;
         if (useMock) {
             productRepository = new MockProductRepository(application);
         } else {

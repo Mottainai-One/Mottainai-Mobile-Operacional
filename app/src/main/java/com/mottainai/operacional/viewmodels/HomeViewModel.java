@@ -34,11 +34,11 @@ public class HomeViewModel extends AndroidViewModel {
     private boolean alertsLoaded = false;
     private boolean suggestionsLoaded = false;
 
-    private final LiveData<Boolean> loading = new LiveData<>(false);
-    private final LiveData<String> error = new LiveData<>();
-    private final LiveData<String> sessionError = new LiveData<>();
-    private final LiveData<List<Alert>> alerts = new LiveData<>(Collections.emptyList());
-    private final LiveData<List<Suggestion>> suggestions = new LiveData<>(Collections.emptyList());
+    private final MutableLiveData<Boolean> loading = new MutableLiveData<>(false);
+    private final MutableLiveData<String> error = new MutableLiveData<>();
+    private final MutableLiveData<String> sessionError = new MutableLiveData<>();
+    private final MutableLiveData<List<Alert>> alerts = new MutableLiveData<>(Collections.emptyList());
+    private final MutableLiveData<List<Suggestion>> suggestions = new MutableLiveData<>(Collections.emptyList());
 
     public HomeViewModel(@NonNull Application application) {
         super(application);

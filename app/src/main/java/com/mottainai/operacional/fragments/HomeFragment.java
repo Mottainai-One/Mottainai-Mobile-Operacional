@@ -254,33 +254,35 @@ public class HomeFragment extends Fragment {
             btnShortcutDamage.setOnClickListener(v -> navigateTo(R.id.registerDamageFragment));
         }
 
-        // Gerente
+        // Gerente - atalhos de gestão (apenas Config existe; demais mostram toast)
         if (btnShortcutInventario != null) {
-            btnShortcutInventario.setOnClickListener(v -> navigateTo(R.id.inventoryFragment));
+            btnShortcutInventario.setOnClickListener(v -> showComingSoon());
         }
         if (btnShortcutAvarias != null) {
-            btnShortcutAvarias.setOnClickListener(v -> navigateTo(R.id.damageListFragment));
+            btnShortcutAvarias.setOnClickListener(v -> showComingSoon());
         }
         if (btnShortcutFornecedores != null) {
-            btnShortcutFornecedores.setOnClickListener(v -> navigateTo(R.id.suppliersFragment));
+            btnShortcutFornecedores.setOnClickListener(v -> showComingSoon());
         }
 
         // Dono
         if (btnShortcutEquipe != null) {
-            btnShortcutEquipe.setOnClickListener(v -> navigateTo(R.id.teamFragment));
+            btnShortcutEquipe.setOnClickListener(v -> showComingSoon());
         }
         if (btnShortcutConfig != null) {
             btnShortcutConfig.setOnClickListener(v -> navigateTo(R.id.configFragment));
         }
     }
 
+    private void showComingSoon() {
+        Toast.makeText(requireContext(), "Funcionalidade em desenvolvimento", Toast.LENGTH_SHORT).show();
+    }
+
     private void navigateTo(int destinationId) {
         try {
             navController.navigate(destinationId);
         } catch (IllegalArgumentException e) {
-            // Destino não existe no grafo - mostra toast informativo
-            String msg = "Funcionalidade em desenvolvimento";
-            Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show();
+            showComingSoon();
         }
     }
 
@@ -303,19 +305,19 @@ public class HomeFragment extends Fragment {
             layoutShortcuts.setVisibility(View.VISIBLE);
             tvAlertsTitle.setText("Alertas de estoque");
         } else if (isGerente) {
-            // Gerente: cards de gestão + atalhos de gestão + sugestões
+            // Gerente: cards de gestão + atalhos básicos + atalhos gestão (sem destino real)
             layoutCardsGerente.setVisibility(View.VISIBLE);
             layoutShortcuts.setVisibility(View.VISIBLE); // Produtos, Escanear, Avaria
-            layoutShortcutsGestao.setVisibility(View.VISIBLE); // Inventário, Avarias, Fornecedores
+            layoutShortcutsGestao.setVisibility(View.VISIBLE); // Inventário, Avarias, Fornecedores (em desenvolvimento)
             tvAlertsTitle.setText("Alertas");
             tvSuggestionsTitle.setVisibility(View.VISIBLE);
             rvSuggestions.setVisibility(View.VISIBLE);
         } else if (isDono) {
-            // Dono: cards financeiros + todos atalhos + config
+            // Dono: cards financeiros + atalhos + config
             layoutCardsDono.setVisibility(View.VISIBLE);
             layoutShortcuts.setVisibility(View.VISIBLE);
             layoutShortcutsGestao.setVisibility(View.VISIBLE);
-            layoutShortcutsDono.setVisibility(View.VISIBLE);
+            layoutShortcutsDono.setVisibility(View.GONE); // Equipe não existe
             tvAlertsTitle.setText("Visão geral");
             tvSuggestionsTitle.setVisibility(View.VISIBLE);
             rvSuggestions.setVisibility(View.VISIBLE);
