@@ -67,6 +67,12 @@ public class ProductDetailActivity extends AppCompatActivity {
     }
 
     private void initViews() {
+        androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
         ivProductImage = findViewById(R.id.iv_product_image);
         tvProductName = findViewById(R.id.tv_product_name);
         tvProductSku = findViewById(R.id.tv_product_sku);
@@ -81,6 +87,12 @@ public class ProductDetailActivity extends AppCompatActivity {
         progressContainer = findViewById(R.id.progress_container);
         errorContainer = findViewById(R.id.error_container);
         tvError = findViewById(R.id.tv_error);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     private void setupViewModel() {
