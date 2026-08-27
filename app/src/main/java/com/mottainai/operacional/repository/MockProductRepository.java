@@ -135,6 +135,14 @@ public class MockProductRepository extends ProductRepository {
     }
 
     @Override
+    public void createProduct(com.mottainai.operacional.models.ProductUpsertRequest request, ProductCallback callback) {
+        Product p = new Product();
+        p.setName(request.getName()); p.setSku(request.getBarcode()); p.setSupplier(request.getBrand());
+        p.setQuantity(0); p.setMinQuantity(0); p.setStoreId("loja02");
+        createProduct(p, callback);
+    }
+
+    @Override
     public void updateProduct(String productId, Product product, ProductCallback callback) {
         new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
             for (int i = 0; i < mockProducts.size(); i++) {
@@ -147,5 +155,18 @@ public class MockProductRepository extends ProductRepository {
             }
             callback.onError("Produto não encontrado");
         }, 800);
+    }
+
+    @Override
+    public void updateProduct(String productId, com.mottainai.operacional.models.ProductUpsertRequest request, ProductCallback callback) {
+        // Mock: busca existente e aplica campos do request
+        fetchProductById(productId, new ProductCallback() {
+            @Override public void onSuccess(Product existing) {
+                existing.setName(request.getName()); existing.setSku(request.getBarcode());
+                existing.setSupplier(request.getBrand());
+                updateProduct(productId, existing, callback);
+            }
+            @Override public void onError(String message) { callback.onError(message); }
+        });
     }
 }

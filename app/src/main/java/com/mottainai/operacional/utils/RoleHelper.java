@@ -4,18 +4,20 @@ public class RoleHelper {
 
     // Dono é o único que pode ver a aba Config
     public static boolean isOwner(String role) {
-        return Constants.ROLE_DONO.equals(role);
+        return role != null && Constants.ROLE_DONO.equalsIgnoreCase(role.trim());
     }
 
     // Gerente e Dono podem cadastrar produto
     public static boolean canRegisterProduct(String role) {
-        return Constants.ROLE_GERENTE.equals(role)
-                || Constants.ROLE_DONO.equals(role);
+        if (role == null) return false;
+        String r = role.trim();
+        return Constants.ROLE_GERENTE.equalsIgnoreCase(r)
+                || Constants.ROLE_DONO.equalsIgnoreCase(r);
     }
 
     // Estoquista NÃO pode ver sugestões
     public static boolean canViewSuggestions(String role) {
-        return !Constants.ROLE_ESTOQUISTA.equals(role);
+        return role == null || !Constants.ROLE_ESTOQUISTA.equalsIgnoreCase(role.trim());
     }
 
     // Traduz o role em nome de exibição (vem do switch que está no Fragment)

@@ -1,6 +1,5 @@
 package com.mottainai.operacional.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -14,7 +13,6 @@ import androidx.lifecycle.ViewModelProvider;
 import com.bumptech.glide.Glide;
 import com.mottainai.operacional.R;
 import com.mottainai.operacional.models.Product;
-import com.mottainai.operacional.repository.ProductRepository;
 import com.mottainai.operacional.utils.RoleHelper;
 import com.mottainai.operacional.utils.SessionManager;
 import com.mottainai.operacional.viewmodels.ProductDetailViewModel;
@@ -25,6 +23,10 @@ public class ProductDetailActivity extends AppCompatActivity {
     private SessionManager sessionManager;
     private String productId;
     private boolean isNewProduct;
+    private final androidx.activity.result.ActivityResultLauncher<android.content.Intent> formLauncher =
+            registerForActivityResult(new androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult(), r -> {
+                if (r.getResultCode() == RESULT_OK && productId != null) viewModel.loadProduct(productId);
+            });
 
     // Views
     private ImageView ivProductImage;
@@ -104,63 +106,64 @@ public class ProductDetailActivity extends AppCompatActivity {
     }
 
     private void setupButtons() {
-        String role = new SessionManager(this).getRole();
-
         btnRegisterDamage.setOnClickListener(v -> {
-            Toast.makeText(this, "Registrar Avaria - Em implementação", Toast.LENGTH_SHORT).show();
-            // TODO: Navegar para tela de registrar avaria
+            Toast.makeText(this, "Registrar avaria — funcionalidade pendente (aguarda endpoint)", Toast.LENGTH_SHORT).show();
         });
 
-        boolean canEdit = RoleHelper.canRegisterProduct(new SessionManager(this).getRole());
+        boolean canEdit = RoleHelper.canRegisterProduct(sessionManager.getRole());
         btnEditProduct.setVisibility(canEdit ? View.VISIBLE : View.GONE);
         btnEditProduct.setOnClickListener(v -> {
-            Toast.makeText(this, "Editar Produto - Em implementação", Toast.LENGTH_SHORT).show();
-            // TODO: Navegar para tela de edição
+            if (!canEdit) {
+                Toast.makeText(this, "Sem permissão para editar", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (productId == null) return;
+            android.content.Intent intent = new android.content.Intent(this, ProductFormActivity.class);
+            intent.putExtra("product_id", productId);
+            formLauncher.launch(intent);
         });
     }
 
+    /** Delega ao ViewModel; Activity não acessa Repository diretamente. */
     private void loadProduct(String id) {
-        new ProductRepository(getApplication()).fetchProductById(id, new ProductRepository.ProductCallback() {
-            @Override
-            public void onSuccess(Product product) {
-                runOnUiThread(() -> bindProduct(product));
-            }
-
-            @Override
-            public void onError(String message) {
-                runOnUiThread(() -> showError(message));
-            }
-        });
+        viewModel.loadProduct(id);
     }
 
     private void setupNewProduct() {
-        // Modo criação - mostrar campos editáveis
-        progressContainer.setVisibility(View.GONE);
-        // TODO: Implementar formulário de criação
-        Toast.makeText(this, "Criação de novo produto - Em implementação", Toast.LENGTH_SHORT).show();
+        // Redireciona para ProductFormActivity para criação real
+        boolean canCreate = RoleHelper.canRegisterProduct(sessionManager.getRole());
+        if (!canCreate) {
+            showError("Sem permissão para criar produto");
+            btnEditProduct.setVisibility(View.GONE);
+            return;
+        }
+        android.content.Intent intent = new android.content.Intent(this, ProductFormActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     private void bindProduct(Product product) {
         progressContainer.setVisibility(View.GONE);
 
         tvProductName.setText(product.getName());
-        tvProductSku.setText("SKU: " + product.getSku());
-        tvProductQuantity.setText("Quantidade: " + product.getQuantity());
-        tvProductMinQuantity.setText("Mínimo: " + product.getMinQuantity());
-
-        tvProductBatch.setText("Lote: " + (product.getBatch() != null ? product.getBatch() : "—"));
-        tvProductExpiry.setText("Validade: " + (product.getExpiryDate() != null ? product.getExpiryDate() : "—"));
+        // SKU na UI corresponde a barcode da API
+        tvProductSku.setText("Código: " + (product.getSku() != null ? product.getSku() : "—"));
+        // Campos de inventário pendentes — exibir placeholder até /api/v1/inventory existir
+        tvProductQuantity.setText("Quantidade: " + product.getQuantity() + " (contrato pendente)");
+        tvProductMinQuantity.setText("Mínimo: " + product.getMinQuantity() + " (contrato pendente)");
+        tvProductBatch.setText("Lote: " + (product.getBatch() != null ? product.getBatch() : "— (pendente)"));
+        tvProductExpiry.setText("Validade: " + (product.getExpiryDate() != null ? product.getExpiryDate() : "— (pendente)"));
         tvProductSupplier.setText("Fornecedor: " + (product.getSupplier() != null ? product.getSupplier() : "—"));
-        tvProductStore.setText("Loja: " + (product.getStoreId() != null ? product.getStoreId() : "—"));
+        tvProductStore.setText("Loja: " + (product.getStoreId() != null ? product.getStoreId() : sessionManager.getStoreId() + " (token)"));
 
         if (product.getImageUrl() != null && !product.getImageUrl().isEmpty()) {
             Glide.with(this)
                     .load(product.getImageUrl())
                     .placeholder(R.drawable.ic_product_placeholder)
                     .error(R.drawable.ic_product_placeholder)
-                    .into((ImageView) findViewById(R.id.iv_product_image));
+                    .into(ivProductImage);
         } else {
-            ((ImageView) findViewById(R.id.iv_product_image)).setImageResource(R.drawable.ic_product_placeholder);
+            ivProductImage.setImageResource(R.drawable.ic_product_placeholder);
         }
     }
 
