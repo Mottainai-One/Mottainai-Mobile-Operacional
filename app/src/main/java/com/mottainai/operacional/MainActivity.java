@@ -21,13 +21,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         // Controla a autenticação ANTES de criar a view/NavHostFragment.
-        // Centraliza aqui o guard de sessão: valida Firebase Auth + sessão local.
+        // Centraliza aqui o guard de sessão: valida Firebase Auth + sessão local completa.
         SessionManager session = new SessionManager(this);
 
         boolean firebaseAuthed = FirebaseAuth.getInstance().getCurrentUser() != null;
-        boolean sessionComplete = session.isLoggedIn()
-                && session.getStoreId() != null && !session.getStoreId().isEmpty()
-                && session.getRole() != null && !session.getRole().isEmpty();
+        boolean sessionComplete = session.hasCompleteProfile();
 
         if (!firebaseAuthed || !sessionComplete) {
             // Limpa a sessão local se o Firebase não tiver usuário (sessão inválida/expirada)
