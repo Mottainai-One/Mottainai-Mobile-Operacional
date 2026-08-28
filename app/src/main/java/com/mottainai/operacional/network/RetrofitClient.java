@@ -2,6 +2,7 @@ package com.mottainai.operacional.network;
 
 import android.content.Context;
 
+import com.mottainai.operacional.BuildConfig;
 import com.mottainai.operacional.utils.SessionManager;
 
 import java.util.concurrent.TimeUnit;
@@ -15,17 +16,25 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient {
 
-    private static final String BASE_URL = "https://api.mottainai.com.br/";
+    // TODO MOBILE-03: confirmar base URL real com backend. Valor vem de BuildConfig.API_BASE_URL.
+    private static final String BASE_URL = BuildConfig.API_BASE_URL;
     private static Retrofit retrofit = null;
 
     public static Retrofit getClient(Context context) {
         if (retrofit == null) {
             HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+            // Nunca logar BODY em release; não expor Authorization/token.
+            if (BuildConfig.DEBUG) {
+                logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
+                logging.redactHeader("Authorization");
+                logging.redactHeader("authorization");
+            } else {
+                logging.setLevel(HttpLoggingInterceptor.Level.NONE);
+            }
 
             OkHttpClient client = new OkHttpClient.Builder()
                     .addInterceptor(logging)
-                    .addInterceptor(new AuthInterceptor(context))
+                    .addInterceptor(new AuthInterceptor(context.getApplicationContext()))
                     .connectTimeout(30, TimeUnit.SECONDS)
                     .readTimeout(30, TimeUnit.SECONDS)
                     .writeTimeout(30, TimeUnit.SECONDS)
@@ -38,6 +47,11 @@ public class RetrofitClient {
                     .build();
         }
         return retrofit;
+    }
+
+    /** Força recriação após troca de token/baseUrl (ex.: logout/login). */
+    public static void clear() {
+        retrofit = null;
     }
 
     private static class AuthInterceptor implements Interceptor {
@@ -53,6 +67,7 @@ public class RetrofitClient {
             Request original = chain.request();
             Request.Builder builder = original.newBuilder();
             if (token != null && !token.isEmpty()) {
+                // Token deve ser Firebase ID token, se backend confirmar aceitação.
                 builder.header("Authorization", "Bearer " + token);
             }
             return chain.proceed(builder.build());

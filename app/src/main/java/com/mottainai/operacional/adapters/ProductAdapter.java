@@ -57,11 +57,12 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         if (products != null) {
             fullList.addAll(products);
         }
-        getFilter().filter("");
+        filteredList = new ArrayList<>(fullList);
+        notifyDataSetChanged();
     }
 
     public List<Product> getCurrentList() {
-        return new ArrayList<>(fullList);
+        return new ArrayList<>(filteredList);
     }
 
     @NonNull

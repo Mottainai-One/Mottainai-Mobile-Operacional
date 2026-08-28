@@ -2,6 +2,13 @@ package com.mottainai.operacional.models;
 
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * Modelo de domínio usado pela UI (lista/detalhe).
+ * Campos sku, quantity, batch, expiry_date vêm de contrato pendente.
+ * API atual (/api/v1/products) retorna apenas: id, categoryId, barcode, name, etc. (ver ProductResponse).
+ * Campos de inventário (quantity, minQuantity, batch, expiryDate, storeId, imageUrl) são mockáveis
+ * via MockProductRepository até /api/v1/inventory existir. Não simular sucesso em produção.
+ */
 public class Product {
     @SerializedName("id")
     private String id;
