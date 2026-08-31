@@ -10,22 +10,17 @@ import java.util.UUID;
 
 public class MockProductRepository extends ProductRepository {
 
-    private static final List<Product> mockProducts = new ArrayList<>();
-    private static boolean initialized = false;
+    private final List<Product> mockProducts = new ArrayList<>();
 
     public MockProductRepository(Application application) {
         super(application);
-        if (!initialized) {
-            initMockData();
-            initialized = true;
-        }
+        initMockData();
     }
 
     private void initMockData() {
-        // IDs fixos para que lista e detalhe compartilhem o mesmo mock
         // Produto 1 - Estoque baixo
         Product p1 = new Product();
-        p1.setId("mock-001");
+        p1.setId(UUID.randomUUID().toString());
         p1.setName("Arroz Integral 1kg");
         p1.setSku("ARZ-001");
         p1.setQuantity(3);
@@ -39,7 +34,7 @@ public class MockProductRepository extends ProductRepository {
 
         // Produto 2 - Atenção
         Product p2 = new Product();
-        p2.setId("mock-002");
+        p2.setId(UUID.randomUUID().toString());
         p2.setName("Feijão Preto 1kg");
         p2.setSku("FEI-002");
         p2.setQuantity(12);
@@ -53,7 +48,7 @@ public class MockProductRepository extends ProductRepository {
 
         // Produto 3 - Normal
         Product p3 = new Product();
-        p3.setId("mock-003");
+        p3.setId(UUID.randomUUID().toString());
         p3.setName("Óleo de Soja 900ml");
         p3.setSku("OLE-003");
         p3.setQuantity(50);
@@ -67,7 +62,7 @@ public class MockProductRepository extends ProductRepository {
 
         // Produto 4 - Normal
         Product p4 = new Product();
-        p4.setId("mock-004");
+        p4.setId(UUID.randomUUID().toString());
         p4.setName("Açúcar Cristal 2kg");
         p4.setSku("ACU-004");
         p4.setQuantity(25);
@@ -81,7 +76,7 @@ public class MockProductRepository extends ProductRepository {
 
         // Produto 5 - Baixo
         Product p5 = new Product();
-        p5.setId("mock-005");
+        p5.setId(UUID.randomUUID().toString());
         p5.setName("Sal Refinado 1kg");
         p5.setSku("SAL-005");
         p5.setQuantity(2);
@@ -95,7 +90,7 @@ public class MockProductRepository extends ProductRepository {
 
         // Produto 6 - Atenção
         Product p6 = new Product();
-        p6.setId("mock-006");
+        p6.setId(UUID.randomUUID().toString());
         p6.setName("Macarrão Espaguete 500g");
         p6.setSku("MAC-006");
         p6.setQuantity(14);
@@ -106,20 +101,6 @@ public class MockProductRepository extends ProductRepository {
         p6.setStoreId("loja02");
         p6.setImageUrl("");
         mockProducts.add(p6);
-
-        // Produto 7 - Guaraná (EAN real para teste de scanner)
-        Product p7 = new Product();
-        p7.setId("mock-007");
-        p7.setName("Guaraná Antarctica Lata 350ml");
-        p7.setSku("7891991000826");
-        p7.setQuantity(20);
-        p7.setMinQuantity(10);
-        p7.setBatch("LOTE-2024-007");
-        p7.setExpiryDate("2025-12-31");
-        p7.setSupplier("Ambev");
-        p7.setStoreId("loja02");
-        p7.setImageUrl("");
-        mockProducts.add(p7);
     }
 
     @Override
