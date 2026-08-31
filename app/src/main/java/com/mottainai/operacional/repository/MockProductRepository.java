@@ -101,6 +101,20 @@ public class MockProductRepository extends ProductRepository {
         p6.setStoreId("loja02");
         p6.setImageUrl("");
         mockProducts.add(p6);
+
+        // Produto 7 - Guaraná (EAN real para teste de scanner)
+        Product p7 = new Product();
+        p7.setId(UUID.randomUUID().toString());
+        p7.setName("Guaraná Antarctica Lata 350ml");
+        p7.setSku("7891991000826");
+        p7.setQuantity(20);
+        p7.setMinQuantity(10);
+        p7.setBatch("LOTE-2024-007");
+        p7.setExpiryDate("2025-12-31");
+        p7.setSupplier("Ambev");
+        p7.setStoreId("loja02");
+        p7.setImageUrl("");
+        mockProducts.add(p7);
     }
 
     @Override
