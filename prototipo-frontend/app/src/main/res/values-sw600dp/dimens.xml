@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Tablets: mais respiro nas laterais e barra mais confortável -->
+    <dimen name="screen_padding">40dp</dimen>
+    <dimen name="screen_padding_vertical">32dp</dimen>
+
+    <dimen name="bottom_nav_height">72dp</dimen>
+
+    <dimen name="login_padding">48dp</dimen>
+</resources>
