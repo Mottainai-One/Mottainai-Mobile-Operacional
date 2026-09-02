@@ -144,6 +144,19 @@ public class MockProductRepository extends ProductRepository {
     }
 
     @Override
+    public void fetchProductByBarcode(String barcode, ProductCallback callback) {
+        new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+            for (Product p : mockProducts) {
+                if (barcode != null && barcode.equals(p.getSku())) {
+                    callback.onSuccess(p);
+                    return;
+                }
+            }
+            callback.onError("Produto não encontrado");
+        }, 500);
+    }
+
+    @Override
     public void createProduct(Product product, ProductCallback callback) {
         new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
             String newId = UUID.randomUUID().toString();
