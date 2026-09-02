@@ -49,4 +49,8 @@ public interface ApiService {
 
     @GET("api/v1/suggestions")
     Call<java.util.List<com.mottainai.operacional.models.Suggestion>> getSuggestions(@Query("store_id") String storeId);
+
+    // Avarias - contrato pendente confirmar com backend
+    @POST("api/v1/damages")
+    Call<com.mottainai.operacional.models.Damage> createDamage(@Body com.mottainai.operacional.models.DamageRequest request);
 }

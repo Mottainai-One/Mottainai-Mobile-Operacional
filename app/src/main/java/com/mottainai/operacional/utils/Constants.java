@@ -22,4 +22,7 @@ public class Constants {
     // false = usa ProductRepository (API real via Retrofit)
     // TODO: alterar para false quando API Spring estiver pronta
     public static final boolean USE_MOCK_REPOSITORY = true;
+
+    // Mock para avarias (MOBILE-06) até POST /api/v1/damages existir
+    public static final boolean USE_MOCK_DAMAGE = true;
 }

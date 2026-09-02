@@ -119,7 +119,10 @@ public class ProductDetailActivity extends AppCompatActivity {
 
     private void setupButtons() {
         btnRegisterDamage.setOnClickListener(v -> {
-            Toast.makeText(this, "Registrar avaria — funcionalidade pendente (aguarda endpoint)", Toast.LENGTH_SHORT).show();
+            if (productId == null) return;
+            android.content.Intent intent = new android.content.Intent(this, RegisterDamageActivity.class);
+            intent.putExtra("product_id", productId);
+            startActivity(intent);
         });
 
         boolean canEdit = RoleHelper.canRegisterProduct(sessionManager.getRole());
