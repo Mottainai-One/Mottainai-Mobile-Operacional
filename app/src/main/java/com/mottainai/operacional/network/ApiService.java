@@ -37,10 +37,10 @@ public interface ApiService {
     Call<ProductResponse> getProductByBarcode(@Path("barcode") String barcode);
 
     @POST("api/v1/products")
-    Call<ProductResponse> createProduct(@Body Product product);
+    Call<ProductResponse> createProduct(@Body com.mottainai.operacional.models.ProductUpsertRequest request);
 
     @PUT("api/v1/products/{id}")
-    Call<ProductResponse> updateProduct(@Path("id") String id, @Body Product product);
+    Call<ProductResponse> updateProduct(@Path("id") String id, @Body com.mottainai.operacional.models.ProductUpsertRequest request);
 
     // Alertas e sugestões - mantido para compat, mas contrato pendente (devem vir do backend)
     // Se backend não tiver, Repository deve ficar mockável e não simular sucesso.

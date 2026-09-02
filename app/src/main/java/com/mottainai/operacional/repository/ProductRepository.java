@@ -141,8 +141,16 @@ public class ProductRepository {
         });
     }
 
+    // Compat para Mock: Product -> UpsertRequest
     public void createProduct(Product product, ProductCallback callback) {
-        apiService.createProduct(product).enqueue(new Callback<ProductResponse>() {
+        com.mottainai.operacional.models.ProductUpsertRequest r = new com.mottainai.operacional.models.ProductUpsertRequest();
+        r.setName(product.getName()); r.setBarcode(product.getSku()); r.setBrand(product.getSupplier());
+        r.setDescription(null); r.setCategoryId(1); r.setUnitMeasure("UN"); r.setActive(true);
+        createProduct(r, callback);
+    }
+
+    public void createProduct(com.mottainai.operacional.models.ProductUpsertRequest request, ProductCallback callback) {
+        apiService.createProduct(request).enqueue(new Callback<ProductResponse>() {
             @Override
             public void onResponse(Call<ProductResponse> call, Response<ProductResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -160,7 +168,14 @@ public class ProductRepository {
     }
 
     public void updateProduct(String productId, Product product, ProductCallback callback) {
-        apiService.updateProduct(productId, product).enqueue(new Callback<ProductResponse>() {
+        com.mottainai.operacional.models.ProductUpsertRequest r = new com.mottainai.operacional.models.ProductUpsertRequest();
+        r.setName(product.getName()); r.setBarcode(product.getSku()); r.setBrand(product.getSupplier());
+        r.setDescription(null); r.setCategoryId(1); r.setUnitMeasure("UN"); r.setActive(true);
+        updateProduct(productId, r, callback);
+    }
+
+    public void updateProduct(String productId, com.mottainai.operacional.models.ProductUpsertRequest request, ProductCallback callback) {
+        apiService.updateProduct(productId, request).enqueue(new Callback<ProductResponse>() {
             @Override
             public void onResponse(Call<ProductResponse> call, Response<ProductResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
