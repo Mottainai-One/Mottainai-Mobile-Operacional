@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--
+        Estilo único da barra inferior. Todas as telas apontam para cá, então
+        mudar altura, cor ou tamanho de rótulo é uma alteração em um lugar só.
+        A altura é wrap_content com minHeight: assim a barra cresce quando o
+        usuário aumenta a fonte do sistema e quando o BaseActivity aplica o
+        padding da barra de navegação (gestos / 3 botões).
+    -->
+    <style name="Widget.App.BottomNav" parent="Widget.Material3.BottomNavigationView">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">@dimen/bottom_nav_height</item>
+        <item name="android:background">@drawable/bg_bottom_nav</item>
+        <item name="itemIconTint">@color/bottom_nav_item</item>
+        <item name="itemTextColor">@color/bottom_nav_item</item>
+        <item name="itemRippleColor">@color/bottom_nav_item</item>
+        <item name="labelVisibilityMode">labeled</item>
+        <item name="itemPaddingTop">@dimen/bottom_nav_item_padding_top</item>
+        <item name="itemPaddingBottom">@dimen/bottom_nav_item_padding_bottom</item>
+        <item name="itemTextAppearanceActive">@style/TextAppearance.App.BottomNavLabel</item>
+        <item name="itemTextAppearanceInactive">@style/TextAppearance.App.BottomNavLabel</item>
+        <item name="itemActiveIndicatorStyle">@style/Widget.App.BottomNav.ActiveIndicator</item>
+        <!-- Elevacao zero de proposito: com Z=0 na barra e Z>0 no FAB, o FAB
+             (declarado depois no XML) desenha por cima em qualquer aparelho. -->
+        <item name="elevation">0dp</item>
+        <item name="android:elevation">0dp</item>
+    </style>
+
+    <!-- Pilula da aba ativa na paleta do app, no lugar do lilas padrao do M3 -->
+    <style name="Widget.App.BottomNav.ActiveIndicator"
+        parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/card_light_green</item>
+    </style>
+
+    <!-- Rótulo curto o suficiente para caber em 5 abas em telas de 320dp -->
+    <style name="TextAppearance.App.BottomNavLabel" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:textSize">11sp</item>
+        <item name="android:textColor">@color/bottom_nav_item</item>
+    </style>
+
+    <!--
+        FAB central: fica ancorado na borda superior da barra (metade dentro,
+        metade fora), ocupando a lacuna do item placeholder do menu. Como a
+        âncora é a própria barra, ele acompanha qualquer altura/inset.
+    -->
+    <style name="Widget.App.Fab" parent="Widget.Material3.FloatingActionButton.Primary">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="backgroundTint">@color/primary_green</item>
+        <item name="tint">@color/white</item>
+        <item name="fabSize">normal</item>
+        <item name="elevation">6dp</item>
+        <item name="borderWidth">0dp</item>
+    </style>
+
+</resources>

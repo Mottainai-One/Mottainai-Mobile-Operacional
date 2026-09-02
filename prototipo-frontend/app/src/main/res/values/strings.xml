@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">mobile operacional]</string>
+    <string name="fab_add_description">Adicionar</string>
+    <string name="fab_scan_description">Escanear produto</string>
+</resources>

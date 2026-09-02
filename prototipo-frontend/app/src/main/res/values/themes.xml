@@ -1,0 +1,24 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!--
+        O app é desenhado só em claro (fundo bege, texto preto, cards brancos).
+        Herdar de DayNight fazia os widgets do Material virarem escuros no modo
+        noturno enquanto os fundos continuavam claros, então fixamos Light.
+    -->
+    <style name="Base.Theme.MobileOperacional" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/primary_green</item>
+        <item name="colorPrimaryDark">@color/primary_green_dark</item>
+        <item name="colorAccent">@color/primary_green</item>
+        <item name="android:windowBackground">@color/background_beige</item>
+
+        <!-- Edge-to-edge é obrigatório no targetSdk 35+; barras transparentes
+             com ícones escuros para contrastar com o fundo claro do app. -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:enforceNavigationBarContrast" tools:targetApi="q">false</item>
+        <item name="android:enforceStatusBarContrast" tools:targetApi="q">false</item>
+    </style>
+
+    <style name="Theme.MobileOperacional" parent="Base.Theme.MobileOperacional" />
+</resources>
