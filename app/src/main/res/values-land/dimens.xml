@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Em paisagem sobra pouca altura: barra mais baixa e menos respiro vertical -->
+    <!-- Em paisagem sobra pouca altura: menos respiro vertical -->
     <dimen name="screen_padding">32dp</dimen>
     <dimen name="screen_padding_vertical">12dp</dimen>
-
-    <dimen name="bottom_nav_height">56dp</dimen>
-    <dimen name="bottom_nav_item_padding_top">4dp</dimen>
-    <dimen name="bottom_nav_item_padding_bottom">4dp</dimen>
-
-    <dimen name="login_padding">32dp</dimen>
 </resources>

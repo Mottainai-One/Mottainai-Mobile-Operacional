@@ -22,6 +22,5 @@
     <string name="cancel">Cancelar</string>
 
     <!-- Telas de protótipo -->
-    <string name="fab_add_description">Adicionar</string>
-    <string name="fab_scan_description">Escanear produto</string>
+    <string name="back">Voltar</string>
 </resources>

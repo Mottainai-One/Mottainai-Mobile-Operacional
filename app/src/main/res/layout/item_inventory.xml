@@ -28,6 +28,7 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/tv_item_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Arroz integral 1kg"
@@ -36,6 +37,7 @@
                 android:textSize="14sp"/>
 
             <TextView
+                android:id="@+id/tv_item_counts"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Esperado 48 - contado 48"
@@ -50,6 +52,7 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/tv_item_result"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="OK"
@@ -58,6 +61,7 @@
                 android:textSize="12sp"/>
 
             <TextView
+                android:id="@+id/tv_item_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_status_tag"

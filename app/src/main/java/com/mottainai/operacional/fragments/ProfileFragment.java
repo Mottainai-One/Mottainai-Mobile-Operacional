@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -43,6 +44,14 @@ public class ProfileFragment extends Fragment {
         String roleLabel = RoleHelper.roleToLabel(session.getRole());  // <- único lugar
         String store = session.getStoreId() != null ? session.getStoreId() : "—";
         tvUserInfo.setText("Perfil: " + roleLabel + "\nLoja: " + store);
+
+        // Configurações da operação são exclusivas do Dono.
+        View btnOpenConfig = view.findViewById(R.id.btn_open_config);
+        if (RoleHelper.isOwner(session.getRole())) {
+            btnOpenConfig.setVisibility(View.VISIBLE);
+            btnOpenConfig.setOnClickListener(v ->
+                    Navigation.findNavController(view).navigate(R.id.action_profileFragment_to_configFragment));
+        }
 
         btnLogout.setOnClickListener(v -> {
             FirebaseAuth.getInstance().signOut();

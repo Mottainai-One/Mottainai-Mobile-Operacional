@@ -2,8 +2,13 @@ package com.mottainai.operacional;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
@@ -18,6 +23,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Com targetSdk 36 o app é desenhado de ponta a ponta sem opção de
+        // desligar: sem tratar os insets aqui, a barra inferior fica sob a
+        // barra de gestos do sistema.
+        EdgeToEdge.enable(this);
         super.onCreate(savedInstanceState);
 
         // Controla a autenticação ANTES de criar a view/NavHostFragment.
@@ -51,6 +60,25 @@ public class MainActivity extends AppCompatActivity {
 
         BottomNavigationView bottomNav = findViewById(R.id.bottom_nav);
         NavigationUI.setupWithNavController(bottomNav, navController);
+
+        applyWindowInsets(bottomNav);
+    }
+
+    /**
+     * Distribui os insets do sistema: topo e laterais na raiz, rodapé como
+     * padding da própria barra inferior. Assim o fundo branco da barra continua
+     * desenhado atrás da barra de gestos, em vez de sobrar uma faixa vazia.
+     */
+    private void applyWindowInsets(View bottomNav) {
+        View root = findViewById(android.R.id.content);
+        ViewCompat.setOnApplyWindowInsetsListener(root, (v, windowInsets) -> {
+            Insets bars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(bars.left, bars.top, bars.right, 0);
+            bottomNav.setPadding(bottomNav.getPaddingLeft(), bottomNav.getPaddingTop(),
+                    bottomNav.getPaddingRight(), bars.bottom);
+            return WindowInsetsCompat.CONSUMED;
+        });
+        ViewCompat.requestApplyInsets(root);
     }
 
     private void redirectToLogin() {

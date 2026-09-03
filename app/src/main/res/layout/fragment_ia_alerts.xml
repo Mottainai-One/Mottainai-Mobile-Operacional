@@ -1,11 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground">
 
-    <TextView
+    <LinearLayout
+        android:id="@+id/header_ia"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/screen_padding"
+        android:paddingVertical="@dimen/screen_padding_vertical"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Inteligência"
+            android:textColor="@color/text_primary"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Alertas e recomendações para agir antes do problema"
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp" />
+
+        <!--
+            "Sugestões" só existe para quem pode aprová-las (RoleHelper.canViewSuggestions);
+            visibilidade da aba é decidida em código, não aqui.
+        -->
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_ia"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:tabIndicatorColor="@color/colorPrimary"
+            app:tabSelectedTextColor="@color/colorPrimary"
+            app:tabTextColor="@color/text_secondary">
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Alertas" />
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/tab_item_suggestions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sugestões" />
+        </com.google.android.material.tabs.TabLayout>
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progress_ia"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="IA" />
-</FrameLayout>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header_ia" />
+
+    <TextView
+        android:id="@+id/tv_ia_empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="24dp"
+        android:text="Nenhum alerta no momento"
+        android:textColor="@color/text_secondary"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header_ia" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_ia"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingHorizontal="@dimen/screen_padding"
+        android:paddingBottom="24dp"
+        app:layout_constraintBottom_toTopOf="@id/btn_ask_ai"
+        app:layout_constraintTop_toBottomOf="@id/header_ia" />
+
+    <!-- Assistente de IA: tela estática por enquanto, sem backend de chat ainda. -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_ask_ai"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/screen_padding"
+        android:layout_marginBottom="16dp"
+        android:minHeight="48dp"
+        android:text="Perguntar à IA"
+        android:textAllCaps="false"
+        app:cornerRadius="8dp"
+        app:icon="@drawable/ic_ia"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
