@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Espaçamento base das telas de protótipo (sobrescrito em -land e -sw600dp) -->
+    <dimen name="screen_padding">24dp</dimen>
+    <dimen name="screen_padding_vertical">24dp</dimen>
+</resources>

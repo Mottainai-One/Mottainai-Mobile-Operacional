@@ -14,10 +14,19 @@
         android:text="Carregando..."
         android:textSize="16sp" />
 
+    <!-- Só o Dono vê este botão (ConfigFragment.isOwner faz a mesma checagem). -->
+    <Button
+        android:id="@+id/btn_open_config"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Configurações"
+        android:visibility="gone" />
+
     <Button
         android:id="@+id/btn_logout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="12dp"
         android:text="Sair" />
 </LinearLayout>

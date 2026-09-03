@@ -44,4 +44,17 @@
     <!-- Legacy colors -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Paleta das telas de protótipo -->
+    <color name="primary_green">#1F5233</color>
+    <color name="primary_green_dark">#183D26</color>
+    <color name="background_beige">#F8F7F2</color>
+    <color name="background_beige_dark">#E8E7E2</color>
+    <color name="card_light_green">#E9F5EF</color>
+    <color name="accent_red">#D32F2F</color>
+    <color name="accent_red_dark">#B71C1C</color>
+    <color name="accent_orange">#F57C00</color>
+    <color name="text_grey">#757575</color>
+    <color name="text_grey_light">#BDBDBD</color>
+    <color name="divider_grey">#EEEEEE</color>
 </resources>

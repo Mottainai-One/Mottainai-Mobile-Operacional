@@ -20,4 +20,7 @@
     <string name="product_store">Loja</string>
     <string name="save">Salvar</string>
     <string name="cancel">Cancelar</string>
+
+    <!-- Telas de protótipo -->
+    <string name="back">Voltar</string>
 </resources>

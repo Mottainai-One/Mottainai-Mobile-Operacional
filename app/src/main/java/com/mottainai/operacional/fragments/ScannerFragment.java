@@ -516,8 +516,12 @@ public class ScannerFragment extends Fragment {
     }
 
     private void openDamageRegistration(Product product) {
-        // TODO MOBILE-06: navegar para registro de avaria
-        Toast.makeText(requireContext(), "Registrar avaria — pendente (MOBILE-06)", Toast.LENGTH_SHORT).show();
+        android.os.Bundle args = new android.os.Bundle();
+        args.putString("product_id", product.getId());
+        args.putString("product_name", product.getName());
+        args.putString("product_sku", product.getSku());
+        Navigation.findNavController(requireView())
+                .navigate(R.id.action_scannerFragment_to_registerDamageFragment, args);
     }
 
     private void openNewProductForm() {

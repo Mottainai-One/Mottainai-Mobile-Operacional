@@ -13,6 +13,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.mottainai.operacional.R;
@@ -77,21 +79,17 @@ public class ProductsListFragment extends Fragment {
             binding.tabProducts.addOnTabSelectedListener(new com.google.android.material.tabs.TabLayout.OnTabSelectedListener() {
                 @Override public void onTabSelected(com.google.android.material.tabs.TabLayout.Tab tab) {
                     int pos = tab.getPosition();
+                    NavController navController = Navigation.findNavController(requireView());
                     if (pos == 1) {
-                        Toast.makeText(requireContext(), "Inventário — pendente (aguarda endpoint)", Toast.LENGTH_SHORT).show();
+                        navController.navigate(R.id.action_productsListFragment_to_inventoryFragment);
                         binding.tabProducts.selectTab(binding.tabProducts.getTabAt(0));
                     } else if (pos == 2) {
-                        Toast.makeText(requireContext(), "Fornecedores — pendente (aguarda contrato)", Toast.LENGTH_SHORT).show();
+                        navController.navigate(R.id.action_productsListFragment_to_suppliersFragment);
                         binding.tabProducts.selectTab(binding.tabProducts.getTabAt(0));
                     }
                 }
                 @Override public void onTabUnselected(com.google.android.material.tabs.TabLayout.Tab tab) {}
-                @Override public void onTabReselected(com.google.android.material.tabs.TabLayout.Tab tab) {
-                    if (tab.getPosition() != 0) {
-                        Toast.makeText(requireContext(), "Funcionalidade pendente", Toast.LENGTH_SHORT).show();
-                        binding.tabProducts.selectTab(binding.tabProducts.getTabAt(0));
-                    }
-                }
+                @Override public void onTabReselected(com.google.android.material.tabs.TabLayout.Tab tab) {}
             });
         }
     }
