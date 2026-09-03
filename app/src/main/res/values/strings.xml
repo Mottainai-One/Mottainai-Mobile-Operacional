@@ -20,4 +20,8 @@
     <string name="product_store">Loja</string>
     <string name="save">Salvar</string>
     <string name="cancel">Cancelar</string>
+
+    <!-- Telas de protótipo -->
+    <string name="fab_add_description">Adicionar</string>
+    <string name="fab_scan_description">Escanear produto</string>
 </resources>

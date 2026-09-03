@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Barra inferior das telas de protótipo (jornadas Estoquista e Gerente).
+
+    Usa os mesmos ids do nav_graph e do bottom_nav_menu da equipe, para que a
+    mesma aba responda pelo mesmo id nas duas implementações. Fica em arquivo
+    separado porque o item central é um espaço reservado para o FAB, e o
+    bottom_nav_menu da equipe é consumido pelo NavigationUI, que exige que todo
+    item tenha um destino correspondente no grafo.
+-->
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/homeFragment"
+        android:icon="@drawable/ic_home"
+        android:title="Home" />
+    <item
+        android:id="@+id/productsListFragment"
+        android:icon="@drawable/ic_products"
+        android:title="Produtos" />
+    <!-- Espaço do FAB central, que abre a ScannerActivity -->
+    <item
+        android:id="@+id/scannerFragment"
+        android:icon="@android:color/transparent"
+        android:title=""
+        android:enabled="false" />
+    <item
+        android:id="@+id/iaAlertsFragment"
+        android:icon="@drawable/ic_ai"
+        android:title="IA" />
+    <item
+        android:id="@+id/profileFragment"
+        android:icon="@drawable/ic_profile"
+        android:title="Perfil" />
+</menu>

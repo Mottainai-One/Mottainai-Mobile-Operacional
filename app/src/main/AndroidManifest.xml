@@ -38,6 +38,118 @@
         <activity
             android:name=".activities.ProductFormActivity"
             android:exported="false" />
+
+        <!-- Telas de protótipo: fluxo navegável das jornadas Estoquista,
+             Gerente e Dono. Tema próprio porque o desenho é só claro. -->
+        <activity
+            android:name=".activities.ApproveSuggestionActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/Theme.MottainaiPrototipo" />
+        <activity
+            android:name=".activities.ChatAIActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/Theme.MottainaiPrototipo" />
+        <activity
+            android:name=".activities.ConfigActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MottainaiPrototipo" />
+        <activity
+            android:name=".activities.DamageSuccessActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MottainaiPrototipo" />
+        <activity
+            android:name=".activities.EditMemberActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/Theme.MottainaiPrototipo" />
+        <activity
+            android:name=".activities.EditProductActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/Theme.MottainaiPrototipo" />
+        <activity
+            android:name=".activities.EditSupplierActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/Theme.MottainaiPrototipo" />
+        <activity
+            android:name=".activities.HomeActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MottainaiPrototipo" />
+        <activity
+            android:name=".activities.IntelligenceActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MottainaiPrototipo" />
+        <activity
+            android:name=".activities.InventoryActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MottainaiPrototipo" />
+        <activity
+            android:name=".activities.InviteMemberActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/Theme.MottainaiPrototipo" />
+        <activity
+            android:name=".activities.ManagerHomeActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MottainaiPrototipo" />
+        <activity
+            android:name=".activities.ManagerIntelligenceActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MottainaiPrototipo" />
+        <activity
+            android:name=".activities.ManagerProductDetailActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MottainaiPrototipo" />
+        <activity
+            android:name=".activities.ManagerProductsActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/Theme.MottainaiPrototipo" />
+        <activity
+            android:name=".activities.NewProductActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/Theme.MottainaiPrototipo" />
+        <activity
+            android:name=".activities.NewSupplierActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/Theme.MottainaiPrototipo" />
+        <activity
+            android:name=".activities.OwnerHomeActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MottainaiPrototipo" />
+        <activity
+            android:name=".activities.ProductsActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/Theme.MottainaiPrototipo" />
+        <activity
+            android:name=".activities.ProfileActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MottainaiPrototipo" />
+        <activity
+            android:name=".activities.RegisterDamageActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/Theme.MottainaiPrototipo" />
+        <activity
+            android:name=".activities.ScannerActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MottainaiPrototipo" />
+        <activity
+            android:name=".activities.ScannerNotFoundActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MottainaiPrototipo" />
+        <activity
+            android:name=".activities.SuppliersActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/Theme.MottainaiPrototipo" />
+
     </application>
 
 </manifest>
