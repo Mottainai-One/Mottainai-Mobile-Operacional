@@ -43,8 +43,7 @@ public class LoginActivity extends AppCompatActivity {
         authRepository = new AuthRepository();
         userRepository = new UserRepository();
 
-        // Verifica se o usuário já está logado COM SESSÃO COMPLETA, se estiver leva para home
-        if (session.isLoggedIn() 
+        if (session.isLoggedIn()
                 && session.getStoreId() != null && !session.getStoreId().isEmpty()
                 && session.getRole() != null && !session.getRole().isEmpty()) {
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
@@ -56,7 +55,6 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(v -> login());
     }
 
-    // Realiza o login na activity
     private void login() {
         String email = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
@@ -84,7 +82,6 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    // Carrega o perfil do usuário
     private void loadUserProfile(String uid) {
         userRepository.getUserProfile(uid, new UserRepository.UserCallback() {
             @Override
@@ -117,16 +114,12 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    // Renova o ID token para que as custom claims (storeID, role) entrem no token
-    // antes do Firestore validar as security rules. Só abre a MainActivity após o
-    // refresh terminar. Se falhar, mostra erro e mantém o usuário no login.
     private void refreshTokenAndProceed(User user) {
         FirebaseAuth.getInstance().getCurrentUser()
                 .getIdToken(true)
                 .addOnSuccessListener(new OnSuccessListener<GetTokenResult>() {
                     @Override
                     public void onSuccess(@NonNull GetTokenResult result) {
-                        // DEBUG temporário — inspecionar custom claims do token
                         Object storeID = result.getClaims().get("storeID");
                         Object role = result.getClaims().get("role");
                         Log.d("AUTH_CLAIMS", "storeID=" + storeID + ", role=" + role);
@@ -139,9 +132,7 @@ public class LoginActivity extends AppCompatActivity {
                                     Toast.LENGTH_LONG).show();
                             return;
                         }
-                        // Só salva a sessão após a renovação do token com as claims confirmadas
                         session.saveSession(user);
-                        // Salva o Firebase ID token para usar como Authorization: Bearer nas chamadas de API
                         session.saveToken(result.getToken());
                         goToMain();
                     }

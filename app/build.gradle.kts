@@ -17,9 +17,14 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        // TODO MOBILE-03: confirmar base URL real da API Spring (/api/v1). Sem segredo hardcoded.
-        // Sobrescrever via gradle.properties: apiBaseUrl=https://sua.api.real/
-        buildConfigField("String", "API_BASE_URL", "\"https://api.mottainai.com.br/\"")
+        // A URL pode ser sobrescrita em gradle.properties sem alterar o código.
+        // O valor precisa terminar com '/' porque o Retrofit resolve os paths relativos.
+        val configuredApiBaseUrl = providers.gradleProperty("apiBaseUrl")
+            .orElse("https://api.mottainai.com.br/")
+            .get()
+            .let { if (it.endsWith("/")) it else "$it/" }
+            .replace("\"", "\\\"")
+        buildConfigField("String", "API_BASE_URL", "\"$configuredApiBaseUrl\"")
     }
 
     buildTypes {

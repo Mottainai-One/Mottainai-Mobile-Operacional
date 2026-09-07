@@ -12,27 +12,56 @@
     <fragment
         android:id="@+id/productsListFragment"
         android:name="com.mottainai.operacional.fragments.ProductsListFragment"
-        android:label="Produtos" />
+        android:label="Produtos">
+        <action
+            android:id="@+id/action_productsListFragment_to_inventoryFragment"
+            app:destination="@id/inventoryFragment" />
+        <action
+            android:id="@+id/action_productsListFragment_to_suppliersFragment"
+            app:destination="@id/suppliersFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/scannerFragment"
         android:name="com.mottainai.operacional.fragments.ScannerFragment"
-        android:label="Scanner" />
+        android:label="Scanner">
+        <action
+            android:id="@+id/action_scannerFragment_to_registerDamageFragment"
+            app:destination="@id/registerDamageFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/iaAlertsFragment"
         android:name="com.mottainai.operacional.fragments.IaAlertsFragment"
-        android:label="IA" />
+        android:label="IA">
+        <action
+            android:id="@+id/action_iaAlertsFragment_to_approveSuggestionFragment"
+            app:destination="@id/approveSuggestionFragment" />
+        <action
+            android:id="@+id/action_iaAlertsFragment_to_chatAiFragment"
+            app:destination="@id/chatAiFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.mottainai.operacional.fragments.ProfileFragment"
-        android:label="Perfil" />
+        android:label="Perfil">
+        <action
+            android:id="@+id/action_profileFragment_to_configFragment"
+            app:destination="@id/configFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/configFragment"
         android:name="com.mottainai.operacional.fragments.ConfigFragment"
-        android:label="Configuração" />
+        android:label="Configuração">
+        <action
+            android:id="@+id/action_configFragment_to_inviteMemberFragment"
+            app:destination="@id/inviteMemberFragment" />
+        <action
+            android:id="@+id/action_configFragment_to_editMemberFragment"
+            app:destination="@id/editMemberFragment" />
+    </fragment>
 
     <activity
         android:id="@+id/productDetailActivity"
@@ -45,5 +74,110 @@
             android:name="is_new_product"
             app:argType="boolean" />
     </activity>
+
+    <!-- Telas abaixo: destinos alcançados a partir das abas acima, sem aba própria. -->
+
+    <fragment
+        android:id="@+id/inventoryFragment"
+        android:name="com.mottainai.operacional.fragments.InventoryFragment"
+        android:label="Inventário" />
+
+    <fragment
+        android:id="@+id/suppliersFragment"
+        android:name="com.mottainai.operacional.fragments.SuppliersFragment"
+        android:label="Fornecedores">
+        <action
+            android:id="@+id/action_suppliersFragment_to_newSupplierFragment"
+            app:destination="@id/newSupplierFragment" />
+        <action
+            android:id="@+id/action_suppliersFragment_to_editSupplierFragment"
+            app:destination="@id/editSupplierFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/newSupplierFragment"
+        android:name="com.mottainai.operacional.fragments.NewSupplierFragment"
+        android:label="Novo fornecedor" />
+
+    <fragment
+        android:id="@+id/editSupplierFragment"
+        android:name="com.mottainai.operacional.fragments.EditSupplierFragment"
+        android:label="Editar fornecedor">
+        <argument
+            android:name="supplier_name"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/registerDamageFragment"
+        android:name="com.mottainai.operacional.fragments.RegisterDamageFragment"
+        android:label="Registrar avaria">
+        <argument
+            android:name="product_id"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <argument
+            android:name="product_name"
+            app:argType="string" />
+        <argument
+            android:name="product_sku"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <action
+            android:id="@+id/action_registerDamageFragment_to_damageSuccessFragment"
+            app:destination="@id/damageSuccessFragment"
+            app:popUpTo="@id/scannerFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/damageSuccessFragment"
+        android:name="com.mottainai.operacional.fragments.DamageSuccessFragment"
+        android:label="Avaria registrada">
+        <argument
+            android:name="product_name"
+            app:argType="string" />
+        <argument
+            android:name="damage_quantity"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/approveSuggestionFragment"
+        android:name="com.mottainai.operacional.fragments.ApproveSuggestionFragment"
+        android:label="Aprovar sugestão">
+        <argument
+            android:name="suggestion_id"
+            app:argType="string" />
+        <argument
+            android:name="suggestion_title"
+            app:argType="string" />
+        <argument
+            android:name="suggestion_description"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/chatAiFragment"
+        android:name="com.mottainai.operacional.fragments.ChatAiFragment"
+        android:label="Chat com IA" />
+
+    <fragment
+        android:id="@+id/inviteMemberFragment"
+        android:name="com.mottainai.operacional.fragments.InviteMemberFragment"
+        android:label="Convidar membro" />
+
+    <fragment
+        android:id="@+id/editMemberFragment"
+        android:name="com.mottainai.operacional.fragments.EditMemberFragment"
+        android:label="Editar membro">
+        <argument
+            android:name="member_name"
+            app:argType="string" />
+        <argument
+            android:name="member_role"
+            app:argType="string" />
+    </fragment>
 
 </navigation>

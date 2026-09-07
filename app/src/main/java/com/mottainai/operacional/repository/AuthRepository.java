@@ -10,15 +10,14 @@ public class AuthRepository {
         void onError(Exception e);
     }
 
-    // Realiza o login
     public void login(String email, String password, AuthCallback callback) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         String uid = mAuth.getCurrentUser().getUid();
-                        callback.onSuccess(uid);      // devolve o UID
+                        callback.onSuccess(uid);
                     } else {
-                        callback.onError(task.getException());  // avisa o erro
+                        callback.onError(task.getException());
                     }
                 });
     }

@@ -15,10 +15,21 @@ import java.util.List;
 
 public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.SuggestionViewHolder> {
 
+    /** Clique em um item da lista, para abrir a tela de decisão da sugestão. */
+    public interface OnSuggestionClickListener {
+        void onSuggestionClick(Suggestion suggestion);
+    }
+
     private List<Suggestion> suggestionList;
+    private final OnSuggestionClickListener clickListener;
 
     public SuggestionAdapter() {
+        this(null);
+    }
+
+    public SuggestionAdapter(OnSuggestionClickListener clickListener) {
         this.suggestionList = null;
+        this.clickListener = clickListener;
     }
 
     public void setSuggestions(List<Suggestion> suggestionList) {
@@ -40,6 +51,9 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.Su
         holder.tvSuggestionTitle.setText(suggestion.getTitle());
         holder.tvSuggestionDescription.setText(suggestion.getDescription());
         holder.tvSuggestionStatus.setText(suggestion.getStatus());
+        if (clickListener != null) {
+            holder.itemView.setOnClickListener(v -> clickListener.onSuggestionClick(suggestion));
+        }
     }
 
     @Override

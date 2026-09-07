@@ -13,9 +13,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
-
-import androidx.activity.result.contract.ActivityResultContracts;
 
 import com.mottainai.operacional.R;
 import com.mottainai.operacional.activities.ProductDetailActivity;
@@ -32,15 +32,6 @@ public class ProductsListFragment extends Fragment {
     private ProductAdapter adapter;
     private SessionManager sessionManager;
     private long lastClickTime = 0;
-    private androidx.activity.result.ActivityResultLauncher<Intent> formLauncher;
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        formLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-            if (result.getResultCode() == android.app.Activity.RESULT_OK) loadProducts();
-        });
-    }
 
     @Nullable
     @Override
@@ -88,21 +79,17 @@ public class ProductsListFragment extends Fragment {
             binding.tabProducts.addOnTabSelectedListener(new com.google.android.material.tabs.TabLayout.OnTabSelectedListener() {
                 @Override public void onTabSelected(com.google.android.material.tabs.TabLayout.Tab tab) {
                     int pos = tab.getPosition();
+                    NavController navController = Navigation.findNavController(requireView());
                     if (pos == 1) {
-                        Toast.makeText(requireContext(), "Inventário — pendente (aguarda endpoint)", Toast.LENGTH_SHORT).show();
+                        navController.navigate(R.id.action_productsListFragment_to_inventoryFragment);
                         binding.tabProducts.selectTab(binding.tabProducts.getTabAt(0));
                     } else if (pos == 2) {
-                        Toast.makeText(requireContext(), "Fornecedores — pendente (aguarda contrato)", Toast.LENGTH_SHORT).show();
+                        navController.navigate(R.id.action_productsListFragment_to_suppliersFragment);
                         binding.tabProducts.selectTab(binding.tabProducts.getTabAt(0));
                     }
                 }
                 @Override public void onTabUnselected(com.google.android.material.tabs.TabLayout.Tab tab) {}
-                @Override public void onTabReselected(com.google.android.material.tabs.TabLayout.Tab tab) {
-                    if (tab.getPosition() != 0) {
-                        Toast.makeText(requireContext(), "Funcionalidade pendente", Toast.LENGTH_SHORT).show();
-                        binding.tabProducts.selectTab(binding.tabProducts.getTabAt(0));
-                    }
-                }
+                @Override public void onTabReselected(com.google.android.material.tabs.TabLayout.Tab tab) {}
             });
         }
     }
@@ -133,8 +120,9 @@ public class ProductsListFragment extends Fragment {
                 Toast.makeText(requireContext(), "Sem permissão para criar produto", Toast.LENGTH_SHORT).show();
                 return;
             }
-            Intent intent = new Intent(requireContext(), com.mottainai.operacional.activities.ProductFormActivity.class);
-            formLauncher.launch(intent);
+            Intent intent = new Intent(requireContext(), ProductDetailActivity.class);
+            intent.putExtra("is_new_product", true);
+            startActivity(intent);
         });
     }
 

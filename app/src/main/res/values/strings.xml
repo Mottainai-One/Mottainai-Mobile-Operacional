@@ -20,4 +20,7 @@
     <string name="product_store">Loja</string>
     <string name="save">Salvar</string>
     <string name="cancel">Cancelar</string>
+    <string name="back">Voltar</string>
+    <string name="fab_add_description">Adicionar produto</string>
+    <string name="fab_scan_description">Escanear produto</string>
 </resources>

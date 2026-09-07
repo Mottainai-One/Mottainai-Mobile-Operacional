@@ -2,15 +2,19 @@ package com.mottainai.operacional;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-
 import com.mottainai.operacional.activities.LoginActivity;
 import com.mottainai.operacional.utils.SessionManager;
 
@@ -18,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        EdgeToEdge.enable(this);
         super.onCreate(savedInstanceState);
 
         // Controla a autenticação ANTES de criar a view/NavHostFragment.
@@ -28,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
         boolean sessionComplete = session.hasCompleteProfile();
 
         if (!firebaseAuthed || !sessionComplete) {
-            // Limpa a sessão local se o Firebase não tiver usuário (sessão inválida/expirada)
             if (!firebaseAuthed) {
                 session.clearSession();
             }
@@ -51,6 +55,26 @@ public class MainActivity extends AppCompatActivity {
 
         BottomNavigationView bottomNav = findViewById(R.id.bottom_nav);
         NavigationUI.setupWithNavController(bottomNav, navController);
+        View fabScan = findViewById(R.id.fab_scan);
+        fabScan.setOnClickListener(v -> {
+            if (navController.getCurrentDestination() == null
+                    || navController.getCurrentDestination().getId() != R.id.scannerFragment) {
+                navController.navigate(R.id.scannerFragment);
+            }
+        });
+        applyWindowInsets(bottomNav);
+    }
+
+    private void applyWindowInsets(View bottomNav) {
+        View root = findViewById(android.R.id.content);
+        ViewCompat.setOnApplyWindowInsetsListener(root, (v, windowInsets) -> {
+            Insets bars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(bars.left, bars.top, bars.right, 0);
+            bottomNav.setPadding(bottomNav.getPaddingLeft(), bottomNav.getPaddingTop(),
+                    bottomNav.getPaddingRight(), bars.bottom);
+            return WindowInsetsCompat.CONSUMED;
+        });
+        ViewCompat.requestApplyInsets(root);
     }
 
     private void redirectToLogin() {
