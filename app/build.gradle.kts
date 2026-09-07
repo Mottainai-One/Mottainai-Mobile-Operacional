@@ -117,6 +117,7 @@ dependencies {
     //Navigation Component
     implementation("androidx.navigation:navigation-fragment:2.8.9")
     implementation("androidx.navigation:navigation-ui:2.8.9")
+    implementation("androidx.viewpager2:viewpager2:1.1.0")
 
     //OSMDroid
     implementation("org.osmdroid:osmdroid-android:6.1.18")

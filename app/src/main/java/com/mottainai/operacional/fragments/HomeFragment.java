@@ -271,9 +271,9 @@ public class HomeFragment extends Fragment {
             btnShortcutDamage.setOnClickListener(v -> navigateTo(R.id.scannerFragment));
         }
 
-        // Gerente - atalhos de gestão (apenas Config existe; demais mostram toast)
+        // Gerente - atalhos de gestão
         if (btnShortcutInventario != null) {
-            btnShortcutInventario.setOnClickListener(v -> showComingSoon());
+            btnShortcutInventario.setOnClickListener(v -> navigateToProductsTab(1));
         }
         if (btnShortcutAvarias != null) {
             // Não existe uma lista de avarias nesta versão; iniciar pelo
@@ -281,7 +281,7 @@ public class HomeFragment extends Fragment {
             btnShortcutAvarias.setOnClickListener(v -> navigateTo(R.id.scannerFragment));
         }
         if (btnShortcutFornecedores != null) {
-            btnShortcutFornecedores.setOnClickListener(v -> showComingSoon());
+            btnShortcutFornecedores.setOnClickListener(v -> navigateToProductsTab(2));
         }
 
         // Dono
@@ -300,6 +300,16 @@ public class HomeFragment extends Fragment {
     private void navigateTo(int destinationId) {
         try {
             navController.navigate(destinationId);
+        } catch (IllegalArgumentException e) {
+            showComingSoon();
+        }
+    }
+
+    private void navigateToProductsTab(int tabIndex) {
+        Bundle args = new Bundle();
+        args.putInt(ProductsListFragment.ARG_INITIAL_TAB, tabIndex);
+        try {
+            navController.navigate(R.id.productsListFragment, args);
         } catch (IllegalArgumentException e) {
             showComingSoon();
         }
@@ -324,10 +334,10 @@ public class HomeFragment extends Fragment {
             layoutShortcuts.setVisibility(View.VISIBLE);
             tvAlertsTitle.setText("Alertas de estoque");
         } else if (isGerente) {
-            // Gerente: cards de gestão + atalhos básicos + atalhos gestão (sem destino real)
+            // Gerente: cards de gestão + atalhos básicos + atalhos de gestão
             layoutCardsGerente.setVisibility(View.VISIBLE);
             layoutShortcuts.setVisibility(View.VISIBLE); // Produtos, Escanear, Avaria
-            layoutShortcutsGestao.setVisibility(View.VISIBLE); // Inventário, Avarias, Fornecedores (em desenvolvimento)
+            layoutShortcutsGestao.setVisibility(View.VISIBLE); // Inventário, Avarias e Fornecedores
             tvAlertsTitle.setText("Alertas");
             tvSuggestionsTitle.setVisibility(View.VISIBLE);
             rvSuggestions.setVisibility(View.VISIBLE);

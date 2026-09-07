@@ -10,7 +10,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,9 +21,8 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Contagem de inventário. Sem endpoint ainda (o mesmo "aguarda endpoint" que
- * já estava no placeholder da aba, em ProductsListFragment.setupTabs) — os
- * itens abaixo são ilustrativos, no espírito do MockProductRepository.
+ * Conteúdo da aba Inventário. Sem endpoint ainda, portanto os itens abaixo são
+ * ilustrativos, no espírito do MockProductRepository.
  */
 public class InventoryFragment extends Fragment {
 
@@ -38,9 +36,6 @@ public class InventoryFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        view.findViewById(R.id.btn_back).setOnClickListener(v ->
-                Navigation.findNavController(view).popBackStack());
 
         List<InventoryItem> items = Arrays.asList(
                 new InventoryItem("Arroz integral 1kg", 48, 48),
