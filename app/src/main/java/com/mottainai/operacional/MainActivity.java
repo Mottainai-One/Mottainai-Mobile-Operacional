@@ -67,11 +67,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void applyWindowInsets(View bottomNav) {
         View root = findViewById(android.R.id.content);
+        View navHost = findViewById(R.id.nav_host_fragment);
         ViewCompat.setOnApplyWindowInsetsListener(root, (v, windowInsets) -> {
             Insets bars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(bars.left, bars.top, bars.right, 0);
             bottomNav.setPadding(bottomNav.getPaddingLeft(), bottomNav.getPaddingTop(),
                     bottomNav.getPaddingRight(), bars.bottom);
+            // O conteúdo recebe o inset do teclado; as barras já foram tratadas acima.
+            ViewCompat.dispatchApplyWindowInsets(navHost, windowInsets);
             return WindowInsetsCompat.CONSUMED;
         });
         ViewCompat.requestApplyInsets(root);

@@ -23,4 +23,8 @@ public class Constants {
 
     // Mock para avarias (MOBILE-06) até POST /api/v1/damages existir
     public static final boolean USE_MOCK_DAMAGE = true;
+
+    // Mock para inventário (MOBILE-07) até o contrato de sessões estar disponível.
+    // As alterações ficam somente na memória do aplicativo.
+    public static final boolean USE_MOCK_INVENTORY = true;
 }
