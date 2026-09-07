@@ -42,6 +42,13 @@ public interface ApiService {
     @PUT("api/v1/products/{id}")
     Call<ProductResponse> updateProduct(@Path("id") String id, @Body com.mottainai.operacional.models.ProductUpsertRequest request);
 
+    /**
+     * Troca o token Firebase por um token curto, limitado à Mottainai-IA.
+     * A API relacional valida o usuário, empresa e papel antes da emissão.
+     */
+    @POST("api/v1/ai/access-token")
+    Call<com.mottainai.operacional.models.AiAccessTokenResponse> issueAiAccessToken();
+
     // Alertas e sugestões - mantido para compat, mas contrato pendente (devem vir do backend)
     // Se backend não tiver, Repository deve ficar mockável e não simular sucesso.
     @GET("api/v1/alerts")

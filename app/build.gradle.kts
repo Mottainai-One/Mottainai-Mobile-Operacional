@@ -45,6 +45,11 @@ android {
                 "API_BASE_URL",
                 "\"${localOrGradleProperty("apiBaseUrl", "https://api.mottainai.com.br/")}\""
             )
+            buildConfigField(
+                "String",
+                "IA_BASE_URL",
+                "\"${localOrGradleProperty("iaBaseUrl", "http://10.0.2.2:8000/")}\""
+            )
         }
         release {
             // Nunca herdar um endpoint HTTP local no artefato de produção.
@@ -52,6 +57,11 @@ android {
                 "String",
                 "API_BASE_URL",
                 "\"${localOrGradleProperty("releaseApiBaseUrl", "https://api.mottainai.com.br/")}\""
+            )
+            buildConfigField(
+                "String",
+                "IA_BASE_URL",
+                "\"${localOrGradleProperty("releaseIaBaseUrl", "https://ia.mottainai.com.br/")}\""
             )
             isMinifyEnabled = false
             proguardFiles(
