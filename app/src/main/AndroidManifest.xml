@@ -19,6 +19,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MottainaiOperacional">
 
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_notification" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="mottainai_general" />
+
         <!-- LAUNCHER agora é a LoginActivity -->
         <activity
             android:name=".activities.LoginActivity"
@@ -45,6 +52,14 @@
         <activity
             android:name=".activities.RegisterDamageActivity"
             android:exported="false" />
+
+        <service
+            android:name=".notifications.MottainaiFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
 
         <provider
             android:name="androidx.core.content.FileProvider"

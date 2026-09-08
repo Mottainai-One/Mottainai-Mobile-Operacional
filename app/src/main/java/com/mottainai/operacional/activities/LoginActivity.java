@@ -18,6 +18,7 @@ import com.mottainai.operacional.R;
 import com.mottainai.operacional.utils.SessionManager;
 import com.mottainai.operacional.models.User;
 import com.mottainai.operacional.repository.AuthRepository;
+import com.mottainai.operacional.repository.NotificationRepository;
 import com.mottainai.operacional.repository.UserRepository;
 
 public class LoginActivity extends AppCompatActivity {
@@ -131,6 +132,7 @@ public class LoginActivity extends AppCompatActivity {
                         }
                         session.saveSession(user);
                         session.saveToken(result.getToken());
+                        new NotificationRepository(getApplicationContext()).captureCurrentDeviceToken();
                         goToMain();
                     }
                 })

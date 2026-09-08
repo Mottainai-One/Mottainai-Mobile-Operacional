@@ -35,4 +35,18 @@
     <string name="chat_sender_assistant">Assistente Mottainai</string>
     <string name="chat_empty_title">Como posso ajudar?</string>
     <string name="chat_empty_message">Pergunte sobre riscos, validade, estoque ou próximos passos.</string>
+    <string name="notification_channel_alerts_name">Alertas operacionais</string>
+    <string name="notification_channel_alerts_description">Avisos importantes sobre a operação.</string>
+    <string name="notification_channel_suggestions_name">Sugestões da IA</string>
+    <string name="notification_channel_suggestions_description">Sugestões que aguardam análise da operação.</string>
+    <string name="notification_channel_inventory_name">Inventário</string>
+    <string name="notification_channel_inventory_description">Atualizações sobre contagens e divergências.</string>
+    <string name="notification_channel_general_name">Atualizações gerais</string>
+    <string name="notification_channel_general_description">Atualizações não críticas do Mottainai.</string>
+    <string name="notification_permission_title">Ative os alertas operacionais</string>
+    <string name="notification_permission_message">Receba avisos de inventário, alertas e sugestões importantes da sua loja.</string>
+    <string name="notification_permission_enable">Ativar notificações</string>
+    <string name="notification_permission_not_now">Agora não</string>
+    <string name="notification_default_title">Mottainai Operacional</string>
+    <string name="notification_default_body">Há uma atualização para sua operação.</string>
 </resources>

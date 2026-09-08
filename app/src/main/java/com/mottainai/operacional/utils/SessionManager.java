@@ -12,6 +12,9 @@ public class SessionManager {
     private static final String KEY_STORE_ID = "storeId";
     private static final String KEY_TOKEN = "token";
     private static final String KEY_AI_CHAT_SESSION_ID = "aiChatSessionId";
+    private static final String KEY_FCM_TOKEN = "fcmToken";
+    private static final String KEY_FCM_TOKEN_PENDING_SYNC = "fcmTokenPendingSync";
+    private static final String KEY_NOTIFICATION_PERMISSION_PROMPTED = "notificationPermissionPrompted";
     private final SharedPreferences prefs;
 
     public SessionManager(Context context) {
@@ -71,5 +74,47 @@ public class SessionManager {
 
     public void saveAiChatSessionId(String sessionId) {
         prefs.edit().putString(KEY_AI_CHAT_SESSION_ID, sessionId).apply();
+    }
+
+    public String getFcmToken() {
+        return prefs.getString(KEY_FCM_TOKEN, null);
+    }
+
+    /**
+     * Um token novo sempre fica pendente até o endpoint oficial de dispositivos
+     * confirmar o vínculo com o usuário autenticado.
+     */
+    public void saveFcmToken(String token) {
+        if (token == null || token.trim().isEmpty()) return;
+
+        boolean tokenChanged = !token.equals(getFcmToken());
+        SharedPreferences.Editor editor = prefs.edit().putString(KEY_FCM_TOKEN, token);
+        if (tokenChanged) {
+            editor.putBoolean(KEY_FCM_TOKEN_PENDING_SYNC, true);
+        }
+        editor.apply();
+    }
+
+    public boolean isFcmTokenSyncPending() {
+        return prefs.getBoolean(KEY_FCM_TOKEN_PENDING_SYNC, false);
+    }
+
+    public void markFcmTokenSynced() {
+        prefs.edit().putBoolean(KEY_FCM_TOKEN_PENDING_SYNC, false).apply();
+    }
+
+    public void clearFcmToken() {
+        prefs.edit()
+                .remove(KEY_FCM_TOKEN)
+                .remove(KEY_FCM_TOKEN_PENDING_SYNC)
+                .apply();
+    }
+
+    public boolean hasNotificationPermissionPrompted() {
+        return prefs.getBoolean(KEY_NOTIFICATION_PERMISSION_PROMPTED, false);
+    }
+
+    public void markNotificationPermissionPrompted() {
+        prefs.edit().putBoolean(KEY_NOTIFICATION_PERMISSION_PROMPTED, true).apply();
     }
 }
