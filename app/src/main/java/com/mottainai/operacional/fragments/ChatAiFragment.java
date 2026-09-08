@@ -339,7 +339,8 @@ public class ChatAiFragment extends Fragment {
             Insets imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime());
             boolean keyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime());
             int desiredBottomMargin = keyboardVisible
-                    ? imeInsets.bottom + getResources().getDimensionPixelSize(R.dimen.chat_composer_keyboard_gap)
+                    ? Math.max(0, imeInsets.bottom - getBottomSpaceOutsideChat(root))
+                            + getResources().getDimensionPixelSize(R.dimen.chat_composer_keyboard_gap)
                     : composerBaseBottomMargin;
 
             ViewGroup.LayoutParams layoutParams = composer.getLayoutParams();
@@ -353,6 +354,12 @@ public class ChatAiFragment extends Fragment {
             return insets;
         });
         ViewCompat.requestApplyInsets(root);
+    }
+
+    private int getBottomSpaceOutsideChat(View root) {
+        int[] location = new int[2];
+        root.getLocationInWindow(location);
+        return Math.max(0, root.getRootView().getHeight() - location[1] - root.getHeight());
     }
 
     private interface AiTokenCallback {
