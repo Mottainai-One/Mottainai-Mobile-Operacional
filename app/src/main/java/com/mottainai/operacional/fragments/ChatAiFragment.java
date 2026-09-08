@@ -11,6 +11,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -68,6 +71,7 @@ public class ChatAiFragment extends Fragment {
     private String pendingMessage;
     private boolean requestInProgress;
     private RetryAction retryAction = RetryAction.NONE;
+    private int composerBaseBottomMargin;
 
     @Nullable
     @Override
@@ -95,13 +99,13 @@ public class ChatAiFragment extends Fragment {
         progressBar = view.findViewById(R.id.progress_chat);
         statusView = view.findViewById(R.id.tv_chat_status);
         errorView = view.findViewById(R.id.tv_chat_error);
+        View composer = view.findViewById(R.id.chat_composer);
+        configureComposerInsets(view, composer);
 
         messagesView.setLayoutManager(new LinearLayoutManager(requireContext()));
         messagesView.setAdapter(messageAdapter);
         renderConversationState();
 
-        view.findViewById(R.id.tv_quick_question_1).setOnClickListener(this::sendQuickQuestion);
-        view.findViewById(R.id.tv_quick_question_2).setOnClickListener(this::sendQuickQuestion);
         sendButton.setOnClickListener(v -> sendFromInput());
         retryButton.setOnClickListener(v -> retryLastRequest());
         messageInput.setOnEditorActionListener((v, actionId, event) -> {
@@ -114,12 +118,6 @@ public class ChatAiFragment extends Fragment {
 
         if (hasSavedSession) {
             loadHistory();
-        }
-    }
-
-    private void sendQuickQuestion(View view) {
-        if (view instanceof TextView) {
-            sendMessage(((TextView) view).getText().toString(), true);
         }
     }
 
@@ -332,6 +330,29 @@ public class ChatAiFragment extends Fragment {
         boolean hasMessages = messageAdapter.getItemCount() > 0;
         emptyChatState.setVisibility(hasMessages ? View.GONE : View.VISIBLE);
         messagesView.setVisibility(hasMessages ? View.VISIBLE : View.INVISIBLE);
+    }
+
+    private void configureComposerInsets(View root, View composer) {
+        composerBaseBottomMargin = getResources()
+                .getDimensionPixelSize(R.dimen.chat_composer_scanner_clearance);
+        ViewCompat.setOnApplyWindowInsetsListener(root, (view, insets) -> {
+            Insets imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime());
+            boolean keyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime());
+            int desiredBottomMargin = keyboardVisible
+                    ? imeInsets.bottom + getResources().getDimensionPixelSize(R.dimen.chat_composer_keyboard_gap)
+                    : composerBaseBottomMargin;
+
+            ViewGroup.LayoutParams layoutParams = composer.getLayoutParams();
+            if (layoutParams instanceof ViewGroup.MarginLayoutParams) {
+                ViewGroup.MarginLayoutParams margins = (ViewGroup.MarginLayoutParams) layoutParams;
+                if (margins.bottomMargin != desiredBottomMargin) {
+                    margins.bottomMargin = desiredBottomMargin;
+                    composer.setLayoutParams(margins);
+                }
+            }
+            return insets;
+        });
+        ViewCompat.requestApplyInsets(root);
     }
 
     private interface AiTokenCallback {

@@ -23,12 +23,6 @@
     <string name="back">Voltar</string>
     <string name="fab_add_description">Adicionar produto</string>
     <string name="fab_scan_description">Escanear produto</string>
-    <string name="chat_title">Chat com IA</string>
-    <string name="chat_intro_title">Olá! Sou sua assistente operacional.</string>
-    <string name="chat_intro_message">Pergunte sobre produtos, riscos e próximos passos da sua operação.</string>
-    <string name="chat_quick_questions">Perguntas rápidas</string>
-    <string name="chat_quick_question_expiring">O que vence hoje?</string>
-    <string name="chat_quick_question_risk">Onde há mais risco?</string>
     <string name="chat_message_hint">Digite sua pergunta</string>
     <string name="chat_send">Enviar</string>
     <string name="chat_retry">Tentar novamente</string>

@@ -8,4 +8,7 @@
     <dimen name="bottom_nav_item_padding_bottom">8dp</dimen>
     <dimen name="card_padding">16dp</dimen>
     <dimen name="card_corner_radius">12dp</dimen>
+    <!-- Espaço que mantém o compositor acima do FAB de scanner elevado. -->
+    <dimen name="chat_composer_scanner_clearance">44dp</dimen>
+    <dimen name="chat_composer_keyboard_gap">12dp</dimen>
 </resources>
