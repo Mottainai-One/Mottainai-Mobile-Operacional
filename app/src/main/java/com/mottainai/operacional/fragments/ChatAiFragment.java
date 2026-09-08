@@ -12,7 +12,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -98,8 +97,6 @@ public class ChatAiFragment extends Fragment {
         messagesView.setLayoutManager(new LinearLayoutManager(requireContext()));
         messagesView.setAdapter(messageAdapter);
 
-        view.findViewById(R.id.btn_back).setOnClickListener(v ->
-                Navigation.findNavController(view).popBackStack());
         view.findViewById(R.id.tv_quick_question_1).setOnClickListener(this::sendQuickQuestion);
         view.findViewById(R.id.tv_quick_question_2).setOnClickListener(this::sendQuickQuestion);
         sendButton.setOnClickListener(v -> sendFromInput());

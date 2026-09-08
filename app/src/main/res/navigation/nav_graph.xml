@@ -35,9 +35,6 @@
         <action
             android:id="@+id/action_iaAlertsFragment_to_approveSuggestionFragment"
             app:destination="@id/approveSuggestionFragment" />
-        <action
-            android:id="@+id/action_iaAlertsFragment_to_chatAiFragment"
-            app:destination="@id/chatAiFragment" />
     </fragment>
 
     <fragment
@@ -136,11 +133,6 @@
             android:name="suggestion_description"
             app:argType="string" />
     </fragment>
-
-    <fragment
-        android:id="@+id/chatAiFragment"
-        android:name="com.mottainai.operacional.fragments.ChatAiFragment"
-        android:label="Chat com IA" />
 
     <fragment
         android:id="@+id/inviteMemberFragment"
