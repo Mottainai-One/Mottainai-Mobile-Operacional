@@ -35,4 +35,10 @@
     <string name="chat_sending">Consultando a IA…</string>
     <string name="chat_loading_history">Carregando conversa anterior…</string>
     <string name="chat_send_description">Enviar mensagem para a IA</string>
+    <string name="chat_assistant_name">Assistente Mottainai</string>
+    <string name="chat_status_available">Disponível para sua operação</string>
+    <string name="chat_sender_user">Você</string>
+    <string name="chat_sender_assistant">Assistente Mottainai</string>
+    <string name="chat_empty_title">Como posso ajudar?</string>
+    <string name="chat_empty_message">Pergunte sobre riscos, validade, estoque ou próximos passos.</string>
 </resources>

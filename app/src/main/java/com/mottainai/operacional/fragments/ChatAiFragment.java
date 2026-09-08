@@ -55,6 +55,7 @@ public class ChatAiFragment extends Fragment {
     private final ChatMessageAdapter messageAdapter = new ChatMessageAdapter();
 
     private RecyclerView messagesView;
+    private View emptyChatState;
     private TextInputEditText messageInput;
     private MaterialButton sendButton;
     private MaterialButton retryButton;
@@ -87,6 +88,7 @@ public class ChatAiFragment extends Fragment {
         }
 
         messagesView = view.findViewById(R.id.rv_chat_messages);
+        emptyChatState = view.findViewById(R.id.empty_chat_state);
         messageInput = view.findViewById(R.id.et_chat_message);
         sendButton = view.findViewById(R.id.btn_chat_send);
         retryButton = view.findViewById(R.id.btn_chat_retry);
@@ -96,6 +98,7 @@ public class ChatAiFragment extends Fragment {
 
         messagesView.setLayoutManager(new LinearLayoutManager(requireContext()));
         messagesView.setAdapter(messageAdapter);
+        renderConversationState();
 
         view.findViewById(R.id.tv_quick_question_1).setOnClickListener(this::sendQuickQuestion);
         view.findViewById(R.id.tv_quick_question_2).setOnClickListener(this::sendQuickQuestion);
@@ -140,6 +143,7 @@ public class ChatAiFragment extends Fragment {
         if (appendUserMessage) {
             messageAdapter.addMessage(new ChatMessage(message, true));
             messageInput.setText("");
+            renderConversationState();
             scrollToLatestMessage();
         }
 
@@ -166,6 +170,7 @@ public class ChatAiFragment extends Fragment {
                             sessionManager.saveAiChatSessionId(sessionId);
                             messageAdapter.addMessage(new ChatMessage(body.getResponse(), false));
                             pendingMessage = null;
+                            renderConversationState();
                             finishRequest();
                             scrollToLatestMessage();
                         }
@@ -196,6 +201,7 @@ public class ChatAiFragment extends Fragment {
                         return;
                     }
                     messageAdapter.replaceMessages(toChatMessages(body.getMessages()));
+                    renderConversationState();
                     finishRequest();
                     scrollToLatestMessage();
                 }
@@ -320,6 +326,12 @@ public class ChatAiFragment extends Fragment {
         if (messageAdapter.getItemCount() > 0) {
             messagesView.post(() -> messagesView.smoothScrollToPosition(messageAdapter.getItemCount() - 1));
         }
+    }
+
+    private void renderConversationState() {
+        boolean hasMessages = messageAdapter.getItemCount() > 0;
+        emptyChatState.setVisibility(hasMessages ? View.GONE : View.VISIBLE);
+        messagesView.setVisibility(hasMessages ? View.VISIBLE : View.INVISIBLE);
     }
 
     private interface AiTokenCallback {
