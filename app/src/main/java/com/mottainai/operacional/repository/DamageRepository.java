@@ -7,6 +7,7 @@ import com.mottainai.operacional.models.DamageRequest;
 import com.mottainai.operacional.network.ApiService;
 import com.mottainai.operacional.network.RetrofitClient;
 import com.mottainai.operacional.utils.Constants;
+import com.mottainai.operacional.utils.SessionManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +23,7 @@ import retrofit2.Response;
  */
 public class DamageRepository {
     private final ApiService apiService;
+    private final SessionManager sessionManager;
     private static final List<Damage> mockDamages = new ArrayList<>();
 
     public interface DamageCallback {
@@ -31,6 +33,7 @@ public class DamageRepository {
 
     public DamageRepository(Application application) {
         this.apiService = RetrofitClient.getClient(application).create(ApiService.class);
+        this.sessionManager = new SessionManager(application);
     }
 
     public void createDamage(DamageRequest request, DamageCallback callback) {
@@ -38,11 +41,17 @@ public class DamageRepository {
             new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
                 // Validação servidor simulada
                 if (request.getProductId() == null) { callback.onError("Produto inválido"); return; }
+                String storeId = sessionManager.getStoreId();
+                String userId = sessionManager.getUid();
+                if (isBlank(storeId) || isBlank(userId)) {
+                    callback.onError("Sessão sem loja ou usuário. Faça login novamente.");
+                    return;
+                }
                 Damage d = new Damage();
                 d.setId(UUID.randomUUID().toString());
                 d.setProductId(request.getProductId());
-                d.setStoreId("loja02");
-                d.setUserId("mock-user");
+                d.setStoreId(storeId);
+                d.setUserId(userId);
                 d.setReason(request.getReason());
                 d.setQuantity(request.getQuantity());
                 d.setNote(request.getNote());
@@ -71,5 +80,9 @@ public class DamageRepository {
         if (code==400) return "Dados inválidos.";
         if (code>=500) return "Erro no servidor. Tente novamente.";
         return "Erro: " + code;
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.trim().isEmpty();
     }
 }
