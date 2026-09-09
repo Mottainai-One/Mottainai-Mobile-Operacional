@@ -2,7 +2,6 @@ package com.mottainai.operacional.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -122,8 +121,6 @@ public class LoginActivity extends AppCompatActivity {
                     public void onSuccess(@NonNull GetTokenResult result) {
                         Object storeID = result.getClaims().get("storeID");
                         Object role = result.getClaims().get("role");
-                        Log.d("AUTH_CLAIMS", "storeID=" + storeID + ", role=" + role);
-
                         if (storeID == null || role == null) {
                             btnLogin.setEnabled(true);
                             btnLogin.setText("Entrar");
@@ -140,7 +137,6 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.w("AUTH_CLAIMS", "Falha ao renovar token", e);
                         btnLogin.setEnabled(true);
                         btnLogin.setText("Entrar");
                         Toast.makeText(LoginActivity.this,
