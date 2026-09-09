@@ -147,8 +147,8 @@ public class ChatAiFragment extends Fragment {
 
         showLoading(getString(R.string.chat_sending));
         requestAiAccessToken(RetryAction.SEND, accessToken -> {
-            AiApiService aiService = AiRetrofitClient.getClient(accessToken).create(AiApiService.class);
-            aiService.sendMessage(new AiChatRequest(pendingMessage, sessionId))
+            AiApiService aiService = AiRetrofitClient.getClient().create(AiApiService.class);
+            aiService.sendMessage("Bearer " + accessToken, new AiChatRequest(pendingMessage, sessionId))
                     .enqueue(new Callback<AiChatResponse>() {
                         @Override
                         public void onResponse(@NonNull Call<AiChatResponse> call,
@@ -186,8 +186,9 @@ public class ChatAiFragment extends Fragment {
     private void loadHistory() {
         showLoading(getString(R.string.chat_loading_history));
         requestAiAccessToken(RetryAction.HISTORY, accessToken -> {
-            AiApiService aiService = AiRetrofitClient.getClient(accessToken).create(AiApiService.class);
-            aiService.getHistory(sessionId).enqueue(new Callback<AiChatHistoryResponse>() {
+            AiApiService aiService = AiRetrofitClient.getClient().create(AiApiService.class);
+            aiService.getHistory("Bearer " + accessToken, sessionId)
+                    .enqueue(new Callback<AiChatHistoryResponse>() {
                 @Override
                 public void onResponse(@NonNull Call<AiChatHistoryResponse> call,
                                        @NonNull Response<AiChatHistoryResponse> response) {

@@ -120,9 +120,11 @@ POST /chat                        → chat com agente IA
 3. Para usar a API local no emulador, crie/edite `local.properties` (arquivo ignorado pelo Git):
    ```properties
    apiBaseUrl=http://10.0.2.2:8080/
+   iaBaseUrl=http://10.0.2.2:8000/
    ```
-   O endpoint HTTP local só é aceito no build `debug`; o `release` usa HTTPS e pode
-   receber outro endpoint seguro via `-PreleaseApiBaseUrl=https://.../` no CI.
+   Os endpoints HTTP locais só são aceitos no build `debug`; o `release` usa HTTPS e
+   pode receber outros endpoints seguros por `-PreleaseApiBaseUrl=https://.../` e
+   `-PreleaseIaBaseUrl=https://.../` no CI.
 4. Adicione o arquivo `google-services.json` do Firebase (para push)
 5. Rode em um emulador ou dispositivo físico
 

@@ -7,6 +7,7 @@ import com.mottainai.operacional.models.AiChatResponse;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 
@@ -14,8 +15,14 @@ import retrofit2.http.Path;
 public interface AiApiService {
 
     @POST("chat")
-    Call<AiChatResponse> sendMessage(@Body AiChatRequest request);
+    Call<AiChatResponse> sendMessage(
+            @Header("Authorization") String authorization,
+            @Body AiChatRequest request
+    );
 
     @GET("chat/history/{sessionId}")
-    Call<AiChatHistoryResponse> getHistory(@Path("sessionId") String sessionId);
+    Call<AiChatHistoryResponse> getHistory(
+            @Header("Authorization") String authorization,
+            @Path("sessionId") String sessionId
+    );
 }
