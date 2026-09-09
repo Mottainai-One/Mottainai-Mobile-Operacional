@@ -11,11 +11,11 @@ import com.mottainai.operacional.models.Product;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Fonte temporária da etapa MOBILE-07. Mantém a sessão enquanto o processo do
@@ -28,7 +28,8 @@ public class MockInventoryRepository {
         void onError(String message);
     }
 
-    private static final Map<String, InventorySession> sessionsByStore = new HashMap<>();
+    private static final ConcurrentMap<String, InventorySession> sessionsByStore =
+            new ConcurrentHashMap<>();
 
     private final MockProductRepository productRepository;
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
@@ -78,8 +79,8 @@ public class MockInventoryRepository {
                         InventorySession.Status.IN_PROGRESS,
                         items
                 );
-                sessionsByStore.put(key, session);
-                callback.onSuccess(copyOf(session));
+                InventorySession storedSession = sessionsByStore.putIfAbsent(key, session);
+                callback.onSuccess(copyOf(storedSession != null ? storedSession : session));
             }
 
             @Override
