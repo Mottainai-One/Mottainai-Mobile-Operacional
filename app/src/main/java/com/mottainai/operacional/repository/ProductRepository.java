@@ -142,8 +142,18 @@ public class ProductRepository {
         });
     }
 
+    /**
+     * O modelo legado {@link Product} não representa todos os campos do contrato
+     * de produto. Em particular, SKU e fornecedor não podem ser enviados como
+     * barcode e marca. As gravações na API devem usar ProductUpsertRequest.
+     */
+    @Deprecated
     public void createProduct(Product product, ProductCallback callback) {
-        apiService.createProduct(product).enqueue(new Callback<ProductResponse>() {
+        callback.onError("Use ProductUpsertRequest para cadastrar produtos na API.");
+    }
+
+    public void createProduct(com.mottainai.operacional.models.ProductUpsertRequest request, ProductCallback callback) {
+        apiService.createProduct(request).enqueue(new Callback<ProductResponse>() {
             @Override
             public void onResponse(Call<ProductResponse> call, Response<ProductResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -160,8 +170,14 @@ public class ProductRepository {
         });
     }
 
+    /** @see #createProduct(Product, ProductCallback) */
+    @Deprecated
     public void updateProduct(String productId, Product product, ProductCallback callback) {
-        apiService.updateProduct(productId, product).enqueue(new Callback<ProductResponse>() {
+        callback.onError("Use ProductUpsertRequest para editar produtos na API.");
+    }
+
+    public void updateProduct(String productId, com.mottainai.operacional.models.ProductUpsertRequest request, ProductCallback callback) {
+        apiService.updateProduct(productId, request).enqueue(new Callback<ProductResponse>() {
             @Override
             public void onResponse(Call<ProductResponse> call, Response<ProductResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {

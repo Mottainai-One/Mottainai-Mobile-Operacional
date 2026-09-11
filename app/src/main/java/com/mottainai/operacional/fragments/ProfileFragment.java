@@ -14,7 +14,6 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.google.firebase.auth.FirebaseAuth;
-
 import com.mottainai.operacional.R;
 import com.mottainai.operacional.activities.LoginActivity;
 import com.mottainai.operacional.utils.SessionManager;
@@ -45,7 +44,6 @@ public class ProfileFragment extends Fragment {
         String store = session.getStoreId() != null ? session.getStoreId() : "—";
         tvUserInfo.setText("Perfil: " + roleLabel + "\nLoja: " + store);
 
-        // Configurações da operação são exclusivas do Dono.
         View btnOpenConfig = view.findViewById(R.id.btn_open_config);
         if (RoleHelper.isOwner(session.getRole())) {
             btnOpenConfig.setVisibility(View.VISIBLE);
