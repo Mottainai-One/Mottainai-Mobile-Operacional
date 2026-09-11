@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/Theme.MottainaiOperacional.AppBarOverlay">
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/Theme.MottainaiOperacional.PopupOverlay"
+            app:title="Registrar avaria" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ProgressBar android:id="@+id/progress_damage" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:visibility="gone" />
+            <TextView android:id="@+id/tv_damage_error" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/severity_critico" android:visibility="gone" android:padding="8dp" />
+
+            <!-- Resumo produto -->
+            <com.google.android.material.card.MaterialCardView android:layout_width="match_parent" android:layout_height="wrap_content" app:cardCornerRadius="12dp" app:cardElevation="2dp" android:layout_marginBottom="16dp">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+                    <TextView android:id="@+id/tv_product_name" android:layout_width="match_parent" android:layout_height="wrap_content" android:textStyle="bold" android:textSize="16sp" android:textColor="@color/text_primary" />
+                    <TextView android:id="@+id/tv_product_sku" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/text_secondary" android:textSize="13sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.textfield.TextInputLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Motivo *">
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView android:id="@+id/actv_reason" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
+            <TextView android:id="@+id/tv_error_reason" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/severity_critico" android:textSize="12sp" android:visibility="gone"/>
+
+            <com.google.android.material.textfield.TextInputLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Quantidade afetada *">
+                <com.google.android.material.textfield.TextInputEditText android:id="@+id/et_quantity" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="number" />
+            </com.google.android.material.textfield.TextInputLayout>
+            <TextView android:id="@+id/tv_error_quantity" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/severity_critico" android:textSize="12sp" android:visibility="gone"/>
+
+            <com.google.android.material.textfield.TextInputLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Observação (opcional)">
+                <com.google.android.material.textfield.TextInputEditText android:id="@+id/et_note" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="textMultiLine" android:minLines="2" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Foto (opcional)" android:textStyle="bold" android:layout_marginTop="16dp" />
+            <ImageView android:id="@+id/iv_preview" android:layout_width="match_parent" android:layout_height="180dp" android:scaleType="centerCrop" android:visibility="gone" android:background="@color/surface_card" android:layout_marginTop="8dp" />
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp">
+                <com.google.android.material.button.MaterialButton android:id="@+id/btn_camera" style="@style/Widget.MaterialComponents.Button.OutlinedButton" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Câmera" app:icon="@drawable/ic_add_photo" />
+                <com.google.android.material.button.MaterialButton android:id="@+id/btn_gallery" style="@style/Widget.MaterialComponents.Button.OutlinedButton" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="8dp" android:text="Galeria" app:icon="@drawable/ic_add_photo" />
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton android:id="@+id/btn_submit" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Registrar avaria" android:backgroundTint="@color/severity_critico" android:layout_marginTop="24dp" />
+            <com.google.android.material.button.MaterialButton android:id="@+id/btn_cancel" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Cancelar" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

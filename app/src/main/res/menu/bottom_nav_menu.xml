@@ -13,8 +13,9 @@
 
     <item
         android:id="@+id/scannerFragment"
-        android:icon="@drawable/ic_scanner"
-        android:title="Scanner" />
+        android:icon="@android:color/transparent"
+        android:title=""
+        android:enabled="false" />
 
     <item
         android:id="@+id/iaAlertsFragment"

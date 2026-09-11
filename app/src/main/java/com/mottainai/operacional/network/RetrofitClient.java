@@ -67,7 +67,7 @@ public class RetrofitClient {
             Request original = chain.request();
             Request.Builder builder = original.newBuilder();
             if (token != null && !token.isEmpty()) {
-                // Token deve ser Firebase ID token, se backend confirmar aceitação.
+                // Token Firebase usado pela integração atual.
                 builder.header("Authorization", "Bearer " + token);
             }
             return chain.proceed(builder.build());

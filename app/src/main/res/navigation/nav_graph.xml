@@ -13,12 +13,10 @@
         android:id="@+id/productsListFragment"
         android:name="com.mottainai.operacional.fragments.ProductsListFragment"
         android:label="Produtos">
-        <action
-            android:id="@+id/action_productsListFragment_to_inventoryFragment"
-            app:destination="@id/inventoryFragment" />
-        <action
-            android:id="@+id/action_productsListFragment_to_suppliersFragment"
-            app:destination="@id/suppliersFragment" />
+        <argument
+            android:name="initial_tab"
+            app:argType="integer"
+            android:defaultValue="0" />
     </fragment>
 
     <fragment
@@ -37,9 +35,6 @@
         <action
             android:id="@+id/action_iaAlertsFragment_to_approveSuggestionFragment"
             app:destination="@id/approveSuggestionFragment" />
-        <action
-            android:id="@+id/action_iaAlertsFragment_to_chatAiFragment"
-            app:destination="@id/chatAiFragment" />
     </fragment>
 
     <fragment
@@ -74,25 +69,6 @@
             android:name="is_new_product"
             app:argType="boolean" />
     </activity>
-
-    <!-- Telas abaixo: destinos alcançados a partir das abas acima, sem aba própria. -->
-
-    <fragment
-        android:id="@+id/inventoryFragment"
-        android:name="com.mottainai.operacional.fragments.InventoryFragment"
-        android:label="Inventário" />
-
-    <fragment
-        android:id="@+id/suppliersFragment"
-        android:name="com.mottainai.operacional.fragments.SuppliersFragment"
-        android:label="Fornecedores">
-        <action
-            android:id="@+id/action_suppliersFragment_to_newSupplierFragment"
-            app:destination="@id/newSupplierFragment" />
-        <action
-            android:id="@+id/action_suppliersFragment_to_editSupplierFragment"
-            app:destination="@id/editSupplierFragment" />
-    </fragment>
 
     <fragment
         android:id="@+id/newSupplierFragment"
@@ -157,11 +133,6 @@
             android:name="suggestion_description"
             app:argType="string" />
     </fragment>
-
-    <fragment
-        android:id="@+id/chatAiFragment"
-        android:name="com.mottainai.operacional.fragments.ChatAiFragment"
-        android:label="Chat com IA" />
 
     <fragment
         android:id="@+id/inviteMemberFragment"

@@ -37,10 +37,17 @@ public interface ApiService {
     Call<ProductResponse> getProductByBarcode(@Path("barcode") String barcode);
 
     @POST("api/v1/products")
-    Call<ProductResponse> createProduct(@Body Product product);
+    Call<ProductResponse> createProduct(@Body com.mottainai.operacional.models.ProductUpsertRequest request);
 
     @PUT("api/v1/products/{id}")
-    Call<ProductResponse> updateProduct(@Path("id") String id, @Body Product product);
+    Call<ProductResponse> updateProduct(@Path("id") String id, @Body com.mottainai.operacional.models.ProductUpsertRequest request);
+
+    /**
+     * Troca o token Firebase por um token curto, limitado à Mottainai-IA.
+     * A API relacional valida o usuário, empresa e papel antes da emissão.
+     */
+    @POST("api/v1/ai/access-token")
+    Call<com.mottainai.operacional.models.AiAccessTokenResponse> issueAiAccessToken();
 
     // Alertas e sugestões - mantido para compat, mas contrato pendente (devem vir do backend)
     // Se backend não tiver, Repository deve ficar mockável e não simular sucesso.
@@ -49,4 +56,8 @@ public interface ApiService {
 
     @GET("api/v1/suggestions")
     Call<java.util.List<com.mottainai.operacional.models.Suggestion>> getSuggestions(@Query("store_id") String storeId);
+
+    // Avarias - contrato pendente confirmar com backend
+    @POST("api/v1/damages")
+    Call<com.mottainai.operacional.models.Damage> createDamage(@Body com.mottainai.operacional.models.DamageRequest request);
 }

@@ -11,6 +11,7 @@ public class SessionManager {
     private static final String KEY_ROLE = "role";
     private static final String KEY_STORE_ID = "storeId";
     private static final String KEY_TOKEN = "token";
+    private static final String KEY_AI_CHAT_SESSION_ID = "aiChatSessionId";
     private final SharedPreferences prefs;
 
     public SessionManager(Context context) {
@@ -62,5 +63,13 @@ public class SessionManager {
 
     public void saveToken(String token) {
         prefs.edit().putString(KEY_TOKEN, token).apply();
+    }
+
+    public String getAiChatSessionId() {
+        return prefs.getString(KEY_AI_CHAT_SESSION_ID, null);
+    }
+
+    public void saveAiChatSessionId(String sessionId) {
+        prefs.edit().putString(KEY_AI_CHAT_SESSION_ID, sessionId).apply();
     }
 }
