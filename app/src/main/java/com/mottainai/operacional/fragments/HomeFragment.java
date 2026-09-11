@@ -224,9 +224,9 @@ public class HomeFragment extends Fragment {
         String role = sessionManager.getRole();
 
         if (name != null && !name.isEmpty()) {
-            tvWelcome.setText("Bem-vindo, " + name);
+            tvWelcome.setText("Olá, " + name + " 👋");
         } else {
-            tvWelcome.setText("Bem-vindo");
+            tvWelcome.setText("Olá 👋");
         }
 
         String roleLabel = RoleHelper.roleToLabel(role);
@@ -243,6 +243,21 @@ public class HomeFragment extends Fragment {
     }
 
     private void setupShortcuts() {
+        View cameraButton = requireView().findViewById(R.id.btn_abrir_camera);
+        if (cameraButton != null) {
+            cameraButton.setOnClickListener(v -> navigateTo(R.id.scannerFragment));
+        }
+
+        View expiringCard = requireView().findViewById(R.id.cv_produtos_vencendo);
+        if (expiringCard != null) {
+            expiringCard.setOnClickListener(v -> navigateTo(R.id.productsListFragment));
+        }
+
+        View lowStockCard = requireView().findViewById(R.id.cv_estoque_baixo);
+        if (lowStockCard != null) {
+            lowStockCard.setOnClickListener(v -> navigateTo(R.id.productsListFragment));
+        }
+
         // Estoquista
         if (btnShortcutProducts != null) {
             btnShortcutProducts.setOnClickListener(v -> navigateTo(R.id.productsListFragment));
@@ -251,7 +266,9 @@ public class HomeFragment extends Fragment {
             btnShortcutScan.setOnClickListener(v -> navigateTo(R.id.scannerFragment));
         }
         if (btnShortcutDamage != null) {
-            btnShortcutDamage.setOnClickListener(v -> showComingSoon());
+            // A avaria exige um produto; o scanner é o ponto de entrada que
+            // identifica o produto antes de abrir o formulário de registro.
+            btnShortcutDamage.setOnClickListener(v -> navigateTo(R.id.scannerFragment));
         }
 
         // Gerente - atalhos de gestão (apenas Config existe; demais mostram toast)
@@ -259,7 +276,9 @@ public class HomeFragment extends Fragment {
             btnShortcutInventario.setOnClickListener(v -> showComingSoon());
         }
         if (btnShortcutAvarias != null) {
-            btnShortcutAvarias.setOnClickListener(v -> showComingSoon());
+            // Não existe uma lista de avarias nesta versão; iniciar pelo
+            // scanner mantém o fluxo conectado ao formulário existente.
+            btnShortcutAvarias.setOnClickListener(v -> navigateTo(R.id.scannerFragment));
         }
         if (btnShortcutFornecedores != null) {
             btnShortcutFornecedores.setOnClickListener(v -> showComingSoon());

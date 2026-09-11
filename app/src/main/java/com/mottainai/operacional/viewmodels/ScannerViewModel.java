@@ -12,6 +12,8 @@ import com.mottainai.operacional.repository.ProductRepository;
 import com.mottainai.operacional.repository.MockProductRepository;
 import com.mottainai.operacional.utils.Constants;
 
+import java.util.Locale;
+
 public class ScannerViewModel extends AndroidViewModel {
 
     private final ProductRepository repository;
@@ -25,7 +27,9 @@ public class ScannerViewModel extends AndroidViewModel {
     public ScannerViewModel(@NonNull Application application) {
         super(application);
         boolean useMock = Constants.USE_MOCK_REPOSITORY;
-        repository = useMock ? new MockProductRepository(application) : new com.mottainai.operacional.repository.ProductRepository(application);
+        repository = useMock
+                ? new MockProductRepository(application)
+                : new ProductRepository(application);
     }
 
     public MutableLiveData<ScannerUiState> getUiState() {
@@ -33,18 +37,18 @@ public class ScannerViewModel extends AndroidViewModel {
     }
 
     public void onBarcodeScanned(String barcode) {
-        // Debounce: prevent duplicate scans within time window
-        long now = System.currentTimeMillis();
-        if (isProcessing) {
-            return;
-        }
-        if (barcode.equals(lastScannedBarcode) && (now - lastScanTime) < SCAN_DEBOUNCE_MS) {
+        String normalized = barcode == null ? "" : barcode.trim();
+        if (normalized.isEmpty()) {
             return;
         }
 
-        // Normalize barcode
-        String normalized = barcode.trim();
-        if (normalized.isEmpty()) {
+        // Debounce: prevent duplicate scans within time window.
+        if (isProcessing) {
+            return;
+        }
+        long now = System.currentTimeMillis();
+        if (normalized.equals(lastScannedBarcode)
+                && (now - lastScanTime) < SCAN_DEBOUNCE_MS) {
             return;
         }
 
@@ -53,10 +57,8 @@ public class ScannerViewModel extends AndroidViewModel {
         isProcessing = true;
         uiState.postValue(new ScannerUiState.LookingUp(normalized));
 
-        // Query product by barcode
-        com.mottainai.operacional.repository.ProductRepository repo = 
-            (com.mottainai.operacional.repository.ProductRepository) repository;
-        repo.fetchProductByBarcode(normalized, new com.mottainai.operacional.repository.ProductRepository.ProductCallback() {
+        // MockProductRepository e ProductRepository compartilham este contrato.
+        repository.fetchProductByBarcode(normalized, new ProductRepository.ProductCallback() {
             @Override
             public void onSuccess(Product product) {
                 isProcessing = false;
@@ -71,7 +73,12 @@ public class ScannerViewModel extends AndroidViewModel {
             public void onError(String message) {
                 isProcessing = false;
                 // Check if it's a 404
-                if (message != null && message.contains("404")) {
+                String normalizedMessage = message == null
+                        ? ""
+                        : message.toLowerCase(Locale.ROOT);
+                if (normalizedMessage.contains("404")
+                        || normalizedMessage.contains("não encontrado")
+                        || normalizedMessage.contains("nao encontrado")) {
                     uiState.postValue(new ScannerUiState.NotFound(normalized));
                 } else {
                     uiState.postValue(new ScannerUiState.Error(message, true, 0));
@@ -97,6 +104,8 @@ public class ScannerViewModel extends AndroidViewModel {
 
     public void onRetryFromError() {
         isProcessing = false;
+        lastScannedBarcode = null;
+        lastScanTime = 0;
         uiState.postValue(ScannerUiState.Idle.INSTANCE);
     }
 

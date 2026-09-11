@@ -1,6 +1,24 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     id("com.google.gms.google-services")
+}
+
+val localProperties = Properties().apply {
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.isFile) {
+        localPropertiesFile.inputStream().use { input -> load(input) }
+    }
+}
+
+fun localOrGradleProperty(name: String, fallback: String): String {
+    return providers.gradleProperty(name)
+        .orElse(localProperties.getProperty(name) ?: fallback)
+        .get()
+        .let { if (it.endsWith("/")) it else "$it/" }
+        .replace("\\", "\\\\")
+        .replace("\"", "\\\"")
 }
 
 android {
@@ -17,13 +35,24 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        // TODO MOBILE-03: confirmar base URL real da API Spring (/api/v1). Sem segredo hardcoded.
-        // Sobrescrever via gradle.properties: apiBaseUrl=https://sua.api.real/
-        buildConfigField("String", "API_BASE_URL", "\"https://api.mottainai.com.br/\"")
     }
 
     buildTypes {
+        debug {
+            // Valores de desenvolvimento pertencem ao local.properties, ignorado pelo Git.
+            buildConfigField(
+                "String",
+                "API_BASE_URL",
+                "\"${localOrGradleProperty("apiBaseUrl", "https://api.mottainai.com.br/")}\""
+            )
+        }
         release {
+            // Nunca herdar um endpoint HTTP local no artefato de produção.
+            buildConfigField(
+                "String",
+                "API_BASE_URL",
+                "\"${localOrGradleProperty("releaseApiBaseUrl", "https://api.mottainai.com.br/")}\""
+            )
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
