@@ -5,6 +5,7 @@ import android.app.Application;
 import com.mottainai.operacional.models.PageResponse;
 import com.mottainai.operacional.models.Product;
 import com.mottainai.operacional.models.ProductResponse;
+import com.mottainai.operacional.models.ProductUpsertRequest;
 import com.mottainai.operacional.network.ApiService;
 import com.mottainai.operacional.network.RetrofitClient;
 
@@ -175,6 +176,22 @@ public class ProductRepository {
                 callback.onError("Erro de rede: " + t.getMessage());
             }
         });
+    }
+
+    private Product upsertToProduct(ProductUpsertRequest req) {
+        Product p = new Product();
+        p.setName(req.getName());
+        p.setSku(req.getBarcode());
+        p.setSupplier(req.getBrand());
+        return p;
+    }
+
+    public void createProduct(ProductUpsertRequest request, ProductCallback callback) {
+        createProduct(upsertToProduct(request), callback);
+    }
+
+    public void updateProduct(String productId, ProductUpsertRequest request, ProductCallback callback) {
+        updateProduct(productId, upsertToProduct(request), callback);
     }
 
     private String mapHttpError(int code) {
