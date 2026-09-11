@@ -9,6 +9,7 @@ import android.hardware.camera2.CameraCharacteristics;
 import android.media.ToneGenerator;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Looper;
 import android.os.Vibrator;
 import android.provider.Settings;
 import android.util.Log;
