@@ -52,6 +52,7 @@ public class BarcodeAnalyzer implements ImageAnalysis.Analyzer {
     }
 
     @Override
+    @androidx.annotation.OptIn(markerClass = androidx.camera.core.ExperimentalGetImage.class)
     public void analyze(ImageProxy imageProxy) {
         if (imageProxy.getImage() == null) {
             imageProxy.close();
