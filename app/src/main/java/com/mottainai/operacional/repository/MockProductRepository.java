@@ -22,7 +22,6 @@ public class MockProductRepository extends ProductRepository {
     }
 
     private void initMockData() {
-        // IDs fixos para que lista e detalhe compartilhem o mesmo mock
         // Produto 1 - Estoque baixo
         Product p1 = new Product();
         p1.setId("mock-001");
@@ -107,7 +106,7 @@ public class MockProductRepository extends ProductRepository {
         p6.setImageUrl("");
         mockProducts.add(p6);
 
-        // Produto 7 - Guaraná (EAN real para teste de scanner)
+        // Produto com EAN real para validar o fluxo encontrado do scanner.
         Product p7 = new Product();
         p7.setId("mock-007");
         p7.setName("Guaraná Antarctica Lata 350ml");
