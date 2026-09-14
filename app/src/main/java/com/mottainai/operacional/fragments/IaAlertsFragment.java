@@ -4,9 +4,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -28,23 +28,22 @@ import com.mottainai.operacional.utils.RoleHelper;
 import com.mottainai.operacional.utils.SessionManager;
 
 /**
- * Aba "IA": alertas de estoque e, para quem pode aprovar (Gerente/Dono), as
- * sugestões pendentes.
- *
- * Alertas e sugestões vêm do Firestore em tempo real, via os repositórios que
- * já existem no projeto (AlertRepository/SuggestionRepository). Não há ainda
- * endpoint para aprovar/recusar uma sugestão — esse passo fica pendente na
- * ApproveSuggestionFragment, com o mesmo aviso "pendente" que o resto do app já
- * usa para funcionalidades que aguardam contrato de API.
+ * Área Inteligência: Alertas, Sugestões e Chat ocupam a mesma tela por abas.
+ * Alertas e sugestões permanecem nos repositórios atuais; o Chat é um fragmento
+ * filho para preservar a conversa ao alternar entre as abas.
  */
 public class IaAlertsFragment extends Fragment {
 
     private static final int ALERT_WINDOW_DAYS = 7;
+    private static final String CHAT_FRAGMENT_TAG = "intelligence_chat";
+
+    private enum IntelligenceTab { ALERTS, SUGGESTIONS, CHAT }
 
     private TabLayout tabLayout;
     private ProgressBar progressBar;
     private TextView tvEmpty;
     private RecyclerView recyclerView;
+    private FrameLayout chatContainer;
 
     private SessionManager sessionManager;
     private NavController navController;
@@ -57,7 +56,7 @@ public class IaAlertsFragment extends Fragment {
     private ListenerRegistration alertsListener;
     private ListenerRegistration suggestionsListener;
 
-    private boolean showingSuggestions = false;
+    private IntelligenceTab selectedTab = IntelligenceTab.ALERTS;
 
     @Nullable
     @Override
@@ -86,37 +85,73 @@ public class IaAlertsFragment extends Fragment {
         progressBar = view.findViewById(R.id.progress_ia);
         tvEmpty = view.findViewById(R.id.tv_ia_empty);
         recyclerView = view.findViewById(R.id.rv_ia);
+        chatContainer = view.findViewById(R.id.chat_tab_container);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-        // Estoquista não decide sugestões, então nem mostramos a aba.
-        TabLayout.Tab suggestionsTab = tabLayout.getTabAt(1);
-        if (!canViewSuggestions && suggestionsTab != null) {
-            tabLayout.removeTab(suggestionsTab);
-        }
+        configureTabs(canViewSuggestions);
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override public void onTabSelected(TabLayout.Tab tab) {
-                showingSuggestions = tab.getPosition() == 1;
-                bindCurrentTab();
+                Object tag = tab.getTag();
+                if (tag instanceof IntelligenceTab) {
+                    showTab((IntelligenceTab) tag);
+                }
             }
             @Override public void onTabUnselected(TabLayout.Tab tab) {}
             @Override public void onTabReselected(TabLayout.Tab tab) {}
         });
 
-        view.findViewById(R.id.btn_ask_ai).setOnClickListener(v ->
-                navController.navigate(R.id.action_iaAlertsFragment_to_chatAiFragment));
-
-        bindCurrentTab();
+        showTab(selectedTab);
     }
 
-    private void bindCurrentTab() {
-        recyclerView.setAdapter(showingSuggestions ? suggestionAdapter : alertAdapter);
+    private void configureTabs(boolean canViewSuggestions) {
+        TabLayout.Tab alertsTab = tabLayout.getTabAt(0);
+        TabLayout.Tab suggestionsTab = tabLayout.getTabAt(1);
+        TabLayout.Tab chatTab = tabLayout.getTabAt(2);
+        if (alertsTab != null) alertsTab.setTag(IntelligenceTab.ALERTS);
+        if (suggestionsTab != null) suggestionsTab.setTag(IntelligenceTab.SUGGESTIONS);
+        if (chatTab != null) chatTab.setTag(IntelligenceTab.CHAT);
+
+        // Estoquista segue sem acesso às sugestões, mas o Chat permanece disponível.
+        if (!canViewSuggestions && suggestionsTab != null) {
+            tabLayout.removeTab(suggestionsTab);
+        }
+
+        TabLayout.Tab selected = tabLayout.getTabAt(tabLayout.getSelectedTabPosition());
+        if (selected != null && selected.getTag() instanceof IntelligenceTab) {
+            selectedTab = (IntelligenceTab) selected.getTag();
+        }
+    }
+
+    private void showTab(IntelligenceTab tab) {
+        selectedTab = tab;
+        if (tab == IntelligenceTab.CHAT) {
+            detachListeners();
+            recyclerView.setVisibility(View.GONE);
+            progressBar.setVisibility(View.GONE);
+            tvEmpty.setVisibility(View.GONE);
+            chatContainer.setVisibility(View.VISIBLE);
+            ensureChatFragment();
+            return;
+        }
+
+        chatContainer.setVisibility(View.GONE);
+        recyclerView.setAdapter(tab == IntelligenceTab.SUGGESTIONS ? suggestionAdapter : alertAdapter);
         showLoading();
-        if (showingSuggestions) {
+        if (tab == IntelligenceTab.SUGGESTIONS) {
             listenSuggestions();
         } else {
             listenAlerts();
         }
+    }
+
+    private void ensureChatFragment() {
+        Fragment existing = getChildFragmentManager().findFragmentByTag(CHAT_FRAGMENT_TAG);
+        if (existing != null) return;
+
+        getChildFragmentManager().beginTransaction()
+                .replace(R.id.chat_tab_container, new ChatAiFragment(), CHAT_FRAGMENT_TAG)
+                .commit();
     }
 
     private void listenAlerts() {
@@ -125,14 +160,14 @@ public class IaAlertsFragment extends Fragment {
         alertsListener = alertRepository.listenAlerts(storeId, ALERT_WINDOW_DAYS, new AlertRepository.AlertCallback() {
             @Override
             public void onSuccess(java.util.List<com.mottainai.operacional.models.Alert> alerts) {
-                if (!isAdded()) return;
+                if (!isAdded() || selectedTab != IntelligenceTab.ALERTS) return;
                 alertAdapter.setAlerts(alerts);
                 showContent(alerts.isEmpty(), "Nenhum alerta no momento");
             }
 
             @Override
             public void onError(Exception e) {
-                if (!isAdded()) return;
+                if (!isAdded() || selectedTab != IntelligenceTab.ALERTS) return;
                 showContent(true, "Não foi possível carregar os alertas");
             }
         });
@@ -144,14 +179,14 @@ public class IaAlertsFragment extends Fragment {
         suggestionsListener = suggestionRepository.listenSuggestions(storeId, new SuggestionRepository.SuggestionCallback() {
             @Override
             public void onSuccess(java.util.List<com.mottainai.operacional.models.Suggestion> suggestions) {
-                if (!isAdded()) return;
+                if (!isAdded() || selectedTab != IntelligenceTab.SUGGESTIONS) return;
                 suggestionAdapter.setSuggestions(suggestions);
                 showContent(suggestions.isEmpty(), "Nenhuma sugestão pendente");
             }
 
             @Override
             public void onError(Exception e) {
-                if (!isAdded()) return;
+                if (!isAdded() || selectedTab != IntelligenceTab.SUGGESTIONS) return;
                 showContent(true, "Não foi possível carregar as sugestões");
             }
         });

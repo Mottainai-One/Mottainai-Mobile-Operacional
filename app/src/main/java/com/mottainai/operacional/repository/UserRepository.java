@@ -18,7 +18,6 @@ public class UserRepository {
         void onNotFound();
     }
 
-    // Busca o perfil e traduz DocumentSnapshot -> User
     public void getUserProfile(String uid, UserCallback callback) {
         db.collection("users").document(uid)
                 .get()

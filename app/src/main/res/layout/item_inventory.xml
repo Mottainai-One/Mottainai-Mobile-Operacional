@@ -1,75 +1,139 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="12dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="0dp">
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="0dp"
+    app:strokeColor="@color/background_beige_dark"
+    app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="12dp">
-
-        <View
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="@drawable/bg_initial_circle" />
+        android:orientation="vertical"
+        android:padding="16dp">
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/tv_item_name"
-                android:layout_width="wrap_content"
+            <View
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:background="@drawable/bg_initial_circle" />
+
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Arroz integral 1kg"
-                android:textColor="@color/black"
-                android:textStyle="bold"
-                android:textSize="14sp"/>
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tv_item_counts"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Esperado 48 - contado 48"
-                android:textColor="@color/text_grey"
-                android:textSize="12sp" />
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/tv_item_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_primary"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="end"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/tv_item_result"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="OK"
-                android:textColor="@color/black"
-                android:textStyle="bold"
-                android:textSize="12sp"/>
+                <TextView
+                    android:id="@+id/tv_item_sku"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:textColor="@color/text_grey"
+                    android:textSize="12sp" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/tv_item_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_status_tag"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="2dp"
-                android:text="● Ativo"
-                android:textColor="@color/primary_green"
-                android:textSize="10sp" />
+                android:background="@drawable/bg_inventory_status_pending"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="5dp"
+                android:textColor="@color/text_grey"
+                android:textSize="11sp"
+                android:textStyle="bold" />
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_expected_quantity"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:textColor="@color/text_primary"
+                android:textSize="13sp" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_physical_quantity"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:hint="Qtd. física"
+                app:boxBackgroundColor="@color/white"
+                app:boxStrokeColor="@color/primary_green"
+                app:boxStrokeWidth="1dp"
+                app:boxStrokeWidthFocused="2dp"
+                app:hintTextColor="@color/primary_green">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_physical_quantity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="Quantidade física contada"
+                    android:gravity="center"
+                    android:inputType="number"
+                    android:maxLength="8"
+                    android:singleLine="true"
+                    android:textColor="@color/text_primary"
+                    android:textColorHint="@color/primary_green"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_item_variance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/text_grey"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_observation"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:hint="Observação (opcional)">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_observation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top|start"
+                android:inputType="textCapSentences|textMultiLine"
+                android:maxLength="280"
+                android:maxLines="3"
+                android:minLines="1"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp" />
+        </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

@@ -14,7 +14,6 @@
         android:text="Carregando..."
         android:textSize="16sp" />
 
-    <!-- Só o Dono vê este botão (ConfigFragment.isOwner faz a mesma checagem). -->
     <Button
         android:id="@+id/btn_open_config"
         android:layout_width="match_parent"

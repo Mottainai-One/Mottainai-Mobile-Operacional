@@ -517,7 +517,12 @@ public class ScannerFragment extends Fragment {
     }
 
     private void openDamageRegistration(Product product) {
-        android.os.Bundle args = new android.os.Bundle();
+        if (product == null || product.getId() == null || product.getId().isEmpty()) {
+            Toast.makeText(requireContext(), "Produto inválido para registrar avaria", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Bundle args = new Bundle();
         args.putString("product_id", product.getId());
         args.putString("product_name", product.getName());
         args.putString("product_sku", product.getSku());
@@ -544,7 +549,9 @@ public class ScannerFragment extends Fragment {
     }
 
     private void openDamageRegistration() {
-        Toast.makeText(requireContext(), "Registrar avaria — pendente (MOBILE-06)", Toast.LENGTH_SHORT).show();
+        Toast.makeText(requireContext(),
+                "Selecione um produto antes de registrar a avaria",
+                Toast.LENGTH_SHORT).show();
     }
 
     private void toggleTorch() {

@@ -15,7 +15,6 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-
 import com.mottainai.operacional.activities.LoginActivity;
 import com.mottainai.operacional.utils.SessionManager;
 
@@ -23,9 +22,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // Com targetSdk 36 o app é desenhado de ponta a ponta sem opção de
-        // desligar: sem tratar os insets aqui, a barra inferior fica sob a
-        // barra de gestos do sistema.
         EdgeToEdge.enable(this);
         super.onCreate(savedInstanceState);
 
@@ -37,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
         boolean sessionComplete = session.hasCompleteProfile();
 
         if (!firebaseAuthed || !sessionComplete) {
-            // Limpa a sessão local se o Firebase não tiver usuário (sessão inválida/expirada)
             if (!firebaseAuthed) {
                 session.clearSession();
             }
@@ -60,22 +55,26 @@ public class MainActivity extends AppCompatActivity {
 
         BottomNavigationView bottomNav = findViewById(R.id.bottom_nav);
         NavigationUI.setupWithNavController(bottomNav, navController);
-
+        View fabScan = findViewById(R.id.fab_scan);
+        fabScan.setOnClickListener(v -> {
+            if (navController.getCurrentDestination() == null
+                    || navController.getCurrentDestination().getId() != R.id.scannerFragment) {
+                navController.navigate(R.id.scannerFragment);
+            }
+        });
         applyWindowInsets(bottomNav);
     }
 
-    /**
-     * Distribui os insets do sistema: topo e laterais na raiz, rodapé como
-     * padding da própria barra inferior. Assim o fundo branco da barra continua
-     * desenhado atrás da barra de gestos, em vez de sobrar uma faixa vazia.
-     */
     private void applyWindowInsets(View bottomNav) {
         View root = findViewById(android.R.id.content);
+        View navHost = findViewById(R.id.nav_host_fragment);
         ViewCompat.setOnApplyWindowInsetsListener(root, (v, windowInsets) -> {
             Insets bars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(bars.left, bars.top, bars.right, 0);
             bottomNav.setPadding(bottomNav.getPaddingLeft(), bottomNav.getPaddingTop(),
                     bottomNav.getPaddingRight(), bars.bottom);
+            // O conteúdo recebe o inset do teclado; as barras já foram tratadas acima.
+            ViewCompat.dispatchApplyWindowInsets(navHost, windowInsets);
             return WindowInsetsCompat.CONSUMED;
         });
         ViewCompat.requestApplyInsets(root);

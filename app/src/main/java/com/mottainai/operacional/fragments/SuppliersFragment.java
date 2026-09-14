@@ -4,20 +4,18 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.mottainai.operacional.R;
 
 /**
- * Lista de fornecedores. Sem endpoint ainda (mesmo "aguarda contrato" que já
- * estava no placeholder da aba, em ProductsListFragment.setupTabs) — os
- * fornecedores abaixo são ilustrativos.
+ * Conteúdo da aba Fornecedores. Sem endpoint ainda, portanto os fornecedores
+ * abaixo são ilustrativos.
  */
 public class SuppliersFragment extends Fragment {
 
@@ -32,19 +30,17 @@ public class SuppliersFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        NavController navController = Navigation.findNavController(view);
-
-        view.findViewById(R.id.btn_back).setOnClickListener(v -> navController.popBackStack());
+        NavController navController = NavHostFragment.findNavController(this);
 
         view.findViewById(R.id.btn_new_supplier).setOnClickListener(v ->
-                navController.navigate(R.id.action_suppliersFragment_to_newSupplierFragment));
+                navController.navigate(R.id.newSupplierFragment));
 
         view.findViewById(R.id.cv_supplier_1).setOnClickListener(v ->
-                navController.navigate(R.id.action_suppliersFragment_to_editSupplierFragment,
+                navController.navigate(R.id.editSupplierFragment,
                         supplierArgs("Cooperativa Verde")));
 
         view.findViewById(R.id.cv_supplier_2).setOnClickListener(v ->
-                navController.navigate(R.id.action_suppliersFragment_to_editSupplierFragment,
+                navController.navigate(R.id.editSupplierFragment,
                         supplierArgs("Distribuidora Circular")));
     }
 
