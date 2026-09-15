@@ -80,7 +80,7 @@
         android:name="com.mottainai.operacional.fragments.EditSupplierFragment"
         android:label="Editar fornecedor">
         <argument
-            android:name="supplier_name"
+            android:name="supplier_id"
             app:argType="string" />
     </fragment>
 
