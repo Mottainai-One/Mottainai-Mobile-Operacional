@@ -194,22 +194,6 @@ public class ProductRepository {
         });
     }
 
-    private Product upsertToProduct(ProductUpsertRequest req) {
-        Product p = new Product();
-        p.setName(req.getName());
-        p.setSku(req.getBarcode());
-        p.setSupplier(req.getBrand());
-        return p;
-    }
-
-    public void createProduct(ProductUpsertRequest request, ProductCallback callback) {
-        createProduct(upsertToProduct(request), callback);
-    }
-
-    public void updateProduct(String productId, ProductUpsertRequest request, ProductCallback callback) {
-        updateProduct(productId, upsertToProduct(request), callback);
-    }
-
     private String mapHttpError(int code) {
         if (code == 401) return "Sessão expirada. Faça login novamente.";
         if (code == 403) return "Sem permissão para esta operação.";
