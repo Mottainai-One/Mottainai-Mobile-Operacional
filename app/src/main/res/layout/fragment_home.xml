@@ -232,7 +232,11 @@
         android:layout_width="1dp"
         android:layout_height="1dp"
         android:visibility="gone"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <ProgressBar android:id="@+id/progress_home" android:layout_width="1dp" android:layout_height="1dp" />
         <LinearLayout android:id="@+id/container_error" android:layout_width="1dp" android:layout_height="1dp">
