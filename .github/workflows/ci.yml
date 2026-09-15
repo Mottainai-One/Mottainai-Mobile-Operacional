@@ -91,7 +91,7 @@ jobs:
           echo "Verificando convenção de commits..."
 
           # Padrão de commits aceitos
-          PATTERN="^(feat|fix|docs|style|refactor|test|chore|ci|perf|build|revert):"
+          PATTERN="^(feat|fix|docs|style|refactor|test|chore|ci|perf|build|revert)(\\([a-z0-9_-]+\\))?:"
 
           # Obter commits do PR
           if [ "${{ github.event_name }}" = "pull_request" ]; then
@@ -108,7 +108,7 @@ jobs:
             COMMIT_MSG=$(echo "$line" | cut -d' ' -f2-)
             if ! echo "$COMMIT_MSG" | grep -qE "$PATTERN"; then
               echo "ERRO: Commit não segue o padrão: $COMMIT_MSG"
-              echo "Padrão esperado: feat|fix|docs|style|refactor|test|chore|ci|perf|build|revert: mensagem"
+              echo "Padrão esperado: tipo: mensagem ou tipo(escopo): mensagem"
               exit 1
             fi
           done
