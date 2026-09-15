@@ -76,7 +76,10 @@ public final class NotificationRouter {
     }
 
     public void show(RemoteMessage message) {
-        if (!sessionManager.hasCompleteProfile() || !canPostNotifications()) return;
+        if (!sessionManager.hasCompleteProfile()) return;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                && ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) return;
 
         Map<String, String> data = message.getData();
         Destination destination = Destination.fromPayload(data);
@@ -139,12 +142,6 @@ public final class NotificationRouter {
             return RoleHelper.canRegisterProduct(role);
         }
         return true;
-    }
-
-    private boolean canPostNotifications() {
-        return Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU
-                || ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
-                == PackageManager.PERMISSION_GRANTED;
     }
 
     private static int notificationRequestCode(String notificationId) {
