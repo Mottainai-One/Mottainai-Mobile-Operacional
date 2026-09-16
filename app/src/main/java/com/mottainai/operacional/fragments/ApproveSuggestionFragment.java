@@ -7,12 +7,17 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.textfield.TextInputEditText;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.mottainai.operacional.R;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Tela de decisão de uma sugestão da IA (aprovar/recusar).
@@ -41,10 +46,13 @@ public class ApproveSuggestionFragment extends Fragment {
         TextView tvTitle = view.findViewById(R.id.tv_suggestion_title);
         TextView tvDescription = view.findViewById(R.id.tv_suggestion_description);
         TextView tvStatus = view.findViewById(R.id.tv_suggestion_status);
+        TextInputEditText inputDiscount = view.findViewById(R.id.input_discount_value);
         tvTitle.setText(title != null ? title : getString(R.string.suggestion_fallback_title));
         tvDescription.setText(description != null ? description
                 : getString(R.string.suggestion_description_unavailable));
         tvStatus.setText(R.string.suggestion_pending);
+        String suggestedDiscount = extractDiscount(description);
+        if (suggestedDiscount != null) inputDiscount.setText(suggestedDiscount);
 
         view.findViewById(R.id.btn_back).setOnClickListener(v ->
                 Navigation.findNavController(view).popBackStack());
@@ -54,5 +62,11 @@ public class ApproveSuggestionFragment extends Fragment {
 
         view.findViewById(R.id.btn_reject).setOnClickListener(v ->
                 Toast.makeText(requireContext(), R.string.suggestion_decision_pending, Toast.LENGTH_SHORT).show());
+    }
+
+    private static String extractDiscount(String description) {
+        if (description == null) return null;
+        Matcher matcher = Pattern.compile("(\\d{1,3}(?:[,.]\\d{1,2})?)\\s*%").matcher(description);
+        return matcher.find() ? matcher.group(1).replace(',', '.') : null;
     }
 }

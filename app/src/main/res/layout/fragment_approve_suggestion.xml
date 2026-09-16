@@ -63,7 +63,8 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
         android:layout_marginTop="20dp"
-        android:hint="@string/suggestion_discount_label"
+        android:hint="@string/suggestion_new_value_label"
+        app:suffixText="%"
         app:boxBackgroundColor="@color/background_beige"
         app:boxCornerRadiusBottomEnd="12dp"
         app:boxCornerRadiusBottomStart="12dp"
@@ -74,6 +75,7 @@
         app:layout_constraintTop_toBottomOf="@id/card_suggestion">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/input_discount_value"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/suggestion_discount_hint"
