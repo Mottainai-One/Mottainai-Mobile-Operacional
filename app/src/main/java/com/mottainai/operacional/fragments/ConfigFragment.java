@@ -70,6 +70,9 @@ public class ConfigFragment extends Fragment {
         view.findViewById(R.id.btn_save_config).setOnClickListener(v ->
                 Toast.makeText(requireContext(), "Configurações salvas — pendente (aguarda endpoint)", Toast.LENGTH_SHORT).show());
 
+        view.findViewById(R.id.btn_save_notifications).setOnClickListener(v ->
+                Toast.makeText(requireContext(), "Notificações salvas — pendente (aguarda endpoint)", Toast.LENGTH_SHORT).show());
+
         view.findViewById(R.id.btn_invite_member).setOnClickListener(v ->
                 navController.navigate(R.id.action_configFragment_to_inviteMemberFragment));
 
