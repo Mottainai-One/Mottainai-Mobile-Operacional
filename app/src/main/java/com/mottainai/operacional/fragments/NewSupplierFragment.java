@@ -5,18 +5,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.mottainai.operacional.R;
+import com.mottainai.operacional.utils.SessionManager;
+import com.mottainai.operacional.viewmodels.SupplierViewModel;
 
 /**
- * Cadastro de fornecedor. Sem endpoint ainda — "Salvar" avisa que está
- * pendente, mesmo padrão do resto do app.
+ * Cadastro local de fornecedor enquanto a API relacional não está ativa no app.
  */
 public class NewSupplierFragment extends Fragment {
 
@@ -35,12 +36,26 @@ public class NewSupplierFragment extends Fragment {
                 Navigation.findNavController(view).popBackStack());
 
         EditText etName = view.findViewById(R.id.et_supplier_name);
+        EditText etCnpj = view.findViewById(R.id.et_supplier_cnpj);
+        EditText etContact = view.findViewById(R.id.et_supplier_contact);
+        SupplierViewModel viewModel = new ViewModelProvider(requireActivity()).get(SupplierViewModel.class);
+        SessionManager session = new SessionManager(requireContext());
+        viewModel.clearCompletion();
+        viewModel.getCompleted().observe(getViewLifecycleOwner(), completed -> {
+            if (Boolean.TRUE.equals(completed)) Navigation.findNavController(view).popBackStack();
+        });
         view.findViewById(R.id.btn_save_supplier).setOnClickListener(v -> {
-            if (etName.getText().toString().trim().isEmpty()) {
+            String name = etName.getText().toString().trim();
+            String cnpj = etCnpj.getText().toString().replaceAll("\\D", "");
+            if (name.isEmpty()) {
                 etName.setError("Informe o nome da empresa");
                 return;
             }
-            Toast.makeText(requireContext(), "Fornecedor — pendente (aguarda contrato)", Toast.LENGTH_SHORT).show();
+            if (cnpj.length() != 14) {
+                etCnpj.setError("Informe os 14 dígitos do CNPJ");
+                return;
+            }
+            viewModel.create(session.getStoreId(), name, cnpj, etContact.getText().toString().trim());
         });
     }
 }
