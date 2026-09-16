@@ -16,6 +16,7 @@ import androidx.navigation.Navigation;
 import com.google.firebase.auth.FirebaseAuth;
 import com.mottainai.operacional.R;
 import com.mottainai.operacional.activities.LoginActivity;
+import com.mottainai.operacional.repository.NotificationRepository;
 import com.mottainai.operacional.utils.SessionManager;
 import com.mottainai.operacional.utils.RoleHelper;
 
@@ -52,6 +53,7 @@ public class ProfileFragment extends Fragment {
         }
 
         btnLogout.setOnClickListener(v -> {
+            new NotificationRepository(requireContext()).clearForLogout();
             FirebaseAuth.getInstance().signOut();
             session.clearSession();
 

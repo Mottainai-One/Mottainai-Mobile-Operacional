@@ -32,6 +32,10 @@
         android:id="@+id/iaAlertsFragment"
         android:name="com.mottainai.operacional.fragments.IaAlertsFragment"
         android:label="IA">
+        <argument
+            android:name="initial_ia_tab"
+            app:argType="string"
+            android:defaultValue="alerts" />
         <action
             android:id="@+id/action_iaAlertsFragment_to_approveSuggestionFragment"
             app:destination="@id/approveSuggestionFragment" />

@@ -34,6 +34,9 @@ import com.mottainai.operacional.utils.SessionManager;
  */
 public class IaAlertsFragment extends Fragment {
 
+    public static final String ARG_INITIAL_TAB = "initial_ia_tab";
+    public static final String TAB_ALERTS = "alerts";
+    public static final String TAB_SUGGESTIONS = "suggestions";
     private static final int ALERT_WINDOW_DAYS = 7;
     private static final String CHAT_FRAGMENT_TAG = "intelligence_chat";
 
@@ -89,6 +92,8 @@ public class IaAlertsFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
         configureTabs(canViewSuggestions);
+        selectedTab = initialTab(canViewSuggestions);
+        selectTab(selectedTab);
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override public void onTabSelected(TabLayout.Tab tab) {
@@ -102,6 +107,27 @@ public class IaAlertsFragment extends Fragment {
         });
 
         showTab(selectedTab);
+    }
+
+    private IntelligenceTab initialTab(boolean canViewSuggestions) {
+        Bundle arguments = getArguments();
+        String requestedTab = arguments == null
+                ? TAB_ALERTS
+                : arguments.getString(ARG_INITIAL_TAB, TAB_ALERTS);
+        if (TAB_SUGGESTIONS.equalsIgnoreCase(requestedTab) && canViewSuggestions) {
+            return IntelligenceTab.SUGGESTIONS;
+        }
+        return IntelligenceTab.ALERTS;
+    }
+
+    private void selectTab(IntelligenceTab tabToSelect) {
+        for (int position = 0; position < tabLayout.getTabCount(); position++) {
+            TabLayout.Tab tab = tabLayout.getTabAt(position);
+            if (tab != null && tabToSelect.equals(tab.getTag())) {
+                tab.select();
+                return;
+            }
+        }
     }
 
     private void configureTabs(boolean canViewSuggestions) {
