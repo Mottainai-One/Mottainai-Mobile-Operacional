@@ -49,4 +49,21 @@
     <string name="notification_permission_not_now">Agora não</string>
     <string name="notification_default_title">Mottainai Operacional</string>
     <string name="notification_default_body">Há uma atualização para sua operação.</string>
+    <string name="profile_title">Perfil</string>
+    <string name="profile_subtitle">Dados da sua sessão operacional</string>
+    <string name="profile_loading">Carregando perfil</string>
+    <string name="profile_name_fallback">Usuário Mottainai</string>
+    <string name="profile_email_unavailable">E-mail não disponível</string>
+    <string name="profile_incomplete_session">Sua sessão não possui papel ou loja. Entre novamente para continuar.</string>
+    <string name="profile_avatar_initials">Iniciais do usuário</string>
+    <string name="profile_operation_data">Dados operacionais</string>
+    <string name="profile_role_label">Papel na operação</string>
+    <string name="profile_store_label">Loja atual</string>
+    <string name="profile_role_value">Perfil: %1$s</string>
+    <string name="profile_store_value">Loja: %1$s</string>
+    <string name="profile_settings">Configurações</string>
+    <string name="profile_logout">Sair da conta</string>
+    <string name="profile_logout_title">Sair da conta?</string>
+    <string name="profile_logout_message">Você precisará entrar novamente para acessar a operação.</string>
+    <string name="profile_logout_confirm">Sair</string>
 </resources>
