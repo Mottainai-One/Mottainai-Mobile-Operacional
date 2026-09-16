@@ -73,7 +73,7 @@
     <string name="suggestion_approval_title">Aprovar sugestões</string>
     <string name="suggestion_pending">Sugestão pendente</string>
     <string name="suggestion_decision_pending">A decisão aguarda o endpoint de sugestões.</string>
-    <string name="suggestion_fallback_title">Sugestão</string>
+    <string name="suggestion_fallback_title">Arroz Integral 1kg</string>
     <string name="suggestion_description_unavailable">Não há raciocínio disponível para esta sugestão.</string>
     <string name="suggestion_discount_label">Ajustar desconto</string>
     <string name="suggestion_new_value_label">Novo valor sugerido</string>
@@ -84,4 +84,5 @@
     <string name="suggestion_reject_confirm">Recusar mesmo assim</string>
     <string name="suggestion_final_price">Novo preço sugerido: %1$s</string>
     <string name="suggestion_final_price_unavailable">Novo preço sugerido: aguardando preço atual</string>
+    <string name="suggestion_ai_discount">Desconto sugerido pela IA: %1$.0f%%</string>
 </resources>

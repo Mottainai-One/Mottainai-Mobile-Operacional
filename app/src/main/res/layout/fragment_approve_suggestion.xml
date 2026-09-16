@@ -56,14 +56,26 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
+    <TextView
+        android:id="@+id/tv_ai_discount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="20dp"
+        android:textColor="@color/text_secondary"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/card_suggestion" />
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/input_discount"
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="20dp"
-        android:hint="@string/suggestion_new_value_label"
+        android:layout_marginTop="10dp"
+        android:hint="@string/suggestion_discount_label"
         app:suffixText="%"
         app:boxBackgroundColor="@color/background_beige"
         app:boxCornerRadiusBottomEnd="12dp"
@@ -72,7 +84,7 @@
         app:boxCornerRadiusTopStart="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/card_suggestion">
+        app:layout_constraintTop_toBottomOf="@id/tv_ai_discount">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/input_discount_value"

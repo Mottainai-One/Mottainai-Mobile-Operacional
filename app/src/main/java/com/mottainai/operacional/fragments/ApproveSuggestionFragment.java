@@ -50,19 +50,18 @@ public class ApproveSuggestionFragment extends Fragment {
         TextView tvTitle = view.findViewById(R.id.tv_suggestion_title);
         TextView tvDescription = view.findViewById(R.id.tv_suggestion_description);
         TextView tvStatus = view.findViewById(R.id.tv_suggestion_status);
+        TextView tvAiDiscount = view.findViewById(R.id.tv_ai_discount);
         TextInputEditText inputDiscount = view.findViewById(R.id.input_discount_value);
         TextView tvFinalPrice = view.findViewById(R.id.tv_suggested_final_price);
         tvTitle.setText(title != null ? title : getString(R.string.suggestion_fallback_title));
         tvDescription.setText(description != null ? description
                 : getString(R.string.suggestion_description_unavailable));
         tvStatus.setText(R.string.suggestion_pending);
-        double currentPrice = args != null ? args.getDouble("suggestion_current_price", -1) : -1;
-        double suggestedDiscount = args != null ? args.getDouble("suggestion_discount", -1) : -1;
-        if (suggestedDiscount < 0) {
-            String parsedDiscount = extractDiscount(description);
-            suggestedDiscount = parsedDiscount == null ? -1 : Double.parseDouble(parsedDiscount);
-        }
+        // Cenário mock até a API fornecer preço atual e desconto da IA.
+        double currentPrice = args != null ? args.getDouble("suggestion_current_price", 12.90) : 12.90;
+        double suggestedDiscount = args != null ? args.getDouble("suggestion_discount", 20) : 20;
         if (suggestedDiscount >= 0) inputDiscount.setText(String.valueOf(suggestedDiscount));
+        tvAiDiscount.setText(getString(R.string.suggestion_ai_discount, suggestedDiscount));
         updateFinalPrice(tvFinalPrice, currentPrice, suggestedDiscount);
         final double priceForCalculation = currentPrice;
         inputDiscount.addTextChangedListener(new TextWatcher() {
