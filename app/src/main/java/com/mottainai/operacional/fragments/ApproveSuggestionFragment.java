@@ -40,16 +40,19 @@ public class ApproveSuggestionFragment extends Fragment {
 
         TextView tvTitle = view.findViewById(R.id.tv_suggestion_title);
         TextView tvDescription = view.findViewById(R.id.tv_suggestion_description);
-        tvTitle.setText(title != null ? title : "Sugestão");
-        tvDescription.setText(description != null ? description : "");
+        TextView tvStatus = view.findViewById(R.id.tv_suggestion_status);
+        tvTitle.setText(title != null ? title : getString(R.string.suggestion_fallback_title));
+        tvDescription.setText(description != null ? description
+                : getString(R.string.suggestion_description_unavailable));
+        tvStatus.setText(R.string.suggestion_pending);
 
         view.findViewById(R.id.btn_back).setOnClickListener(v ->
                 Navigation.findNavController(view).popBackStack());
 
         view.findViewById(R.id.btn_approve).setOnClickListener(v ->
-                Toast.makeText(requireContext(), "Aprovar sugestão — pendente (aguarda endpoint)", Toast.LENGTH_SHORT).show());
+                Toast.makeText(requireContext(), R.string.suggestion_decision_pending, Toast.LENGTH_SHORT).show());
 
         view.findViewById(R.id.btn_reject).setOnClickListener(v ->
-                Toast.makeText(requireContext(), "Recusar sugestão — pendente (aguarda endpoint)", Toast.LENGTH_SHORT).show());
+                Toast.makeText(requireContext(), R.string.suggestion_decision_pending, Toast.LENGTH_SHORT).show());
     }
 }

@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,14 +23,24 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.Su
 
     private List<Suggestion> suggestionList;
     private final OnSuggestionClickListener clickListener;
+    private final OnSuggestionClickListener approveListener;
+    private final OnSuggestionClickListener rejectListener;
 
     public SuggestionAdapter() {
-        this(null);
+        this(null, null, null);
     }
 
     public SuggestionAdapter(OnSuggestionClickListener clickListener) {
+        this(clickListener, clickListener, clickListener);
+    }
+
+    public SuggestionAdapter(OnSuggestionClickListener clickListener,
+                             OnSuggestionClickListener approveListener,
+                             OnSuggestionClickListener rejectListener) {
         this.suggestionList = null;
         this.clickListener = clickListener;
+        this.approveListener = approveListener;
+        this.rejectListener = rejectListener;
     }
 
     public void setSuggestions(List<Suggestion> suggestionList) {
@@ -50,10 +61,13 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.Su
         Suggestion suggestion = suggestionList.get(position);
         holder.tvSuggestionTitle.setText(suggestion.getTitle());
         holder.tvSuggestionDescription.setText(suggestion.getDescription());
-        holder.tvSuggestionStatus.setText(suggestion.getStatus());
-        if (clickListener != null) {
-            holder.itemView.setOnClickListener(v -> clickListener.onSuggestionClick(suggestion));
-        }
+        holder.tvSuggestionStatus.setText(statusLabel(holder.itemView.getContext(), suggestion.getStatus()));
+        holder.itemView.setOnClickListener(clickListener == null ? null
+                : v -> clickListener.onSuggestionClick(suggestion));
+        holder.btnApprove.setOnClickListener(approveListener == null ? null
+                : v -> approveListener.onSuggestionClick(suggestion));
+        holder.btnReject.setOnClickListener(rejectListener == null ? null
+                : v -> rejectListener.onSuggestionClick(suggestion));
     }
 
     @Override
@@ -61,16 +75,27 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.Su
         return suggestionList != null ? suggestionList.size() : 0;
     }
 
+    private static String statusLabel(Context context, String status) {
+        if (status == null || status.trim().isEmpty() || "pending".equalsIgnoreCase(status)) {
+            return context.getString(R.string.suggestion_pending);
+        }
+        return status.trim();
+    }
+
     public static class SuggestionViewHolder extends RecyclerView.ViewHolder {
         TextView tvSuggestionTitle;
         TextView tvSuggestionDescription;
         TextView tvSuggestionStatus;
+        View btnApprove;
+        View btnReject;
 
         public SuggestionViewHolder(View view) {
             super(view);
             tvSuggestionTitle = view.findViewById(R.id.tv_suggestion_title);
             tvSuggestionDescription = view.findViewById(R.id.tv_suggestion_description);
             tvSuggestionStatus = view.findViewById(R.id.tv_suggestion_status);
+            btnApprove = view.findViewById(R.id.btn_suggestion_approve);
+            btnReject = view.findViewById(R.id.btn_suggestion_reject);
         }
     }
 }

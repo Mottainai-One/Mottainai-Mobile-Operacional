@@ -7,9 +7,11 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -80,9 +82,10 @@ public class IaAlertsFragment extends Fragment {
         String role = sessionManager.getRole();
         boolean canViewSuggestions = RoleHelper.canViewSuggestions(role);
 
-        suggestionAdapter = new SuggestionAdapter(suggestion ->
-                navController.navigate(R.id.action_iaAlertsFragment_to_approveSuggestionFragment,
-                        suggestionArgs(suggestion.getId(), suggestion.getTitle(), suggestion.getDescription())));
+        suggestionAdapter = new SuggestionAdapter(
+                suggestion -> openSuggestionDecision(suggestion),
+                suggestion -> openSuggestionDecision(suggestion),
+                this::confirmSuggestionRejection);
 
         tabLayout = view.findViewById(R.id.tab_ia);
         progressBar = view.findViewById(R.id.progress_ia);
@@ -247,6 +250,22 @@ public class IaAlertsFragment extends Fragment {
         args.putString("suggestion_title", title);
         args.putString("suggestion_description", description);
         return args;
+    }
+
+    private void openSuggestionDecision(com.mottainai.operacional.models.Suggestion suggestion) {
+        navController.navigate(R.id.action_iaAlertsFragment_to_approveSuggestionFragment,
+                suggestionArgs(suggestion.getId(), suggestion.getTitle(), suggestion.getDescription()));
+    }
+
+    private void confirmSuggestionRejection(com.mottainai.operacional.models.Suggestion suggestion) {
+        new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.suggestion_reject_title)
+                .setMessage(R.string.suggestion_reject_message)
+                .setNegativeButton(R.string.cancel, null)
+                .setPositiveButton(R.string.suggestion_reject_confirm, (dialog, which) ->
+                        Toast.makeText(requireContext(), R.string.suggestion_decision_pending,
+                                Toast.LENGTH_SHORT).show())
+                .show();
     }
 
     @Override

@@ -66,4 +66,19 @@
     <string name="profile_logout_title">Sair da conta?</string>
     <string name="profile_logout_message">Você precisará entrar novamente para acessar a operação.</string>
     <string name="profile_logout_confirm">Sair</string>
+    <string name="suggestion_reasoning_title">Raciocínio da IA</string>
+    <string name="suggestion_approve">Aprovar</string>
+    <string name="suggestion_reject">Recusar</string>
+    <string name="suggestion_approve_publish">Aprovar e publicar</string>
+    <string name="suggestion_approval_title">Aprovar sugestões</string>
+    <string name="suggestion_pending">Sugestão pendente</string>
+    <string name="suggestion_decision_pending">A decisão aguarda o endpoint de sugestões.</string>
+    <string name="suggestion_fallback_title">Sugestão</string>
+    <string name="suggestion_description_unavailable">Não há raciocínio disponível para esta sugestão.</string>
+    <string name="suggestion_discount_label">Ajustar desconto</string>
+    <string name="suggestion_discount_pending">Aguardando dados da IA</string>
+    <string name="suggestion_discount_hint">Ex.: 20%%</string>
+    <string name="suggestion_reject_title">Recusar esta sugestão?</string>
+    <string name="suggestion_reject_message">Ao recusar esta ação, há maior probabilidade de perda de produtos. Deseja continuar?</string>
+    <string name="suggestion_reject_confirm">Recusar mesmo assim</string>
 </resources>
