@@ -77,4 +77,8 @@
     <string name="suggestion_description_unavailable">Não há raciocínio disponível para esta sugestão.</string>
     <string name="suggestion_discount_label">Ajustar desconto</string>
     <string name="suggestion_discount_pending">Aguardando dados da IA</string>
+    <string name="suggestion_discount_hint">Ex.: 20%%</string>
+    <string name="suggestion_reject_title">Recusar esta sugestão?</string>
+    <string name="suggestion_reject_message">Ao recusar esta ação, há maior probabilidade de perda de produtos. Deseja continuar?</string>
+    <string name="suggestion_reject_confirm">Recusar mesmo assim</string>
 </resources>
