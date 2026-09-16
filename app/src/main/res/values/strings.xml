@@ -82,4 +82,6 @@
     <string name="suggestion_reject_title">Recusar esta sugestão?</string>
     <string name="suggestion_reject_message">Ao recusar esta ação, há maior probabilidade de perda de produtos. Deseja continuar?</string>
     <string name="suggestion_reject_confirm">Recusar mesmo assim</string>
+    <string name="suggestion_final_price">Novo preço sugerido: %1$s</string>
+    <string name="suggestion_final_price_unavailable">Novo preço sugerido: aguardando preço atual</string>
 </resources>

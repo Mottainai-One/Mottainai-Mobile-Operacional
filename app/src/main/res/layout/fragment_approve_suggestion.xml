@@ -84,6 +84,19 @@
             android:textSize="16sp" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <TextView
+        android:id="@+id/tv_suggested_final_price"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/primary_green"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/input_discount" />
+
     <LinearLayout
         android:id="@+id/ll_actions"
         android:layout_width="0dp"
@@ -93,7 +106,7 @@
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/input_discount">
+        app:layout_constraintTop_toBottomOf="@id/tv_suggested_final_price">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_approve"

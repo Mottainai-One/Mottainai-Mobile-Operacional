@@ -6,6 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.text.Editable;
+import android.text.TextWatcher;
 
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -18,6 +20,8 @@ import com.mottainai.operacional.R;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 /**
  * Tela de decisão de uma sugestão da IA (aprovar/recusar).
@@ -47,12 +51,28 @@ public class ApproveSuggestionFragment extends Fragment {
         TextView tvDescription = view.findViewById(R.id.tv_suggestion_description);
         TextView tvStatus = view.findViewById(R.id.tv_suggestion_status);
         TextInputEditText inputDiscount = view.findViewById(R.id.input_discount_value);
+        TextView tvFinalPrice = view.findViewById(R.id.tv_suggested_final_price);
         tvTitle.setText(title != null ? title : getString(R.string.suggestion_fallback_title));
         tvDescription.setText(description != null ? description
                 : getString(R.string.suggestion_description_unavailable));
         tvStatus.setText(R.string.suggestion_pending);
-        String suggestedDiscount = extractDiscount(description);
-        if (suggestedDiscount != null) inputDiscount.setText(suggestedDiscount);
+        double currentPrice = args != null ? args.getDouble("suggestion_current_price", -1) : -1;
+        double suggestedDiscount = args != null ? args.getDouble("suggestion_discount", -1) : -1;
+        if (suggestedDiscount < 0) {
+            String parsedDiscount = extractDiscount(description);
+            suggestedDiscount = parsedDiscount == null ? -1 : Double.parseDouble(parsedDiscount);
+        }
+        if (suggestedDiscount >= 0) inputDiscount.setText(String.valueOf(suggestedDiscount));
+        updateFinalPrice(tvFinalPrice, currentPrice, suggestedDiscount);
+        final double priceForCalculation = currentPrice;
+        inputDiscount.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                try { updateFinalPrice(tvFinalPrice, priceForCalculation, Double.parseDouble(s.toString().replace(',', '.'))); }
+                catch (NumberFormatException ignored) { updateFinalPrice(tvFinalPrice, priceForCalculation, -1); }
+            }
+            @Override public void afterTextChanged(Editable s) { }
+        });
 
         view.findViewById(R.id.btn_back).setOnClickListener(v ->
                 Navigation.findNavController(view).popBackStack());
@@ -68,5 +88,15 @@ public class ApproveSuggestionFragment extends Fragment {
         if (description == null) return null;
         Matcher matcher = Pattern.compile("(\\d{1,3}(?:[,.]\\d{1,2})?)\\s*%").matcher(description);
         return matcher.find() ? matcher.group(1).replace(',', '.') : null;
+    }
+
+    private void updateFinalPrice(TextView view, double currentPrice, double discount) {
+        if (currentPrice < 0 || discount < 0 || discount > 100) {
+            view.setText(R.string.suggestion_final_price_unavailable);
+            return;
+        }
+        double finalPrice = currentPrice * (1 - discount / 100d);
+        view.setText(getString(R.string.suggestion_final_price,
+                NumberFormat.getCurrencyInstance(new Locale("pt", "BR")).format(finalPrice)));
     }
 }
