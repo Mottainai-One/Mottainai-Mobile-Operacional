@@ -244,17 +244,19 @@ public class IaAlertsFragment extends Fragment {
         if (suggestionsListener != null) { suggestionsListener.remove(); suggestionsListener = null; }
     }
 
-    private static Bundle suggestionArgs(String id, String title, String description) {
+    private static Bundle suggestionArgs(com.mottainai.operacional.models.Suggestion suggestion) {
         Bundle args = new Bundle();
-        args.putString("suggestion_id", id);
-        args.putString("suggestion_title", title);
-        args.putString("suggestion_description", description);
+        args.putString("suggestion_id", suggestion.getId());
+        args.putString("suggestion_title", suggestion.getTitle());
+        args.putString("suggestion_description", suggestion.getDescription());
+        if (suggestion.getCurrentPrice() != null) args.putDouble("suggestion_current_price", suggestion.getCurrentPrice());
+        if (suggestion.getSuggestedDiscount() != null) args.putDouble("suggestion_discount", suggestion.getSuggestedDiscount());
         return args;
     }
 
     private void openSuggestionDecision(com.mottainai.operacional.models.Suggestion suggestion) {
         navController.navigate(R.id.action_iaAlertsFragment_to_approveSuggestionFragment,
-                suggestionArgs(suggestion.getId(), suggestion.getTitle(), suggestion.getDescription()));
+                suggestionArgs(suggestion));
     }
 
     private void confirmSuggestionRejection(com.mottainai.operacional.models.Suggestion suggestion) {
