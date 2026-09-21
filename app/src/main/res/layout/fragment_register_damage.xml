@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorBackground">
+    android:background="@color/background_beige">
 
     <ImageButton
         android:id="@+id/btn_back"
@@ -24,7 +24,7 @@
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Registrar avaria"
+        android:text="@string/register_damage"
         android:textColor="@color/text_primary"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -50,7 +50,7 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="12dp"
+                app:cardCornerRadius="@dimen/card_corner_radius"
                 app:cardElevation="0dp">
 
                 <LinearLayout
@@ -87,13 +87,24 @@
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
-            <Spinner
-                android:id="@+id/spinner_damage_reason"
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:background="@drawable/bg_edittext"
-                android:paddingHorizontal="16dp" />
+                android:hint="Selecione um motivo">
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                    android:id="@+id/actv_damage_reason"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none" />
+            </com.google.android.material.textfield.TextInputLayout>
+            <TextView
+                android:id="@+id/tv_error_reason"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/severity_critico"
+                android:textSize="12sp"
+                android:visibility="gone" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -115,6 +126,13 @@
                 android:minHeight="56dp"
                 android:paddingHorizontal="16dp"
                 android:text="1" />
+            <TextView
+                android:id="@+id/tv_error_quantity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/severity_critico"
+                android:textSize="12sp"
+                android:visibility="gone" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -131,7 +149,7 @@
                 android:layout_marginTop="24dp"
                 android:backgroundTint="@color/colorError"
                 android:minHeight="56dp"
-                android:text="Registrar avaria"
+                android:text="@string/register_damage"
                 android:textAllCaps="false"
                 android:textColor="@color/colorOnError"
                 app:cornerRadius="8dp" />

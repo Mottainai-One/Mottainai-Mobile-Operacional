@@ -18,8 +18,6 @@ import androidx.navigation.Navigation;
 
 import com.mottainai.operacional.R;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.text.NumberFormat;
 import java.util.Locale;
 
@@ -81,12 +79,6 @@ public class ApproveSuggestionFragment extends Fragment {
 
         view.findViewById(R.id.btn_reject).setOnClickListener(v ->
                 Toast.makeText(requireContext(), R.string.suggestion_decision_pending, Toast.LENGTH_SHORT).show());
-    }
-
-    private static String extractDiscount(String description) {
-        if (description == null) return null;
-        Matcher matcher = Pattern.compile("(\\d{1,3}(?:[,.]\\d{1,2})?)\\s*%").matcher(description);
-        return matcher.find() ? matcher.group(1).replace(',', '.') : null;
     }
 
     private void updateFinalPrice(TextView view, double currentPrice, double discount) {
