@@ -52,6 +52,7 @@
             <com.google.android.material.textfield.TextInputLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Observação (opcional)">
                 <com.google.android.material.textfield.TextInputEditText android:id="@+id/et_note" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="textMultiLine" android:minLines="2" />
             </com.google.android.material.textfield.TextInputLayout>
+            <TextView android:id="@+id/tv_error_note" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/severity_critico" android:textSize="12sp" android:visibility="gone"/>
 
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Foto (opcional)" android:textStyle="bold" android:layout_marginTop="16dp" />
             <ImageView android:id="@+id/iv_preview" android:layout_width="match_parent" android:layout_height="180dp" android:scaleType="centerCrop" android:visibility="gone" android:background="@color/surface_card" android:layout_marginTop="8dp" />

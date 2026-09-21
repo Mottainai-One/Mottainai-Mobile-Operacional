@@ -53,6 +53,9 @@ public class ProductFormViewModel extends AndroidViewModel {
     public void initNew() {
         productId = null;
         ProductForm f = new ProductForm();
+        // Padrões razoáveis para um produto novo; o usuário pode alterar.
+        f.setCategoryId(1);
+        f.setUnitMeasure("UN");
         form.setValue(f);
     }
 
@@ -104,7 +107,7 @@ public class ProductFormViewModel extends AndroidViewModel {
         else {
             try {
                 BigDecimal w = f.getWeightAsBigDecimal();
-                if (w == null || w.compareTo(BigDecimal.ZERO) < 0) err.put("weight", "Peso inválido");
+                if (w == null || w.compareTo(BigDecimal.ZERO) <= 0) err.put("weight", "Peso inválido");
             } catch (Exception e) { err.put("weight", "Peso inválido"); }
         }
         // Campos pendentes (quantity etc.) validados localmente mas não enviados

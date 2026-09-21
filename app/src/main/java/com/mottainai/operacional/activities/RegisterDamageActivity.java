@@ -28,7 +28,7 @@ public class RegisterDamageActivity extends AppCompatActivity {
     private DamageViewModel viewModel;
     private MaterialAutoCompleteTextView actvReason;
     private com.google.android.material.textfield.TextInputEditText etQuantity, etNote;
-    private android.widget.TextView tvProductName, tvProductSku, tvErrorReason, tvErrorQuantity, tvDamageError;
+    private android.widget.TextView tvProductName, tvProductSku, tvErrorReason, tvErrorQuantity, tvErrorNote, tvDamageError;
     private android.widget.ImageView ivPreview;
     private View progress;
     private com.google.android.material.button.MaterialButton btnSubmit;
@@ -83,6 +83,7 @@ public class RegisterDamageActivity extends AppCompatActivity {
         etNote = findViewById(R.id.et_note);
         tvErrorReason = findViewById(R.id.tv_error_reason);
         tvErrorQuantity = findViewById(R.id.tv_error_quantity);
+        tvErrorNote = findViewById(R.id.tv_error_note);
         tvDamageError = findViewById(R.id.tv_damage_error);
         ivPreview = findViewById(R.id.iv_preview);
         progress = findViewById(R.id.progress_damage);
@@ -123,6 +124,8 @@ public class RegisterDamageActivity extends AppCompatActivity {
             if (errors.containsKey("reason")) tvErrorReason.setText(errors.get("reason"));
             tvErrorQuantity.setVisibility(errors.containsKey("quantity") ? View.VISIBLE : View.GONE);
             if (errors.containsKey("quantity")) tvErrorQuantity.setText(errors.get("quantity"));
+            tvErrorNote.setVisibility(errors.containsKey("note") ? View.VISIBLE : View.GONE);
+            if (errors.containsKey("note")) tvErrorNote.setText(errors.get("note"));
         });
         viewModel.getPhotoUri().observe(this, uri -> {
             if (uri != null) {
