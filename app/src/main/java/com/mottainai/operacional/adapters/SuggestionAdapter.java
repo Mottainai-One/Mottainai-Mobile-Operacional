@@ -48,6 +48,10 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.Su
         notifyDataSetChanged();
     }
 
+    public List<Suggestion> getSuggestions() {
+        return suggestionList;
+    }
+
     @NonNull
     @Override
     public SuggestionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

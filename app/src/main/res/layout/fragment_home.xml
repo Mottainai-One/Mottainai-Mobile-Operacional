@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -21,21 +22,22 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingHorizontal="@dimen/screen_padding"
-            android:paddingTop="16dp"
+            android:paddingTop="@dimen/screen_padding_vertical"
             android:paddingBottom="24dp">
 
             <TextView
+                android:id="@+id/tv_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="QUARTA-FEIRA, 21 AGO"
                 android:textSize="12sp"
-                android:textColor="@color/text_grey"/>
+                android:textColor="@color/text_grey"
+                tools:text="QUARTA-FEIRA, 21 AGO" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/tv_welcome"
-                android:text="Olá, Ana 👋"
+                android:text="Olá 👋"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 android:textColor="@color/black"
@@ -57,230 +59,394 @@
                 android:textSize="12sp"
                 android:textColor="@color/text_grey"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="24dp"
-                android:weightSum="3">
-
-                <LinearLayout
-                    android:id="@+id/card_vencendo"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@drawable/bg_summary_card"
-                    android:padding="16dp"
-                    android:orientation="vertical"
-                    android:layout_marginEnd="8dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:foreground="?attr/selectableItemBackground">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="12"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/accent_red"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Vencendo"
-                        android:textSize="10sp"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/card_estoque_baixo"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@drawable/bg_summary_card"
-                    android:padding="16dp"
-                    android:orientation="vertical"
-                    android:layout_marginEnd="8dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:foreground="?attr/selectableItemBackground">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="7"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/accent_orange"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Estoque baixo"
-                        android:textSize="10sp"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/card_promocoes"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@drawable/bg_summary_card"
-                    android:padding="16dp"
-                    android:orientation="vertical"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:foreground="?attr/selectableItemBackground">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="3"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/primary_green"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Promoções"
-                        android:textSize="10sp"/>
-                </LinearLayout>
-            </LinearLayout>
-
-            <TextView
+            <ProgressBar
+                android:id="@+id/progress_home"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Atenção necessária"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:layout_marginTop="32dp"/>
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="32dp"
+                android:visibility="gone" />
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cv_produtos_vencendo"
+            <LinearLayout
+                android:id="@+id/container_error"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:foreground="?attr/selectableItemBackground"
-                android:clickable="true"
-                android:focusable="true"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="0dp">
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="24dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/tv_error"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Erro ao carregar dados"
+                    android:textColor="@color/text_primary"
+                    android:textSize="16sp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_retry"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="Tentar novamente"
+                    android:textAllCaps="false" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/container_empty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="24dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/tv_empty"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Nenhum dado para exibir"
+                    android:textColor="@color/text_grey"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/content_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp"
-                    android:background="@color/white">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Produtos vencendo"
-                        android:textStyle="bold"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="12 itens vencem em até 48 horas"
-                        android:textSize="12sp"
-                        android:textColor="@color/text_grey"/>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
+                    android:orientation="horizontal"
+                    android:layout_marginTop="24dp"
+                    android:weightSum="3">
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cv_estoque_baixo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:foreground="?attr/selectableItemBackground"
-                android:clickable="true"
-                android:focusable="true"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="2dp">
+                    <LinearLayout
+                        android:id="@+id/card_criticos"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_summary_card"
+                        android:padding="16dp"
+                        android:orientation="vertical"
+                        android:layout_marginEnd="8dp">
+                        <TextView
+                            android:id="@+id/tv_count_critico"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/severity_critico"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Críticos"
+                            android:textSize="10sp"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/card_atencao"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_summary_card"
+                        android:padding="16dp"
+                        android:orientation="vertical"
+                        android:layout_marginEnd="8dp">
+                        <TextView
+                            android:id="@+id/tv_count_atencao"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/severity_atencao"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Atenção"
+                            android:textSize="10sp"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/card_monitor"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_summary_card"
+                        android:padding="16dp"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/tv_count_monitor"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/severity_monitor"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Monitorar"
+                            android:textSize="10sp"/>
+                    </LinearLayout>
+                </LinearLayout>
+
                 <LinearLayout
+                    android:id="@+id/layout_cards_gerente"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp"
-                    android:background="@color/white">
+                    android:layout_marginTop="16dp"
+                    android:visibility="gone">
                     <TextView
+                        android:id="@+id/tv_pending_approvals"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Estoque abaixo do mínimo"
-                        android:textStyle="bold"/>
+                        android:textSize="13sp"
+                        android:textColor="@color/text_primary"
+                        tools:text="Aprovações pendentes: 0"/>
                     <TextView
+                        android:id="@+id/tv_financial_risk"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="7 itens precisam de reposição"
-                        android:textSize="12sp"
-                        android:textColor="@color/text_grey"/>
+                        android:layout_marginTop="4dp"
+                        android:textSize="13sp"
+                        android:textColor="@color/text_grey"
+                        tools:text="Risco financeiro: —"/>
                 </LinearLayout>
-            </androidx.cardview.widget.CardView>
 
-            <Button
-                android:id="@+id/btn_abrir_camera"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="56dp"
-                android:text="Abrir câmera para atualizar estoque →"
-                android:textColor="@color/primary_green"
-                android:background="@android:color/transparent"
-                android:textAllCaps="false"
-                android:layout_marginTop="24dp"
-                android:gravity="start|center_vertical"
-                android:padding="0dp"/>
+                <LinearLayout
+                    android:id="@+id/layout_cards_dono"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="16dp"
+                    android:visibility="gone">
+                    <TextView
+                        android:id="@+id/tv_loss_risk"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="13sp"
+                        android:textColor="@color/text_grey"
+                        tools:text="Risco de perda: —"/>
+                    <TextView
+                        android:id="@+id/tv_value_saved"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:textSize="13sp"
+                        android:textColor="@color/text_grey"
+                        tools:text="Valor salvo: —"/>
+                    <TextView
+                        android:id="@+id/tv_active_stores"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:textSize="13sp"
+                        android:textColor="@color/text_primary"
+                        tools:text="Lojas ativas: 1"/>
+                </LinearLayout>
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Atalhos"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="28dp"/>
+
+                <LinearLayout
+                    android:id="@+id/layout_shortcuts"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="12dp"
+                    android:weightSum="3">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_shortcut_products"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="8dp"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:text="Produtos"
+                        android:textAllCaps="false"
+                        android:textSize="12sp"
+                        app:icon="@drawable/ic_products"
+                        app:iconGravity="textTop"
+                        app:iconPadding="4dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_shortcut_scan"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="8dp"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:text="Escanear"
+                        android:textAllCaps="false"
+                        android:textSize="12sp"
+                        app:icon="@drawable/ic_scanner"
+                        app:iconGravity="textTop"
+                        app:iconPadding="4dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_shortcut_damage"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:text="Avaria"
+                        android:textAllCaps="false"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/layout_shortcuts_gestao"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="8dp"
+                    android:weightSum="3"
+                    android:visibility="gone">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_shortcut_inventario"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="8dp"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:text="Inventário"
+                        android:textAllCaps="false"
+                        android:textSize="12sp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_shortcut_avarias"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="8dp"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:text="Avarias"
+                        android:textAllCaps="false"
+                        android:textSize="12sp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_shortcut_fornecedores"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:text="Fornecedores"
+                        android:textAllCaps="false"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/layout_shortcuts_dono"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="8dp"
+                    android:weightSum="3"
+                    android:visibility="gone">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_shortcut_equipe"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="8dp"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:text="Equipe"
+                        android:textAllCaps="false"
+                        android:textSize="12sp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_shortcut_config"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:text="Config"
+                        android:textAllCaps="false"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tv_alerts_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Alertas"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="28dp"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_alerts"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:nestedScrollingEnabled="false" />
+
+                <TextView
+                    android:id="@+id/tv_suggestions_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sugestões"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="20dp"
+                    android:visibility="gone"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_suggestions"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:nestedScrollingEnabled="false"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/btn_abrir_camera"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="56dp"
+                    android:text="Abrir câmera para atualizar estoque →"
+                    android:textColor="@color/primary_green"
+                    android:background="@android:color/transparent"
+                    android:textAllCaps="false"
+                    android:layout_marginTop="24dp"
+                    android:gravity="start|center_vertical"
+                    android:padding="0dp"/>
+
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
-
-    <!-- Referências mantidas para o HomeFragment operacional; ficam fora da composição visual. -->
-    <LinearLayout
-        android:id="@+id/legacy_home_bindings"
-        android:layout_width="1dp"
-        android:layout_height="1dp"
-        android:visibility="gone"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ProgressBar android:id="@+id/progress_home" android:layout_width="1dp" android:layout_height="1dp" />
-        <LinearLayout android:id="@+id/container_error" android:layout_width="1dp" android:layout_height="1dp">
-            <TextView android:id="@+id/tv_error" android:layout_width="1dp" android:layout_height="1dp" />
-            <Button android:id="@+id/btn_retry" android:layout_width="1dp" android:layout_height="1dp" />
-        </LinearLayout>
-        <LinearLayout android:id="@+id/container_empty" android:layout_width="1dp" android:layout_height="1dp">
-            <TextView android:id="@+id/tv_empty" android:layout_width="1dp" android:layout_height="1dp" />
-        </LinearLayout>
-
-        <LinearLayout android:id="@+id/layout_cards_estoque" android:layout_width="1dp" android:layout_height="1dp">
-            <TextView android:id="@+id/tv_expiring_count" android:layout_width="1dp" android:layout_height="1dp" />
-            <TextView android:id="@+id/tv_low_stock_count" android:layout_width="1dp" android:layout_height="1dp" />
-            <TextView android:id="@+id/tv_promotions_count" android:layout_width="1dp" android:layout_height="1dp" />
-        </LinearLayout>
-        <LinearLayout android:id="@+id/layout_cards_gerente" android:layout_width="1dp" android:layout_height="1dp">
-            <TextView android:id="@+id/tv_pending_approvals" android:layout_width="1dp" android:layout_height="1dp" />
-            <TextView android:id="@+id/tv_financial_risk" android:layout_width="1dp" android:layout_height="1dp" />
-        </LinearLayout>
-        <LinearLayout android:id="@+id/layout_cards_dono" android:layout_width="1dp" android:layout_height="1dp">
-            <TextView android:id="@+id/tv_loss_risk" android:layout_width="1dp" android:layout_height="1dp" />
-            <TextView android:id="@+id/tv_value_saved" android:layout_width="1dp" android:layout_height="1dp" />
-            <TextView android:id="@+id/tv_active_stores" android:layout_width="1dp" android:layout_height="1dp" />
-        </LinearLayout>
-
-        <LinearLayout android:id="@+id/layout_shortcuts" android:layout_width="1dp" android:layout_height="1dp">
-            <Button android:id="@+id/btn_shortcut_products" android:layout_width="1dp" android:layout_height="1dp" />
-            <Button android:id="@+id/btn_shortcut_scan" android:layout_width="1dp" android:layout_height="1dp" />
-            <Button android:id="@+id/btn_shortcut_damage" android:layout_width="1dp" android:layout_height="1dp" />
-        </LinearLayout>
-        <LinearLayout android:id="@+id/layout_shortcuts_gestao" android:layout_width="1dp" android:layout_height="1dp">
-            <Button android:id="@+id/btn_shortcut_inventario" android:layout_width="1dp" android:layout_height="1dp" />
-            <Button android:id="@+id/btn_shortcut_avarias" android:layout_width="1dp" android:layout_height="1dp" />
-            <Button android:id="@+id/btn_shortcut_fornecedores" android:layout_width="1dp" android:layout_height="1dp" />
-        </LinearLayout>
-        <LinearLayout android:id="@+id/layout_shortcuts_dono" android:layout_width="1dp" android:layout_height="1dp">
-            <Button android:id="@+id/btn_shortcut_equipe" android:layout_width="1dp" android:layout_height="1dp" />
-            <Button android:id="@+id/btn_shortcut_config" android:layout_width="1dp" android:layout_height="1dp" />
-        </LinearLayout>
-
-        <TextView android:id="@+id/tv_alerts_title" android:layout_width="1dp" android:layout_height="1dp" />
-        <TextView android:id="@+id/tv_suggestions_title" android:layout_width="1dp" android:layout_height="1dp" />
-        <androidx.recyclerview.widget.RecyclerView android:id="@+id/rv_alerts" android:layout_width="1dp" android:layout_height="1dp" />
-        <androidx.recyclerview.widget.RecyclerView android:id="@+id/rv_suggestions" android:layout_width="1dp" android:layout_height="1dp" />
-    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

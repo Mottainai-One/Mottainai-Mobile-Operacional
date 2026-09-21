@@ -26,6 +26,10 @@ public class AlertAdapter extends RecyclerView.Adapter<AlertAdapter.AlertViewHol
         notifyDataSetChanged();
     }
 
+    public List<Alert> getAlerts() {
+        return alertList;
+    }
+
     @NonNull
     @Override
     public AlertViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -39,9 +43,10 @@ public class AlertAdapter extends RecyclerView.Adapter<AlertAdapter.AlertViewHol
         Alert alert = alertList.get(position);
         holder.tvAlertTitle.setText(alert.getTitle());
         holder.tvAlertMessage.setText(alert.getMessage());
-        holder.tvAlertSeverity.setText(alert.getSeverity());
+        String severity = alert.getSeverity() != null ? alert.getSeverity() : "";
+        holder.tvAlertSeverity.setText(severity);
         int color = android.graphics.Color.BLACK;
-        switch (alert.getSeverity()) {
+        switch (severity) {
             case "CRITICO":
                 color = android.graphics.Color.RED;
                 break;

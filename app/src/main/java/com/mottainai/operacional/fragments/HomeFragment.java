@@ -21,10 +21,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.mottainai.operacional.R;
 import com.mottainai.operacional.adapters.AlertAdapter;
 import com.mottainai.operacional.adapters.SuggestionAdapter;
+import com.mottainai.operacional.models.Alert;
+import com.mottainai.operacional.models.Suggestion;
 import com.mottainai.operacional.utils.RoleHelper;
 import com.mottainai.operacional.utils.SessionManager;
 import com.mottainai.operacional.utils.Constants;
 import com.mottainai.operacional.viewmodels.HomeViewModel;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 public class HomeFragment extends Fragment {
 
@@ -33,6 +40,7 @@ public class HomeFragment extends Fragment {
     private NavController navController;
 
     // Views
+    private TextView tvDate;
     private ProgressBar progressBar;
     private View containerError;
     private TextView tvError;
@@ -42,12 +50,12 @@ public class HomeFragment extends Fragment {
     private TextView tvWelcome;
     private TextView tvStoreInfo;
     private View headerContainer;
+    private View contentContainer;
 
-    // Cards Estoquista
-    private View layoutCardsEstoque;
-    private TextView tvExpiringCount;
-    private TextView tvLowStockCount;
-    private TextView tvPromotionsCount;
+    // Resumo por severidade (todos os papéis)
+    private TextView tvCountCritico;
+    private TextView tvCountAtencao;
+    private TextView tvCountMonitor;
 
     // Cards Gerente
     private View layoutCardsGerente;
@@ -103,6 +111,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void initViews(View view) {
+        tvDate = view.findViewById(R.id.tv_date);
         progressBar = view.findViewById(R.id.progress_home);
         containerError = view.findViewById(R.id.container_error);
         tvError = view.findViewById(R.id.tv_error);
@@ -112,12 +121,12 @@ public class HomeFragment extends Fragment {
         tvWelcome = view.findViewById(R.id.tv_welcome);
         tvStoreInfo = view.findViewById(R.id.tv_store_info);
         headerContainer = view.findViewById(R.id.header_container);
+        contentContainer = view.findViewById(R.id.content_container);
 
-        // Cards Estoquista
-        layoutCardsEstoque = view.findViewById(R.id.layout_cards_estoque);
-        tvExpiringCount = view.findViewById(R.id.tv_expiring_count);
-        tvLowStockCount = view.findViewById(R.id.tv_low_stock_count);
-        tvPromotionsCount = view.findViewById(R.id.tv_promotions_count);
+        // Resumo por severidade
+        tvCountCritico = view.findViewById(R.id.tv_count_critico);
+        tvCountAtencao = view.findViewById(R.id.tv_count_atencao);
+        tvCountMonitor = view.findViewById(R.id.tv_count_monitor);
 
         // Cards Gerente
         layoutCardsGerente = view.findViewById(R.id.layout_cards_gerente);
@@ -173,6 +182,7 @@ public class HomeFragment extends Fragment {
         // Observa loading
         viewModel.getLoading().observe(getViewLifecycleOwner(), isLoading -> {
             progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+            contentContainer.setVisibility(isLoading ? View.GONE : View.VISIBLE);
             if (isLoading) {
                 hideError();
                 hideEmpty();
@@ -197,6 +207,7 @@ public class HomeFragment extends Fragment {
         viewModel.getAlerts().observe(getViewLifecycleOwner(), alerts -> {
             alertAdapter.setAlerts(alerts);
             updateEmptyState();
+            updateCounts(alerts, suggestionAdapter.getSuggestions());
             String role = sessionManager.getRole();
             if (role != null) {
                 applyRoleRules(role);
@@ -207,6 +218,7 @@ public class HomeFragment extends Fragment {
         viewModel.getSuggestions().observe(getViewLifecycleOwner(), suggestions -> {
             suggestionAdapter.setSuggestions(suggestions);
             updateEmptyState();
+            updateCounts(alertAdapter.getAlerts(), suggestions);
         });
 
         // Carrega dados
@@ -222,6 +234,9 @@ public class HomeFragment extends Fragment {
         String name = sessionManager.getName();
         String storeId = sessionManager.getStoreId();
         String role = sessionManager.getRole();
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, d MMM", new Locale("pt", "BR"));
+        tvDate.setText(dateFormat.format(new Date()).toUpperCase(new Locale("pt", "BR")));
 
         if (name != null && !name.isEmpty()) {
             tvWelcome.setText("Olá, " + name + " 👋");
@@ -246,16 +261,6 @@ public class HomeFragment extends Fragment {
         View cameraButton = requireView().findViewById(R.id.btn_abrir_camera);
         if (cameraButton != null) {
             cameraButton.setOnClickListener(v -> navigateTo(R.id.scannerFragment));
-        }
-
-        View expiringCard = requireView().findViewById(R.id.cv_produtos_vencendo);
-        if (expiringCard != null) {
-            expiringCard.setOnClickListener(v -> navigateTo(R.id.productsListFragment));
-        }
-
-        View lowStockCard = requireView().findViewById(R.id.cv_estoque_baixo);
-        if (lowStockCard != null) {
-            lowStockCard.setOnClickListener(v -> navigateTo(R.id.productsListFragment));
         }
 
         // Estoquista
@@ -316,21 +321,20 @@ public class HomeFragment extends Fragment {
     }
 
     private void applyRoleRules(String role) {
-        boolean isEstoque = Constants.ROLE_ESTOQUISTA.equals(role);
         boolean isGerente = Constants.ROLE_GERENTE.equals(role);
         boolean isDono = Constants.ROLE_DONO.equals(role);
 
         // Esconde todos primeiro
-        layoutCardsEstoque.setVisibility(View.GONE);
         layoutCardsGerente.setVisibility(View.GONE);
         layoutCardsDono.setVisibility(View.GONE);
         layoutShortcuts.setVisibility(View.GONE);
         layoutShortcutsGestao.setVisibility(View.GONE);
         layoutShortcutsDono.setVisibility(View.GONE);
+        tvSuggestionsTitle.setVisibility(View.GONE);
+        rvSuggestions.setVisibility(View.GONE);
 
-        if (isEstoque) {
-            // Estoquista: cards de estoque + atalhos básicos
-            layoutCardsEstoque.setVisibility(View.VISIBLE);
+        if (Constants.ROLE_ESTOQUISTA.equals(role)) {
+            // Estoquista: atalhos básicos
             layoutShortcuts.setVisibility(View.VISIBLE);
             tvAlertsTitle.setText("Alertas de estoque");
         } else if (isGerente) {
@@ -346,22 +350,38 @@ public class HomeFragment extends Fragment {
             layoutCardsDono.setVisibility(View.VISIBLE);
             layoutShortcuts.setVisibility(View.VISIBLE);
             layoutShortcutsGestao.setVisibility(View.VISIBLE);
-            layoutShortcutsDono.setVisibility(View.GONE); // Equipe não existe
             tvAlertsTitle.setText("Visão geral");
             tvSuggestionsTitle.setVisibility(View.VISIBLE);
             rvSuggestions.setVisibility(View.VISIBLE);
         }
-
-        // Atualiza contadores dos cards (placeholder - integração com backend futuramente)
-        updateCardCounts(role);
     }
 
-    private void updateCardCounts(String role) {
-        // Por enquanto usa valores zerados - quando houver API de resumo, preencher aqui
-        tvExpiringCount.setText("Vencendo em breve: 0");
-        tvLowStockCount.setText("Estoque baixo: 0");
-        tvPromotionsCount.setText("Promoções ativas: 0");
-        tvPendingApprovals.setText("Aprovações pendentes: 0");
+    /** Deriva os números do resumo a partir dos alertas/sugestões já carregados (nada é inventado). */
+    private void updateCounts(List<Alert> alerts, List<Suggestion> suggestions) {
+        int critico = 0, atencao = 0, monitor = 0;
+        if (alerts != null) {
+            for (Alert alert : alerts) {
+                String severity = alert.getSeverity();
+                if ("CRITICO".equals(severity)) critico++;
+                else if ("ATENCAO".equals(severity)) atencao++;
+                else if ("MONITOR".equals(severity)) monitor++;
+            }
+        }
+        tvCountCritico.setText(String.valueOf(critico));
+        tvCountAtencao.setText(String.valueOf(atencao));
+        tvCountMonitor.setText(String.valueOf(monitor));
+
+        int pending = 0;
+        if (suggestions != null) {
+            for (Suggestion suggestion : suggestions) {
+                String status = suggestion.getStatus();
+                if (status == null || status.trim().isEmpty() || "pending".equalsIgnoreCase(status.trim())) {
+                    pending++;
+                }
+            }
+        }
+        tvPendingApprovals.setText("Aprovações pendentes: " + pending);
+        // Sem fonte de dados ainda para estas métricas: mantidas honestas com "—" em vez de valor inventado.
         tvFinancialRisk.setText("Risco financeiro: —");
         tvLossRisk.setText("Risco de perda: —");
         tvValueSaved.setText("Valor salvo: —");
@@ -387,19 +407,15 @@ public class HomeFragment extends Fragment {
         } else {
             hideEmpty();
             rvAlerts.setVisibility(View.VISIBLE);
-            if (hasSuggestions || Constants.ROLE_GERENTE.equals(role) || Constants.ROLE_DONO.equals(role)) {
-                rvSuggestions.setVisibility(View.VISIBLE);
-            }
         }
     }
 
     private void showError(String message) {
         progressBar.setVisibility(View.GONE);
+        contentContainer.setVisibility(View.GONE);
         containerError.setVisibility(View.VISIBLE);
         tvError.setText(message);
         containerEmpty.setVisibility(View.GONE);
-        rvAlerts.setVisibility(View.GONE);
-        rvSuggestions.setVisibility(View.GONE);
     }
 
     private void hideError() {
@@ -410,7 +426,6 @@ public class HomeFragment extends Fragment {
         progressBar.setVisibility(View.GONE);
         containerEmpty.setVisibility(View.VISIBLE);
         rvAlerts.setVisibility(View.GONE);
-        rvSuggestions.setVisibility(View.GONE);
     }
 
     private void hideEmpty() {
@@ -419,11 +434,10 @@ public class HomeFragment extends Fragment {
 
     private void showSessionError() {
         progressBar.setVisibility(View.GONE);
+        contentContainer.setVisibility(View.GONE);
         containerError.setVisibility(View.VISIBLE);
         tvError.setText("Sessão incompleta. Faça login novamente.");
         containerEmpty.setVisibility(View.GONE);
-        rvAlerts.setVisibility(View.GONE);
-        rvSuggestions.setVisibility(View.GONE);
         headerContainer.setVisibility(View.GONE);
     }
 }
