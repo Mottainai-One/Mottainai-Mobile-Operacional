@@ -13,27 +13,39 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.tabs.TabLayout;
 
 import com.mottainai.operacional.R;
+import com.mottainai.operacional.utils.NotificationPreferences;
 import com.mottainai.operacional.utils.RoleHelper;
 import com.mottainai.operacional.utils.SessionManager;
 
 /**
  * Configurações da operação: exclusiva do Dono (RoleHelper.isOwner).
  *
- * As regras/notificações ainda não têm onde persistir (não existe endpoint de
- * configuração da loja), então "Salvar" só avisa que está pendente — mesma
- * honestidade que o resto do app usa para funcionalidades que aguardam
- * backend. A aba Equipe mostra um convite e um membro de exemplo, já que
- * também não existe endpoint de listagem de equipe (UserRepository só busca o
- * próprio perfil por uid).
+ * Não existe endpoint de configuração da loja ainda, então as preferências
+ * são salvas localmente no dispositivo (NotificationPreferences) em vez de
+ * simuladas — os 3 switches de push realmente controlam o que
+ * NotificationRouter exibe. As regras de promoção/aprovação automáticas
+ * dependem de lógica de IA que ainda roda só no backend, então ficam
+ * salvas localmente mas sem efeito local até existir o endpoint. A aba
+ * Equipe mostra um convite e um membro de exemplo, já que também não existe
+ * endpoint de listagem de equipe (UserRepository só busca o próprio perfil
+ * por uid).
  */
 public class ConfigFragment extends Fragment {
 
     private View contentRules;
     private View contentNotifications;
     private View contentTeam;
+    private NotificationPreferences notificationPreferences;
+
+    private SwitchMaterial switchAutoPromo;
+    private SwitchMaterial switchRequireApproval;
+    private SwitchMaterial switchPushAlerts;
+    private SwitchMaterial switchPushSuggestions;
+    private SwitchMaterial switchPushInventory;
 
     @Nullable
     @Override
@@ -59,6 +71,7 @@ public class ConfigFragment extends Fragment {
         contentRules = view.findViewById(R.id.tab_content_rules);
         contentNotifications = view.findViewById(R.id.tab_content_notifications);
         contentTeam = view.findViewById(R.id.tab_content_team);
+        showTab(0);
 
         TabLayout tabLayout = view.findViewById(R.id.tab_config);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -67,11 +80,29 @@ public class ConfigFragment extends Fragment {
             @Override public void onTabReselected(TabLayout.Tab tab) {}
         });
 
-        view.findViewById(R.id.btn_save_config).setOnClickListener(v ->
-                Toast.makeText(requireContext(), "Configurações salvas — pendente (aguarda endpoint)", Toast.LENGTH_SHORT).show());
+        notificationPreferences = new NotificationPreferences(requireContext());
+        switchAutoPromo = view.findViewById(R.id.switch_auto_promo);
+        switchRequireApproval = view.findViewById(R.id.switch_require_approval);
+        switchPushAlerts = view.findViewById(R.id.switch_push_alerts);
+        switchPushSuggestions = view.findViewById(R.id.switch_push_suggestions);
+        switchPushInventory = view.findViewById(R.id.switch_push_inventory);
 
-        view.findViewById(R.id.btn_save_notifications).setOnClickListener(v ->
-                Toast.makeText(requireContext(), "Notificações salvas — pendente (aguarda endpoint)", Toast.LENGTH_SHORT).show());
+        switchAutoPromo.setChecked(notificationPreferences.isAutoPromoEnabled());
+        switchRequireApproval.setChecked(notificationPreferences.isApprovalRequired());
+        switchPushAlerts.setChecked(notificationPreferences.isPushAlertsEnabled());
+        switchPushSuggestions.setChecked(notificationPreferences.isPushSuggestionsEnabled());
+        switchPushInventory.setChecked(notificationPreferences.isPushInventoryEnabled());
+
+        view.findViewById(R.id.btn_save_config).setOnClickListener(v -> {
+            notificationPreferences.saveRulesPrefs(switchAutoPromo.isChecked(), switchRequireApproval.isChecked());
+            Toast.makeText(requireContext(), "Regras salvas neste dispositivo", Toast.LENGTH_SHORT).show();
+        });
+
+        view.findViewById(R.id.btn_save_notifications).setOnClickListener(v -> {
+            notificationPreferences.saveNotificationPrefs(switchPushAlerts.isChecked(),
+                    switchPushSuggestions.isChecked(), switchPushInventory.isChecked());
+            Toast.makeText(requireContext(), "Notificações salvas neste dispositivo", Toast.LENGTH_SHORT).show();
+        });
 
         view.findViewById(R.id.btn_invite_member).setOnClickListener(v ->
                 navController.navigate(R.id.action_configFragment_to_inviteMemberFragment));

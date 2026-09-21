@@ -15,6 +15,7 @@ import com.google.firebase.messaging.RemoteMessage;
 import com.mottainai.operacional.MainActivity;
 import com.mottainai.operacional.R;
 import com.mottainai.operacional.repository.NotificationRepository;
+import com.mottainai.operacional.utils.NotificationPreferences;
 import com.mottainai.operacional.utils.RoleHelper;
 import com.mottainai.operacional.utils.SessionManager;
 
@@ -68,11 +69,13 @@ public final class NotificationRouter {
     private final Context context;
     private final SessionManager sessionManager;
     private final NotificationRepository notificationRepository;
+    private final NotificationPreferences notificationPreferences;
 
     public NotificationRouter(Context context) {
         this.context = context.getApplicationContext();
         sessionManager = new SessionManager(this.context);
         notificationRepository = new NotificationRepository(this.context);
+        notificationPreferences = new NotificationPreferences(this.context);
     }
 
     public void show(RemoteMessage message) {
@@ -84,6 +87,7 @@ public final class NotificationRouter {
         Map<String, String> data = message.getData();
         Destination destination = Destination.fromPayload(data);
         if (!isDestinationAllowed(destination, sessionManager.getRole())) return;
+        if (!isDestinationEnabledByUser(destination)) return;
 
         String notificationId = firstNonBlank(data.get("notificationId"), message.getMessageId());
         if (!notificationRepository.registerNotificationIfNew(notificationId)) return;
@@ -140,6 +144,19 @@ public final class NotificationRouter {
         }
         if (destination == Destination.INVENTORY) {
             return RoleHelper.canRegisterProduct(role);
+        }
+        return true;
+    }
+
+    private boolean isDestinationEnabledByUser(Destination destination) {
+        if (destination == Destination.ALERT) {
+            return notificationPreferences.isPushAlertsEnabled();
+        }
+        if (destination == Destination.SUGGESTION) {
+            return notificationPreferences.isPushSuggestionsEnabled();
+        }
+        if (destination == Destination.INVENTORY) {
+            return notificationPreferences.isPushInventoryEnabled();
         }
         return true;
     }
