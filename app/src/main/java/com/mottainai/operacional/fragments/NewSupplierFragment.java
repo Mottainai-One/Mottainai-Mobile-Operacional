@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.mottainai.operacional.R;
 import com.mottainai.operacional.utils.SessionManager;
+import com.mottainai.operacional.utils.ValidationUtils;
 import com.mottainai.operacional.viewmodels.SupplierViewModel;
 
 /**
@@ -47,15 +48,20 @@ public class NewSupplierFragment extends Fragment {
         view.findViewById(R.id.btn_save_supplier).setOnClickListener(v -> {
             String name = etName.getText().toString().trim();
             String cnpj = etCnpj.getText().toString().replaceAll("\\D", "");
+            String contact = etContact.getText().toString().trim();
             if (name.isEmpty()) {
                 etName.setError("Informe o nome da empresa");
                 return;
             }
-            if (cnpj.length() != 14) {
-                etCnpj.setError("Informe os 14 dígitos do CNPJ");
+            if (!ValidationUtils.isValidCnpj(cnpj)) {
+                etCnpj.setError("CNPJ inválido");
                 return;
             }
-            viewModel.create(session.getStoreId(), name, cnpj, etContact.getText().toString().trim());
+            if (!contact.isEmpty() && !ValidationUtils.isValidEmail(contact)) {
+                etContact.setError("Informe um e-mail válido");
+                return;
+            }
+            viewModel.create(session.getStoreId(), name, cnpj, contact);
         });
     }
 }

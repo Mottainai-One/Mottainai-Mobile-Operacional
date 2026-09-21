@@ -4,8 +4,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -51,15 +54,35 @@ public class RegisterDamageFragment extends Fragment {
         NavController navController = Navigation.findNavController(view);
         view.findViewById(R.id.btn_back).setOnClickListener(v -> navController.popBackStack());
 
+        Spinner spinnerReason = view.findViewById(R.id.spinner_damage_reason);
+        String[] reasons = new String[]{"Selecione um motivo", "Vencido", "Embalagem danificada", "Quebra", "Contaminação", "Outro"};
+        ArrayAdapter<String> reasonAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, reasons);
+        reasonAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerReason.setAdapter(reasonAdapter);
+
         String finalProductName = productName;
         EditText etQuantity = view.findViewById(R.id.et_damage_quantity);
         view.findViewById(R.id.btn_submit_damage).setOnClickListener(v -> {
-            String quantity = etQuantity.getText().toString().trim();
-            if (quantity.isEmpty()) quantity = "1";
+            if (spinnerReason.getSelectedItemPosition() == 0) {
+                Toast.makeText(requireContext(), "Selecione o motivo da avaria", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            int quantity;
+            try {
+                quantity = Integer.parseInt(etQuantity.getText().toString().trim());
+            } catch (NumberFormatException e) {
+                etQuantity.setError("Quantidade inválida");
+                return;
+            }
+            if (quantity <= 0) {
+                etQuantity.setError("Deve ser maior que zero");
+                return;
+            }
 
             Bundle successArgs = new Bundle();
             successArgs.putString("product_name", finalProductName);
-            successArgs.putString("damage_quantity", quantity);
+            successArgs.putString("damage_quantity", String.valueOf(quantity));
             navController.navigate(R.id.action_registerDamageFragment_to_damageSuccessFragment, successArgs);
         });
     }

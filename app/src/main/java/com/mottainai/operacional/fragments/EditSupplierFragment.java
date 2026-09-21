@@ -17,6 +17,7 @@ import com.mottainai.operacional.R;
 import com.mottainai.operacional.repository.MockSupplierRepository;
 import com.mottainai.operacional.models.Supplier;
 import com.mottainai.operacional.utils.SessionManager;
+import com.mottainai.operacional.utils.ValidationUtils;
 import com.mottainai.operacional.viewmodels.SupplierViewModel;
 
 /**
@@ -56,9 +57,11 @@ public class EditSupplierFragment extends Fragment {
         view.findViewById(R.id.btn_save_supplier).setOnClickListener(v -> {
             String name = etName.getText().toString().trim();
             String cnpj = etCnpj.getText().toString().replaceAll("\\D", "");
+            String contact = etContact.getText().toString().trim();
             if (name.isEmpty()) { etName.setError("Informe o nome da empresa"); return; }
-            if (cnpj.length() != 14) { etCnpj.setError("Informe os 14 dígitos do CNPJ"); return; }
-            viewModel.update(session.getStoreId(), supplierId, name, cnpj, etContact.getText().toString().trim());
+            if (!ValidationUtils.isValidCnpj(cnpj)) { etCnpj.setError("CNPJ inválido"); return; }
+            if (!contact.isEmpty() && !ValidationUtils.isValidEmail(contact)) { etContact.setError("Informe um e-mail válido"); return; }
+            viewModel.update(session.getStoreId(), supplierId, name, cnpj, contact);
         });
 
         view.findViewById(R.id.btn_remove_supplier).setOnClickListener(v -> new MaterialAlertDialogBuilder(requireContext())
