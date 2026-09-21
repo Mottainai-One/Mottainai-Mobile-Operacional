@@ -35,8 +35,11 @@ public class RoleHelper {
     /**
      * Mantém a UI compatível tanto com os perfis em português salvos no Firebase
      * quanto com os aliases em inglês emitidos por integrações anteriores.
+     * Público porque telas que comparam o role diretamente (em vez de usar os
+     * helpers acima) precisam do mesmo tratamento de maiúsculas/minúsculas que
+     * o token do Firebase realmente usa (ex.: "GERENTE", não "gerente").
      */
-    private static String normalize(String role) {
+    public static String normalize(String role) {
         if (role == null) return "";
 
         switch (role.trim().toUpperCase(Locale.ROOT)) {

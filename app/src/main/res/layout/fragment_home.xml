@@ -335,7 +335,7 @@
                         android:insetBottom="0dp"
                         android:text="Inventário"
                         android:textAllCaps="false"
-                        android:textSize="12sp" />
+                        android:textSize="10sp" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_shortcut_avarias"
@@ -348,7 +348,7 @@
                         android:insetBottom="0dp"
                         android:text="Avarias"
                         android:textAllCaps="false"
-                        android:textSize="12sp" />
+                        android:textSize="10sp" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_shortcut_fornecedores"
@@ -360,7 +360,8 @@
                         android:insetBottom="0dp"
                         android:text="Fornecedores"
                         android:textAllCaps="false"
-                        android:textSize="12sp" />
+                        android:paddingHorizontal="2dp"
+                        android:textSize="10sp" />
                 </LinearLayout>
 
                 <LinearLayout

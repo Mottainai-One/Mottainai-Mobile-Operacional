@@ -318,7 +318,11 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    private void applyRoleRules(String role) {
+    private void applyRoleRules(String rawRole) {
+        // O token do Firebase traz o papel em maiúsculas (ex.: "GERENTE"), não
+        // no formato exato das constantes; sem normalizar aqui, esta tela
+        // inteira de regras por papel silenciosamente não ativava nada.
+        String role = RoleHelper.normalize(rawRole);
         boolean isGerente = Constants.ROLE_GERENTE.equals(role);
         boolean isDono = Constants.ROLE_DONO.equals(role);
 
@@ -389,7 +393,7 @@ public class HomeFragment extends Fragment {
     private void updateEmptyState() {
         boolean hasAlerts = alertAdapter.getItemCount() > 0;
         boolean hasSuggestions = suggestionAdapter.getItemCount() > 0;
-        String role = sessionManager.getRole();
+        String role = RoleHelper.normalize(sessionManager.getRole());
 
         if (!hasAlerts && !hasSuggestions) {
             String emptyMsg;
