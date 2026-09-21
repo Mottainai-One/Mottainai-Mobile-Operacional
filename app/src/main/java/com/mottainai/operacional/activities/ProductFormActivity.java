@@ -53,10 +53,10 @@ public class ProductFormActivity extends AppCompatActivity {
 
         String productId = getIntent().getStringExtra("product_id");
         if (productId != null && !productId.isEmpty()) {
-            setTitle("Editar produto");
+            if (getSupportActionBar() != null) getSupportActionBar().setTitle("Editar produto");
             viewModel.initEdit(productId);
         } else {
-            setTitle("Novo produto");
+            if (getSupportActionBar() != null) getSupportActionBar().setTitle("Novo produto");
             viewModel.initNew();
             // Se veio barcode do scanner
             String barcode = getIntent().getStringExtra("barcode");
