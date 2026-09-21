@@ -4,8 +4,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.pm.ActivityInfo;
-import android.hardware.camera2.CameraCharacteristics;
 import android.media.ToneGenerator;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,7 +24,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageAnalysis;
-import androidx.camera.core.ImageProxy;
 import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
@@ -67,7 +64,9 @@ public class ScannerFragment extends Fragment {
     private com.google.android.material.button.MaterialButton btnRequestPermission;
     private com.google.android.material.button.MaterialButton btnOpenSettings;
     private View containerCameraUnavailable;
+    private TextView tvCameraUnavailableMessage;
     private com.google.android.material.button.MaterialButton btnRetryCamera;
+    private boolean cameraUnavailable = false;
     private androidx.cardview.widget.CardView cardResult;
     private TextView tvResultTitle;
     private TextView tvProductName;
@@ -140,6 +139,7 @@ public class ScannerFragment extends Fragment {
         btnOpenSettings = view.findViewById(R.id.btnOpenSettings);
 
         containerCameraUnavailable = view.findViewById(R.id.containerCameraUnavailable);
+        tvCameraUnavailableMessage = view.findViewById(R.id.tvCameraUnavailableMessage);
         btnRetryCamera = view.findViewById(R.id.btnRetryCamera);
 
         cardResult = view.findViewById(R.id.cardResult);
@@ -256,7 +256,8 @@ public class ScannerFragment extends Fragment {
                     .setTitle("Permissão de Câmera")
                     .setMessage("O scanner precisa acessar a câmera para ler códigos de barras.")
                     .setPositiveButton("Permitir", (dialog, which) -> permissionLauncher.launch(Manifest.permission.CAMERA))
-                    .setNegativeButton("Cancelar", null)
+                    .setNegativeButton("Cancelar", (dialog, which) -> showPermissionDenied(false))
+                    .setOnCancelListener(dialog -> showPermissionDenied(false))
                     .show();
         } else {
             permissionLauncher.launch(Manifest.permission.CAMERA);
@@ -274,6 +275,7 @@ public class ScannerFragment extends Fragment {
     }
 
     private void startCamera() {
+        cameraUnavailable = false;
         if (cameraStarting || cameraBound) {
             Log.d("ScannerFragment", "startCamera skipped starting=" + cameraStarting + " bound=" + cameraBound);
             return;
@@ -353,7 +355,11 @@ public class ScannerFragment extends Fragment {
 
         BarcodeAnalyzer analyzer = new BarcodeAnalyzer(requireContext(), barcode -> {
             if (isAdded() && getView() != null) {
-                requireActivity().runOnUiThread(() -> viewModel.onBarcodeScanned(barcode));
+                requireActivity().runOnUiThread(() -> {
+                    if (isAcceptingScans(viewModel.getUiState().getValue())) {
+                        viewModel.onBarcodeScanned(barcode);
+                    }
+                });
             }
         });
 
@@ -388,13 +394,35 @@ public class ScannerFragment extends Fragment {
         showCameraUnavailable("Câmera indisponível");
     }
 
+    /**
+     * Falha de câmera/hardware é diferente de erro de consulta ao produto:
+     * usa sua própria tela (com um retry que de fato tenta a câmera de novo)
+     * em vez do card genérico de erro, que só reseta o estado do ViewModel
+     * sem reiniciar a câmera.
+     */
     private void showCameraUnavailable(String reason) {
         Log.e("ScannerFragment", "showCameraUnavailable: " + reason);
-        viewModel.getUiState().postValue(new ScannerUiState.Error(reason, false, 0));
+        cameraUnavailable = true;
+        hideAllStates();
+        containerCameraUnavailable.setVisibility(View.VISIBLE);
+        tvCameraUnavailableMessage.setText(reason);
+    }
+
+    /**
+     * Enquanto um resultado (encontrado/não encontrado/erro) está na tela, o
+     * analyzer continua decodificando frames; sem este filtro o mesmo código
+     * é relido repetidamente após a janela de debounce do ViewModel expirar,
+     * disparando nova busca, beep e vibração enquanto o card ainda está visível.
+     */
+    private boolean isAcceptingScans(ScannerUiState state) {
+        return state == null
+                || state instanceof ScannerUiState.Idle
+                || state instanceof ScannerUiState.CameraReady
+                || state instanceof ScannerUiState.Scanning;
     }
 
     private void renderState(ScannerUiState state) {
-        if (!isAdded() || getView() == null) {
+        if (!isAdded() || getView() == null || cameraUnavailable) {
             return;
         }
         hideAllStates();
@@ -408,6 +436,9 @@ public class ScannerFragment extends Fragment {
             tvPermissionMessage.setText(pd.permanentlyDenied
                     ? "Permissão de câmera negada permanentemente. Habilite nas configurações."
                     : "Permissão de câmera necessária para escanear códigos de barras.");
+            // Quando negada permanentemente, o launcher de permissão não mostra
+            // mais nenhum diálogo ao ser acionado; só "Abrir Configurações" funciona.
+            btnRequestPermission.setVisibility(pd.permanentlyDenied ? View.GONE : View.VISIBLE);
             containerPermissionDenied.setVisibility(View.VISIBLE);
         } else if (state instanceof ScannerUiState.CameraReady) {
             showScanningUI();
@@ -530,10 +561,6 @@ public class ScannerFragment extends Fragment {
                 .navigate(R.id.action_scannerFragment_to_registerDamageFragment, args);
     }
 
-    private void openNewProductForm() {
-        openNewProductForm(null);
-    }
-
     private void openNewProductForm(String barcode) {
         boolean canCreate = com.mottainai.operacional.utils.RoleHelper.canRegisterProduct(sessionManager.getRole());
         if (!canCreate) {
@@ -546,12 +573,6 @@ public class ScannerFragment extends Fragment {
             intent.putExtra("barcode", barcode);
         }
         startActivity(intent);
-    }
-
-    private void openDamageRegistration() {
-        Toast.makeText(requireContext(),
-                "Selecione um produto antes de registrar a avaria",
-                Toast.LENGTH_SHORT).show();
     }
 
     private void toggleTorch() {
@@ -611,6 +632,10 @@ public class ScannerFragment extends Fragment {
 
         cameraStarting = false;
         cameraBound = false;
+        // Um novo Camera é vinculado sem a lanterna ligada; sem isto o botão
+        // ficava com o ícone "aceso" sem a lanterna realmente estar ligada.
+        torchEnabled = false;
+        if (btnToggleTorch != null) btnToggleTorch.setImageResource(R.drawable.ic_flash_off);
     }
 
     private void showManualEntryDialog() {

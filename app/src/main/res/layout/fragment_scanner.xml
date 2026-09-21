@@ -94,6 +94,7 @@
         android:padding="24dp">
 
         <TextView
+            android:id="@+id/tvCameraUnavailableMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Câmera indisponível neste dispositivo"
@@ -349,6 +350,7 @@
     <!-- Torch Button -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnToggleTorch"
+        style="@style/Widget.App.Fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="24dp"
@@ -361,6 +363,7 @@
     <!-- Close Button -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnCloseScanner"
+        style="@style/Widget.App.Fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="24dp"
@@ -372,6 +375,7 @@
     <!-- Manual Entry Button -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnManualEntry"
+        style="@style/Widget.App.Fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="24dp"
