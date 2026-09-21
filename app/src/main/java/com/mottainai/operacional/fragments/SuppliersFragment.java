@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -51,6 +52,9 @@ public class SuppliersFragment extends Fragment {
         viewModel.getSuppliers().observe(getViewLifecycleOwner(), suppliers -> {
             adapter.submit(suppliers);
             view.findViewById(R.id.tv_suppliers_empty).setVisibility(suppliers == null || suppliers.isEmpty() ? View.VISIBLE : View.GONE);
+        });
+        viewModel.getError().observe(getViewLifecycleOwner(), message -> {
+            if (message != null) Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
         });
         View add = view.findViewById(R.id.btn_new_supplier);
         add.setVisibility(canManage ? View.VISIBLE : View.GONE);

@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -15,6 +14,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
+
+import com.google.android.material.button.MaterialButton;
 
 import com.mottainai.operacional.R;
 import com.mottainai.operacional.activities.LoginActivity;
@@ -35,7 +36,7 @@ public class ProfileFragment extends Fragment {
     private TextView tvRole;
     private TextView tvStore;
     private TextView tvStatus;
-    private Button btnLogout;
+    private MaterialButton btnLogout;
     private boolean redirectingToLogin;
 
     @Nullable
@@ -80,6 +81,11 @@ public class ProfileFragment extends Fragment {
         progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
         profileContent.setVisibility(state.getStatus() == ProfileUiState.Status.CONTENT
                 ? View.VISIBLE : View.GONE);
+        // btn_logout vive fora do ScrollView de propósito (ver fragment_profile.xml) para
+        // continuar acessível mesmo quando profile_content está escondido.
+        boolean canLogout = state.getStatus() == ProfileUiState.Status.CONTENT
+                || state.getStatus() == ProfileUiState.Status.INCOMPLETE_SESSION;
+        btnLogout.setVisibility(canLogout ? View.VISIBLE : View.GONE);
 
         if (state.getStatus() == ProfileUiState.Status.CONTENT) {
             tvAvatarInitials.setText(state.getInitials());

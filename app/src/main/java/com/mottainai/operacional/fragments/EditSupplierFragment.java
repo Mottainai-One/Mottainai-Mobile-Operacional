@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -50,6 +51,9 @@ public class EditSupplierFragment extends Fragment {
             @Override public void onError(String message) { Navigation.findNavController(view).popBackStack(); }
         });
         viewModel.getCompleted().observe(getViewLifecycleOwner(), completed -> { if (Boolean.TRUE.equals(completed)) Navigation.findNavController(view).popBackStack(); });
+        viewModel.getError().observe(getViewLifecycleOwner(), message -> {
+            if (message != null) Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+        });
 
         view.findViewById(R.id.btn_back).setOnClickListener(v ->
                 Navigation.findNavController(view).popBackStack());

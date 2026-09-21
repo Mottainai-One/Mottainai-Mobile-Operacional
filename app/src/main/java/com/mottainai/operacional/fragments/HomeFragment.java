@@ -49,7 +49,6 @@ public class HomeFragment extends Fragment {
     private TextView tvEmpty;
     private TextView tvWelcome;
     private TextView tvStoreInfo;
-    private View headerContainer;
     private View contentContainer;
 
     // Resumo por severidade (todos os papéis)
@@ -120,7 +119,6 @@ public class HomeFragment extends Fragment {
         tvEmpty = view.findViewById(R.id.tv_empty);
         tvWelcome = view.findViewById(R.id.tv_welcome);
         tvStoreInfo = view.findViewById(R.id.tv_store_info);
-        headerContainer = view.findViewById(R.id.header_container);
         contentContainer = view.findViewById(R.id.content_container);
 
         // Resumo por severidade
@@ -438,6 +436,5 @@ public class HomeFragment extends Fragment {
         containerError.setVisibility(View.VISIBLE);
         tvError.setText("Sessão incompleta. Faça login novamente.");
         containerEmpty.setVisibility(View.GONE);
-        headerContainer.setVisibility(View.GONE);
     }
 }

@@ -404,8 +404,20 @@ public class ScannerFragment extends Fragment {
         Log.e("ScannerFragment", "showCameraUnavailable: " + reason);
         cameraUnavailable = true;
         hideAllStates();
+        hideCameraGuidance();
         containerCameraUnavailable.setVisibility(View.VISIBLE);
         tvCameraUnavailableMessage.setText(reason);
+    }
+
+    /**
+     * A mira de escaneamento e a dica "posicione o código..." só fazem sentido
+     * com a câmera realmente ativa; sem isto elas ficavam visíveis atrás das
+     * telas de permissão negada e câmera indisponível.
+     */
+    private void hideCameraGuidance() {
+        previewView.setVisibility(View.GONE);
+        viewfinderOverlay.setVisibility(View.GONE);
+        tvScanHint.setVisibility(View.GONE);
     }
 
     /**
@@ -439,6 +451,7 @@ public class ScannerFragment extends Fragment {
             // Quando negada permanentemente, o launcher de permissão não mostra
             // mais nenhum diálogo ao ser acionado; só "Abrir Configurações" funciona.
             btnRequestPermission.setVisibility(pd.permanentlyDenied ? View.GONE : View.VISIBLE);
+            hideCameraGuidance();
             containerPermissionDenied.setVisibility(View.VISIBLE);
         } else if (state instanceof ScannerUiState.CameraReady) {
             showScanningUI();
