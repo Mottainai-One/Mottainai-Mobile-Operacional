@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorBackground">
+    android:background="@color/background_beige">
 
     <ScrollView
         android:layout_width="0dp"
@@ -50,7 +50,7 @@
                         android:layout_width="64dp"
                         android:layout_height="64dp"
                         android:src="@drawable/ic_check_circle"
-                        app:tint="@color/colorPrimary" />
+                        app:tint="@color/primary_green" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -120,7 +120,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_weight="1"
-            android:backgroundTint="@color/colorPrimary"
+            android:backgroundTint="@color/primary_green"
             android:minHeight="56dp"
             android:text="Voltar para câmera"
             android:textAllCaps="false"

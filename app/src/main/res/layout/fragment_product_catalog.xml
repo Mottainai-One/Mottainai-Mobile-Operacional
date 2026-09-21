@@ -17,7 +17,7 @@
         android:focusableInTouchMode="true"
         android:iconifiedByDefault="false"
         android:minHeight="48dp"
-        android:queryHint="Buscar produto ou SKU"
+        android:queryHint="@string/search_hint"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -60,7 +60,7 @@
             android:id="@+id/tv_error"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Erro ao carregar produtos"
+            android:text="@string/error_load_products"
             android:textColor="@color/text_primary"
             android:textSize="16sp" />
 
@@ -69,7 +69,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:text="Tentar novamente"
+            android:backgroundTint="@color/primary_green"
+            android:textColor="@color/colorOnPrimary"
+            android:text="@string/retry"
             android:textAllCaps="false" />
     </LinearLayout>
 

@@ -23,15 +23,21 @@
                 android:textColor="@color/text_secondary"
                 android:textSize="12sp" />
 
-            <androidx.recyclerview.widget.RecyclerView android:id="@+id/rv_suppliers" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:clipToPadding="false" />
-            <TextView android:id="@+id/tv_suppliers_empty" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center_horizontal" android:layout_marginTop="32dp" android:text="Nenhum fornecedor cadastrado" android:textColor="@color/text_secondary" android:visibility="gone" />
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <androidx.recyclerview.widget.RecyclerView android:id="@+id/rv_suppliers" android:layout_width="match_parent" android:layout_height="match_parent" android:clipToPadding="false" />
+                <TextView android:id="@+id/tv_suppliers_empty" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:text="Nenhum fornecedor cadastrado" android:textColor="@color/text_secondary" android:visibility="gone" />
+            </FrameLayout>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_new_supplier"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:backgroundTint="@color/colorPrimary"
+                android:backgroundTint="@color/primary_green"
                 android:text="+ Novo fornecedor"
                 android:textAllCaps="false"
                 android:textColor="@color/colorOnPrimary"

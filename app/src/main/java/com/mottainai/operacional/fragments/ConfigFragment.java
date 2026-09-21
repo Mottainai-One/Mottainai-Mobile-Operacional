@@ -61,6 +61,8 @@ public class ConfigFragment extends Fragment {
         NavController navController = Navigation.findNavController(view);
         SessionManager sessionManager = new SessionManager(requireContext());
 
+        view.findViewById(R.id.btn_back).setOnClickListener(v -> navController.popBackStack());
+
         boolean isOwner = RoleHelper.isOwner(sessionManager.getRole());
         view.findViewById(R.id.scroll_config).setVisibility(isOwner ? View.VISIBLE : View.GONE);
         view.findViewById(R.id.tv_not_owner).setVisibility(isOwner ? View.GONE : View.VISIBLE);
