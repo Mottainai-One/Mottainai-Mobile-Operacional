@@ -51,11 +51,18 @@
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_config"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="52dp"
             android:layout_marginTop="16dp"
+            android:background="@drawable/bg_toggle_group"
+            app:tabGravity="fill"
+            app:tabIndicator="@drawable/bg_product_section_indicator"
             app:tabIndicatorColor="@color/primary_green"
-            app:tabSelectedTextColor="@color/primary_green"
-            app:tabTextColor="@color/text_secondary">
+            app:tabIndicatorFullWidth="true"
+            app:tabIndicatorGravity="stretch"
+            app:tabMode="fixed"
+            app:tabRippleColor="@android:color/transparent"
+            app:tabSelectedTextColor="@color/white"
+            app:tabTextColor="@color/text_grey">
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
