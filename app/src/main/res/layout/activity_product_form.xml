@@ -1,28 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:background="@color/background_beige"
+    android:orientation="vertical">
 
-    <com.google.android.material.appbar.AppBarLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/Theme.MottainaiOperacional.AppBarOverlay">
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/screen_padding"
+        android:paddingTop="@dimen/screen_padding_vertical">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/Theme.MottainaiOperacional.PopupOverlay" />
-    </com.google.android.material.appbar.AppBarLayout>
+        <ImageButton
+            android:id="@+id/btn_back"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="-8dp"
+            android:layout_marginEnd="4dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/back"
+            android:rotation="180"
+            android:src="@drawable/ic_chevron_right"
+            app:tint="@color/text_primary" />
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_primary"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+    </LinearLayout>
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/background_beige"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:fillViewport="true"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:padding="@dimen/screen_padding">
 
         <androidx.cardview.widget.CardView
@@ -65,6 +83,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
                 android:orientation="horizontal"
                 android:gravity="center_vertical">
 
@@ -72,7 +91,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint="Código de barras / SKU *">
+                    android:hint="Código de barras / SKU *"
+                style="@style/Widget.App.TextInputLayout">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/et_barcode"
@@ -85,8 +105,13 @@
                     android:id="@+id/btn_search_off"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:backgroundTint="@color/primary_green"
                     android:text="Buscar"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorOnPrimary"
+                    app:cornerRadius="12dp"
                     app:icon="@drawable/ic_search"
+                    app:iconTint="@color/colorOnPrimary"
                     android:layout_marginStart="8dp" />
             </LinearLayout>
             <TextView android:id="@+id/tv_error_barcode" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/severity_critico" android:textSize="12sp" android:visibility="gone" />
@@ -96,7 +121,9 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Nome *">
+                android:layout_marginTop="16dp"
+                android:hint="Nome *"
+                style="@style/Widget.App.TextInputLayout">
                 <com.google.android.material.textfield.TextInputEditText android:id="@+id/et_name" android:layout_width="match_parent" android:layout_height="wrap_content" />
             </com.google.android.material.textfield.TextInputLayout>
             <TextView android:id="@+id/tv_error_name" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/severity_critico" android:textSize="12sp" android:visibility="gone" />
@@ -104,14 +131,18 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Descrição">
+                android:layout_marginTop="16dp"
+                android:hint="Descrição"
+                style="@style/Widget.App.TextInputLayout">
                 <com.google.android.material.textfield.TextInputEditText android:id="@+id/et_description" android:layout_width="match_parent" android:layout_height="wrap_content" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Categoria ID *">
+                android:layout_marginTop="16dp"
+                android:hint="Categoria ID *"
+                style="@style/Widget.App.TextInputLayout">
                 <com.google.android.material.textfield.TextInputEditText android:id="@+id/et_category" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="number" />
             </com.google.android.material.textfield.TextInputLayout>
             <TextView android:id="@+id/tv_error_category" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/severity_critico" android:textSize="12sp" android:visibility="gone" />
@@ -119,45 +150,47 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Marca">
+                android:layout_marginTop="16dp"
+                android:hint="Marca"
+                style="@style/Widget.App.TextInputLayout">
                 <com.google.android.material.textfield.TextInputEditText android:id="@+id/et_brand" android:layout_width="match_parent" android:layout_height="wrap_content" />
             </com.google.android.material.textfield.TextInputLayout>
             <TextView android:id="@+id/tv_error_brand" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/severity_critico" android:textSize="12sp" android:visibility="gone" />
 
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
-                <com.google.android.material.textfield.TextInputLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:hint="Unidade *">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:orientation="horizontal">
+                <com.google.android.material.textfield.TextInputLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:hint="Unidade *" style="@style/Widget.App.TextInputLayout">
                     <com.google.android.material.textfield.TextInputEditText android:id="@+id/et_unit" android:layout_width="match_parent" android:layout_height="wrap_content" />
                 </com.google.android.material.textfield.TextInputLayout>
-                <com.google.android.material.textfield.TextInputLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="8dp" android:hint="Peso *">
+                <com.google.android.material.textfield.TextInputLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="8dp" android:hint="Peso *" style="@style/Widget.App.TextInputLayout">
                     <com.google.android.material.textfield.TextInputEditText android:id="@+id/et_weight" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="numberDecimal" />
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
             <TextView android:id="@+id/tv_error_unit" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/severity_critico" android:textSize="12sp" android:visibility="gone" />
             <TextView android:id="@+id/tv_error_weight" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/severity_critico" android:textSize="12sp" android:visibility="gone" />
 
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Inventário (pendente backend /api/v1/inventory)" android:textStyle="bold" android:layout_marginTop="16dp" android:textColor="@color/text_primary" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Inventário (pendente backend /api/v1/inventory)" android:textStyle="bold" android:layout_marginTop="20dp" android:textColor="@color/text_primary" />
 
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
-                <com.google.android.material.textfield.TextInputLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:hint="Quantidade">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:orientation="horizontal">
+                <com.google.android.material.textfield.TextInputLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:hint="Quantidade" style="@style/Widget.App.TextInputLayout">
                     <com.google.android.material.textfield.TextInputEditText android:id="@+id/et_quantity" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="number" />
                 </com.google.android.material.textfield.TextInputLayout>
-                <com.google.android.material.textfield.TextInputLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="8dp" android:hint="Qtd mínima">
+                <com.google.android.material.textfield.TextInputLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="8dp" android:hint="Qtd mínima" style="@style/Widget.App.TextInputLayout">
                     <com.google.android.material.textfield.TextInputEditText android:id="@+id/et_min_quantity" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="number" />
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
             <TextView android:id="@+id/tv_error_quantity" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/severity_critico" android:textSize="12sp" android:visibility="gone" />
             <TextView android:id="@+id/tv_error_min_quantity" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/severity_critico" android:textSize="12sp" android:visibility="gone" />
 
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
-                <com.google.android.material.textfield.TextInputLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:hint="Lote">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:orientation="horizontal">
+                <com.google.android.material.textfield.TextInputLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:hint="Lote" style="@style/Widget.App.TextInputLayout">
                     <com.google.android.material.textfield.TextInputEditText android:id="@+id/et_batch" android:layout_width="match_parent" android:layout_height="wrap_content" />
                 </com.google.android.material.textfield.TextInputLayout>
-                <com.google.android.material.textfield.TextInputLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="8dp" android:hint="Fornecedor">
+                <com.google.android.material.textfield.TextInputLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="8dp" android:hint="Fornecedor" style="@style/Widget.App.TextInputLayout">
                     <com.google.android.material.textfield.TextInputEditText android:id="@+id/et_supplier" android:layout_width="match_parent" android:layout_height="wrap_content" />
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
 
-            <com.google.android.material.textfield.TextInputLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Validade (yyyy-MM-dd)">
+            <com.google.android.material.textfield.TextInputLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:hint="Validade (yyyy-MM-dd)" style="@style/Widget.App.TextInputLayout">
                 <com.google.android.material.textfield.TextInputEditText android:id="@+id/et_expiry" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="date" android:drawableEnd="@drawable/ic_calendar" />
             </com.google.android.material.textfield.TextInputLayout>
             <TextView android:id="@+id/tv_error_expiry" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/severity_critico" android:textSize="12sp" android:visibility="gone" />
@@ -168,7 +201,7 @@
                 android:layout_height="wrap_content"
                 android:text="Disponível para venda"
                 android:checked="true"
-                android:layout_marginTop="8dp" />
+                android:layout_marginTop="16dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_save"
@@ -193,4 +226,4 @@
         </LinearLayout>
         </androidx.cardview.widget.CardView>
     </androidx.core.widget.NestedScrollView>
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</LinearLayout>

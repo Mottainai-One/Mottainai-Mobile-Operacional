@@ -91,7 +91,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:hint="Selecione um motivo">
+                android:hint="Selecione um motivo"
+                style="@style/Widget.App.TextInputLayout.Dropdown">
                 <com.google.android.material.textfield.MaterialAutoCompleteTextView
                     android:id="@+id/actv_damage_reason"
                     android:layout_width="match_parent"

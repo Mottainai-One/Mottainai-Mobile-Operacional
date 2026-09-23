@@ -10,7 +10,6 @@ import android.widget.Toast;
 
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.lifecycle.ViewModelProvider;
@@ -61,9 +60,7 @@ public class RegisterDamageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_damage);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        findViewById(R.id.btn_back).setOnClickListener(v -> finish());
 
         String productId = getIntent().getStringExtra("product_id");
         if (productId == null) { finish(); return; }
@@ -169,5 +166,4 @@ public class RegisterDamageActivity extends AppCompatActivity {
         });
     }
 
-    @Override public boolean onSupportNavigateUp() { finish(); return true; }
 }

@@ -25,4 +25,32 @@
         <item name="elevation">6dp</item>
         <item name="borderWidth">0dp</item>
     </style>
+
+    <style name="Widget.App.TextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/text_input_stroke_color</item>
+        <item name="boxStrokeWidth">2dp</item>
+        <item name="boxStrokeWidthFocused">2dp</item>
+        <item name="boxCornerRadiusTopStart">@dimen/card_corner_radius</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/card_corner_radius</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/card_corner_radius</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/card_corner_radius</item>
+        <item name="hintTextColor">@color/primary_green</item>
+        <item name="android:textColorHint">@color/primary_green</item>
+    </style>
+
+    <!-- Campos de seleção (dropdown) precisam do estilo ExposedDropdownMenu:
+         com o estilo de campo de texto comum o Material não aplica o padding
+         interno correto e o rótulo vaza para fora da borda. -->
+    <style name="Widget.App.TextInputLayout.Dropdown" parent="Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+        <item name="boxStrokeColor">@color/text_input_stroke_color</item>
+        <item name="boxStrokeWidth">2dp</item>
+        <item name="boxStrokeWidthFocused">2dp</item>
+        <item name="boxCornerRadiusTopStart">@dimen/card_corner_radius</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/card_corner_radius</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/card_corner_radius</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/card_corner_radius</item>
+        <item name="hintTextColor">@color/primary_green</item>
+        <item name="android:textColorHint">@color/primary_green</item>
+        <item name="endIconTint">@color/primary_green</item>
+    </style>
 </resources>

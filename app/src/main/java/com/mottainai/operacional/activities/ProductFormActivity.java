@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.textfield.TextInputEditText;
@@ -43,9 +42,8 @@ public class ProductFormActivity extends AppCompatActivity {
             return;
         }
         setContentView(R.layout.activity_product_form);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        findViewById(R.id.btn_back).setOnClickListener(v -> finish());
+        android.widget.TextView tvTitle = findViewById(R.id.tv_title);
 
         offRepo = new OpenFoodFactsRepository();
         initViews();
@@ -53,10 +51,10 @@ public class ProductFormActivity extends AppCompatActivity {
 
         String productId = getIntent().getStringExtra("product_id");
         if (productId != null && !productId.isEmpty()) {
-            if (getSupportActionBar() != null) getSupportActionBar().setTitle("Editar produto");
+            tvTitle.setText("Editar produto");
             viewModel.initEdit(productId);
         } else {
-            if (getSupportActionBar() != null) getSupportActionBar().setTitle("Novo produto");
+            tvTitle.setText("Novo produto");
             viewModel.initNew();
             // Se veio barcode do scanner
             String barcode = getIntent().getStringExtra("barcode");
@@ -252,6 +250,4 @@ public class ProductFormActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public boolean onSupportNavigateUp() { finish(); return true; }
 }
