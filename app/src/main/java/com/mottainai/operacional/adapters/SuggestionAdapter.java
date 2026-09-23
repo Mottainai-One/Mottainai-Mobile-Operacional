@@ -7,10 +7,12 @@ import android.widget.TextView;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.mottainai.operacional.models.Suggestion;
 import com.mottainai.operacional.R;
+import com.mottainai.operacional.utils.Constants;
 
 import java.util.List;
 
@@ -48,6 +50,10 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.Su
         notifyDataSetChanged();
     }
 
+    public List<Suggestion> getSuggestions() {
+        return suggestionList;
+    }
+
     @NonNull
     @Override
     public SuggestionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -61,7 +67,17 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.Su
         Suggestion suggestion = suggestionList.get(position);
         holder.tvSuggestionTitle.setText(suggestion.getTitle());
         holder.tvSuggestionDescription.setText(suggestion.getDescription());
-        holder.tvSuggestionStatus.setText(statusLabel(holder.itemView.getContext(), suggestion.getStatus()));
+        Context context = holder.itemView.getContext();
+        String status = suggestion.getStatus();
+        holder.tvSuggestionStatus.setText(statusLabel(context, status));
+        if (Constants.SUGESTAO_APROVADA.equalsIgnoreCase(status)) {
+            holder.tvSuggestionStatus.setBackgroundResource(R.drawable.bg_suggestion_badge_approved);
+            holder.tvSuggestionStatus.setTextColor(ContextCompat.getColor(context, R.color.primary_green));
+        } else {
+            // Pendente e recusada usam o mesmo selo de atenção/erro já existente.
+            holder.tvSuggestionStatus.setBackgroundResource(R.drawable.bg_suggestion_badge);
+            holder.tvSuggestionStatus.setTextColor(ContextCompat.getColor(context, R.color.accent_red));
+        }
         holder.itemView.setOnClickListener(clickListener == null ? null
                 : v -> clickListener.onSuggestionClick(suggestion));
         holder.btnApprove.setOnClickListener(approveListener == null ? null
@@ -76,8 +92,14 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.Su
     }
 
     private static String statusLabel(Context context, String status) {
-        if (status == null || status.trim().isEmpty() || "pending".equalsIgnoreCase(status)) {
+        if (status == null || status.trim().isEmpty() || Constants.SUGESTAO_PENDENTE.equalsIgnoreCase(status)) {
             return context.getString(R.string.suggestion_pending);
+        }
+        if (Constants.SUGESTAO_APROVADA.equalsIgnoreCase(status)) {
+            return context.getString(R.string.suggestion_approved);
+        }
+        if (Constants.SUGESTAO_RECUSADA.equalsIgnoreCase(status)) {
+            return context.getString(R.string.suggestion_rejected);
         }
         return status.trim();
     }

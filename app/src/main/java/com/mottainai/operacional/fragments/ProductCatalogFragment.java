@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -80,6 +81,15 @@ public class ProductCatalogFragment extends Fragment {
         EditText searchInput = binding.svProductSearch
                 .findViewById(androidx.appcompat.R.id.search_src_text);
         searchInput.setOnClickListener(v -> focusSearchInput());
+        // A lupa padrão do SearchView vive dentro do texto de dica e desaparece
+        // junto com ela ao digitar, deixando o cursor colado na borda esquerda.
+        // Como ícone do próprio campo, ela fica fixa à esquerda do que se digita.
+        searchInput.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                R.drawable.ic_search, 0, 0, 0);
+        searchInput.setCompoundDrawablePadding(
+                getResources().getDimensionPixelSize(R.dimen.search_icon_padding));
+        searchInput.setHintTextColor(
+                ContextCompat.getColor(requireContext(), R.color.text_grey));
 
         binding.svProductSearch.setOnQueryTextListener(
                 new androidx.appcompat.widget.SearchView.OnQueryTextListener() {

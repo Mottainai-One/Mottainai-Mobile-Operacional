@@ -15,7 +15,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GetTokenResult;
 import com.mottainai.operacional.MainActivity;
 import com.mottainai.operacional.R;
+import com.mottainai.operacional.utils.AuthErrorTranslator;
 import com.mottainai.operacional.utils.SessionManager;
+import com.mottainai.operacional.utils.ValidationUtils;
 import com.mottainai.operacional.models.User;
 import com.mottainai.operacional.repository.AuthRepository;
 import com.mottainai.operacional.repository.NotificationRepository;
@@ -63,6 +65,10 @@ public class LoginActivity extends AppCompatActivity {
             Toast.makeText(this, "Preencha email e senha", Toast.LENGTH_SHORT).show();
             return;
         }
+        if (!ValidationUtils.isValidEmail(email)) {
+            Toast.makeText(this, "Informe um e-mail válido", Toast.LENGTH_SHORT).show();
+            return;
+        }
         btnLogin.setEnabled(false);
         btnLogin.setText("Entrando...");
 
@@ -77,7 +83,7 @@ public class LoginActivity extends AppCompatActivity {
                 btnLogin.setEnabled(true);
                 btnLogin.setText("Entrar");
                 Toast.makeText(LoginActivity.this,
-                        "Erro: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        AuthErrorTranslator.toUserMessage(e), Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -102,7 +108,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onError(Exception e) {
                 btnLogin.setEnabled(true);
                 btnLogin.setText("Entrar");
-                Toast.makeText(LoginActivity.this, "Erro: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(LoginActivity.this, AuthErrorTranslator.toUserMessage(e), Toast.LENGTH_LONG).show();
             }
 
             @Override
@@ -142,7 +148,7 @@ public class LoginActivity extends AppCompatActivity {
                         btnLogin.setEnabled(true);
                         btnLogin.setText("Entrar");
                         Toast.makeText(LoginActivity.this,
-                                "Erro ao renovar sessão: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                "Erro ao renovar sessão: " + AuthErrorTranslator.toUserMessage(e), Toast.LENGTH_LONG).show();
                     }
                 });
     }

@@ -17,7 +17,10 @@ public class SupplierAdapter extends RecyclerView.Adapter<SupplierAdapter.ViewHo
     private final Listener listener;
     public SupplierAdapter(Listener listener) { this.listener = listener; setHasStableIds(true); }
     public void submit(List<Supplier> values) { suppliers.clear(); if (values != null) suppliers.addAll(values); notifyDataSetChanged(); }
-    @Override public long getItemId(int position) { return suppliers.get(position).getId().hashCode(); }
+    @Override public long getItemId(int position) {
+        String id = suppliers.get(position).getId();
+        return id == null ? RecyclerView.NO_ID : id.hashCode();
+    }
     @Override public int getItemCount() { return suppliers.size(); }
     @NonNull @Override public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int type) { return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_supplier, parent, false)); }
     @Override public void onBindViewHolder(@NonNull ViewHolder holder, int position) { holder.bind(suppliers.get(position), listener); }

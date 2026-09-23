@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -13,6 +14,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.mottainai.operacional.R;
 
 /**
@@ -23,6 +25,8 @@ import com.mottainai.operacional.R;
  * do fluxo do scanner usa para simular o que a API real faria.
  */
 public class RegisterDamageFragment extends Fragment {
+
+    private static final String[] REASONS = {"Vencido", "Embalagem danificada", "Quebra", "Contaminação", "Outro"};
 
     @Nullable
     @Override
@@ -51,15 +55,42 @@ public class RegisterDamageFragment extends Fragment {
         NavController navController = Navigation.findNavController(view);
         view.findViewById(R.id.btn_back).setOnClickListener(v -> navController.popBackStack());
 
-        String finalProductName = productName;
+        MaterialAutoCompleteTextView actvReason = view.findViewById(R.id.actv_damage_reason);
+        ArrayAdapter<String> reasonAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, REASONS);
+        actvReason.setAdapter(reasonAdapter);
+        TextView tvErrorReason = view.findViewById(R.id.tv_error_reason);
+
         EditText etQuantity = view.findViewById(R.id.et_damage_quantity);
+        TextView tvErrorQuantity = view.findViewById(R.id.tv_error_quantity);
+
+        String finalProductName = productName;
         view.findViewById(R.id.btn_submit_damage).setOnClickListener(v -> {
-            String quantity = etQuantity.getText().toString().trim();
-            if (quantity.isEmpty()) quantity = "1";
+            String reason = actvReason.getText() != null ? actvReason.getText().toString().trim() : "";
+            if (reason.isEmpty()) {
+                tvErrorReason.setText("Selecione o motivo da avaria");
+                tvErrorReason.setVisibility(View.VISIBLE);
+                return;
+            }
+            tvErrorReason.setVisibility(View.GONE);
+
+            int quantity;
+            try {
+                quantity = Integer.parseInt(etQuantity.getText().toString().trim());
+            } catch (NumberFormatException e) {
+                tvErrorQuantity.setText("Quantidade inválida");
+                tvErrorQuantity.setVisibility(View.VISIBLE);
+                return;
+            }
+            if (quantity <= 0) {
+                tvErrorQuantity.setText("Deve ser maior que zero");
+                tvErrorQuantity.setVisibility(View.VISIBLE);
+                return;
+            }
+            tvErrorQuantity.setVisibility(View.GONE);
 
             Bundle successArgs = new Bundle();
             successArgs.putString("product_name", finalProductName);
-            successArgs.putString("damage_quantity", quantity);
+            successArgs.putString("damage_quantity", String.valueOf(quantity));
             navController.navigate(R.id.action_registerDamageFragment_to_damageSuccessFragment, successArgs);
         });
     }

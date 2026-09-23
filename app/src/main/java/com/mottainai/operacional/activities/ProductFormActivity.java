@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.textfield.TextInputEditText;
@@ -29,7 +28,7 @@ public class ProductFormActivity extends AppCompatActivity {
     private SwitchMaterial swActive;
     private View progress;
     private View tvFormError;
-    private android.widget.TextView tvErrorBarcode, tvErrorName, tvErrorCategory, tvErrorUnit, tvErrorWeight, tvErrorExpiry, tvOffInfo;
+    private android.widget.TextView tvErrorBarcode, tvErrorName, tvErrorCategory, tvErrorBrand, tvErrorUnit, tvErrorWeight, tvErrorQuantity, tvErrorMinQuantity, tvErrorExpiry, tvOffInfo;
     private com.google.android.material.button.MaterialButton btnSearchOff, btnSave;
 
     @Override
@@ -43,9 +42,8 @@ public class ProductFormActivity extends AppCompatActivity {
             return;
         }
         setContentView(R.layout.activity_product_form);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        findViewById(R.id.btn_back).setOnClickListener(v -> finish());
+        android.widget.TextView tvTitle = findViewById(R.id.tv_title);
 
         offRepo = new OpenFoodFactsRepository();
         initViews();
@@ -53,10 +51,10 @@ public class ProductFormActivity extends AppCompatActivity {
 
         String productId = getIntent().getStringExtra("product_id");
         if (productId != null && !productId.isEmpty()) {
-            setTitle("Editar produto");
+            tvTitle.setText("Editar produto");
             viewModel.initEdit(productId);
         } else {
-            setTitle("Novo produto");
+            tvTitle.setText("Novo produto");
             viewModel.initNew();
             // Se veio barcode do scanner
             String barcode = getIntent().getStringExtra("barcode");
@@ -83,8 +81,11 @@ public class ProductFormActivity extends AppCompatActivity {
         tvErrorBarcode = findViewById(R.id.tv_error_barcode);
         tvErrorName = findViewById(R.id.tv_error_name);
         tvErrorCategory = findViewById(R.id.tv_error_category);
+        tvErrorBrand = findViewById(R.id.tv_error_brand);
         tvErrorUnit = findViewById(R.id.tv_error_unit);
         tvErrorWeight = findViewById(R.id.tv_error_weight);
+        tvErrorQuantity = findViewById(R.id.tv_error_quantity);
+        tvErrorMinQuantity = findViewById(R.id.tv_error_min_quantity);
         tvErrorExpiry = findViewById(R.id.tv_error_expiry);
         tvOffInfo = findViewById(R.id.tv_off_info);
         btnSearchOff = findViewById(R.id.btn_search_off);
@@ -92,9 +93,6 @@ public class ProductFormActivity extends AppCompatActivity {
         findViewById(R.id.btn_cancel).setOnClickListener(v -> finish());
         btnSearchOff.setOnClickListener(v -> searchOff());
         btnSave.setOnClickListener(v -> onSave());
-        // Validade: categorias padrão se vazio
-        if (etCategory.getText() != null && TextUtils.isEmpty(etCategory.getText().toString())) etCategory.setText("1");
-        if (etUnit.getText() != null && TextUtils.isEmpty(etUnit.getText().toString())) etUnit.setText("UN");
     }
 
     private void setupViewModel() {
@@ -110,13 +108,17 @@ public class ProductFormActivity extends AppCompatActivity {
             showFieldError(tvErrorBarcode, errors.get("barcode"));
             showFieldError(tvErrorName, errors.get("name"));
             showFieldError(tvErrorCategory, errors.get("categoryId"));
+            showFieldError(tvErrorBrand, errors.get("brand"));
             showFieldError(tvErrorUnit, errors.get("unitMeasure"));
             showFieldError(tvErrorWeight, errors.get("weight"));
+            showFieldError(tvErrorQuantity, errors.get("quantity"));
+            showFieldError(tvErrorMinQuantity, errors.get("minQuantity"));
             showFieldError(tvErrorExpiry, errors.get("expiryDate"));
             if (!errors.isEmpty()) {
                 android.widget.TextView tv = findViewById(R.id.tv_form_error);
                 tv.setText("Corrija os campos destacados");
                 tv.setVisibility(View.VISIBLE);
+                focusFirstError(errors);
             } else {
                 findViewById(R.id.tv_form_error).setVisibility(View.GONE);
             }
@@ -195,14 +197,18 @@ public class ProductFormActivity extends AppCompatActivity {
         ProductForm f = collectForm();
         viewModel.updateForm(f);
         viewModel.submit();
-        // Foco no primeiro erro após validação
-        viewModel.getErrors().observe(this, errors -> {
-            if (errors.containsKey("barcode")) etBarcode.requestFocus();
-            else if (errors.containsKey("name")) etName.requestFocus();
-            else if (errors.containsKey("categoryId")) etCategory.requestFocus();
-            else if (errors.containsKey("unitMeasure")) etUnit.requestFocus();
-            else if (errors.containsKey("weight")) etWeight.requestFocus();
-        });
+    }
+
+    private void focusFirstError(java.util.Map<String, String> errors) {
+        if (errors.containsKey("barcode")) etBarcode.requestFocus();
+        else if (errors.containsKey("name")) etName.requestFocus();
+        else if (errors.containsKey("categoryId")) etCategory.requestFocus();
+        else if (errors.containsKey("brand")) etBrand.requestFocus();
+        else if (errors.containsKey("unitMeasure")) etUnit.requestFocus();
+        else if (errors.containsKey("weight")) etWeight.requestFocus();
+        else if (errors.containsKey("quantity")) etQuantity.requestFocus();
+        else if (errors.containsKey("minQuantity")) etMinQuantity.requestFocus();
+        else if (errors.containsKey("expiryDate")) etExpiry.requestFocus();
     }
 
     private void searchOff() {
@@ -244,6 +250,4 @@ public class ProductFormActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public boolean onSupportNavigateUp() { finish(); return true; }
 }

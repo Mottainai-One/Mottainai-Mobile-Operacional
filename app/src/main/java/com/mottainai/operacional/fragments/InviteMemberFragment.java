@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.mottainai.operacional.R;
+import com.mottainai.operacional.utils.ValidationUtils;
 
 /**
  * Convite de novo membro para a equipe. Sem endpoint de convite/equipe ainda
@@ -37,8 +38,13 @@ public class InviteMemberFragment extends Fragment {
 
         EditText etEmail = view.findViewById(R.id.et_invite_email);
         view.findViewById(R.id.btn_send_invite).setOnClickListener(v -> {
-            if (etEmail.getText().toString().trim().isEmpty()) {
+            String email = etEmail.getText().toString().trim();
+            if (email.isEmpty()) {
                 etEmail.setError("Informe um e-mail");
+                return;
+            }
+            if (!ValidationUtils.isValidEmail(email)) {
+                etEmail.setError("Informe um e-mail válido");
                 return;
             }
             Toast.makeText(requireContext(), "Convite — pendente (aguarda endpoint)", Toast.LENGTH_SHORT).show();

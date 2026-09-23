@@ -10,7 +10,6 @@ import android.widget.Toast;
 
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.lifecycle.ViewModelProvider;
@@ -28,7 +27,7 @@ public class RegisterDamageActivity extends AppCompatActivity {
     private DamageViewModel viewModel;
     private MaterialAutoCompleteTextView actvReason;
     private com.google.android.material.textfield.TextInputEditText etQuantity, etNote;
-    private android.widget.TextView tvProductName, tvProductSku, tvErrorReason, tvErrorQuantity, tvDamageError;
+    private android.widget.TextView tvProductName, tvProductSku, tvErrorReason, tvErrorQuantity, tvErrorNote, tvDamageError;
     private android.widget.ImageView ivPreview;
     private View progress;
     private com.google.android.material.button.MaterialButton btnSubmit;
@@ -61,9 +60,7 @@ public class RegisterDamageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_damage);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        findViewById(R.id.btn_back).setOnClickListener(v -> finish());
 
         String productId = getIntent().getStringExtra("product_id");
         if (productId == null) { finish(); return; }
@@ -83,6 +80,7 @@ public class RegisterDamageActivity extends AppCompatActivity {
         etNote = findViewById(R.id.et_note);
         tvErrorReason = findViewById(R.id.tv_error_reason);
         tvErrorQuantity = findViewById(R.id.tv_error_quantity);
+        tvErrorNote = findViewById(R.id.tv_error_note);
         tvDamageError = findViewById(R.id.tv_damage_error);
         ivPreview = findViewById(R.id.iv_preview);
         progress = findViewById(R.id.progress_damage);
@@ -123,6 +121,8 @@ public class RegisterDamageActivity extends AppCompatActivity {
             if (errors.containsKey("reason")) tvErrorReason.setText(errors.get("reason"));
             tvErrorQuantity.setVisibility(errors.containsKey("quantity") ? View.VISIBLE : View.GONE);
             if (errors.containsKey("quantity")) tvErrorQuantity.setText(errors.get("quantity"));
+            tvErrorNote.setVisibility(errors.containsKey("note") ? View.VISIBLE : View.GONE);
+            if (errors.containsKey("note")) tvErrorNote.setText(errors.get("note"));
         });
         viewModel.getPhotoUri().observe(this, uri -> {
             if (uri != null) {
@@ -166,5 +166,4 @@ public class RegisterDamageActivity extends AppCompatActivity {
         });
     }
 
-    @Override public boolean onSupportNavigateUp() { finish(); return true; }
 }

@@ -3,7 +3,7 @@
     <string name="product_image">Imagem do produto</string>
     <string name="navigate_to_detail">Ir para detalhes</string>
     <string name="add_product">Adicionar produto</string>
-    <string name="search_hint">Buscar por nome ou SKU</string>
+    <string name="search_hint">Busque no seu estoque</string>
     <string name="error_load_products">Erro ao carregar produtos</string>
     <string name="retry">Tentar novamente</string>
     <string name="empty_products">Nenhum produto encontrado</string>
@@ -70,14 +70,14 @@
     <string name="suggestion_approve">Aprovar</string>
     <string name="suggestion_reject">Recusar</string>
     <string name="suggestion_approve_publish">Aprovar e publicar</string>
-    <string name="suggestion_approval_title">Aprovar sugestões</string>
+    <string name="suggestion_approval_title">Aprovar sugestão</string>
     <string name="suggestion_pending">Sugestão pendente</string>
+    <string name="suggestion_approved">Aprovada</string>
+    <string name="suggestion_rejected">Recusada</string>
     <string name="suggestion_decision_pending">A decisão aguarda o endpoint de sugestões.</string>
     <string name="suggestion_fallback_title">Arroz Integral 1kg</string>
     <string name="suggestion_description_unavailable">Não há raciocínio disponível para esta sugestão.</string>
     <string name="suggestion_discount_label">Ajustar desconto</string>
-    <string name="suggestion_new_value_label">Novo valor sugerido</string>
-    <string name="suggestion_discount_pending">Aguardando dados da IA</string>
     <string name="suggestion_discount_hint">Ex.: 20</string>
     <string name="suggestion_reject_title">Recusar esta sugestão?</string>
     <string name="suggestion_reject_message">Ao recusar esta ação, há maior probabilidade de perda de produtos. Deseja continuar?</string>
