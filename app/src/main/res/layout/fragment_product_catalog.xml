@@ -18,6 +18,7 @@
         android:iconifiedByDefault="false"
         android:minHeight="48dp"
         android:queryHint="@string/search_hint"
+        app:searchHintIcon="@null"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

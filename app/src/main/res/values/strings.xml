@@ -3,7 +3,7 @@
     <string name="product_image">Imagem do produto</string>
     <string name="navigate_to_detail">Ir para detalhes</string>
     <string name="add_product">Adicionar produto</string>
-    <string name="search_hint">Buscar por nome ou SKU</string>
+    <string name="search_hint">Busque no seu estoque</string>
     <string name="error_load_products">Erro ao carregar produtos</string>
     <string name="retry">Tentar novamente</string>
     <string name="empty_products">Nenhum produto encontrado</string>
