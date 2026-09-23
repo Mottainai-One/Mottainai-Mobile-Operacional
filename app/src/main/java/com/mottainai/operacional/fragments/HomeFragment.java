@@ -67,19 +67,6 @@ public class HomeFragment extends Fragment {
     private TextView tvValueSaved;
     private TextView tvActiveStores;
 
-    // Atalhos
-    private View layoutShortcuts;
-    private View layoutShortcutsGestao;
-    private View layoutShortcutsDono;
-    private View btnShortcutProducts;
-    private View btnShortcutScan;
-    private View btnShortcutDamage;
-    private View btnShortcutInventario;
-    private View btnShortcutAvarias;
-    private View btnShortcutFornecedores;
-    private View btnShortcutEquipe;
-    private View btnShortcutConfig;
-
     // Listas
     private RecyclerView rvAlerts;
     private RecyclerView rvSuggestions;
@@ -105,7 +92,7 @@ public class HomeFragment extends Fragment {
         setupRecyclerViews();
         setupViewModel();
         setupRetryButton();
-        setupShortcuts();
+        setupCameraLink();
         setupHeader();
     }
 
@@ -136,19 +123,6 @@ public class HomeFragment extends Fragment {
         tvLossRisk = view.findViewById(R.id.tv_loss_risk);
         tvValueSaved = view.findViewById(R.id.tv_value_saved);
         tvActiveStores = view.findViewById(R.id.tv_active_stores);
-
-        // Atalhos
-        layoutShortcuts = view.findViewById(R.id.layout_shortcuts);
-        layoutShortcutsGestao = view.findViewById(R.id.layout_shortcuts_gestao);
-        layoutShortcutsDono = view.findViewById(R.id.layout_shortcuts_dono);
-        btnShortcutProducts = view.findViewById(R.id.btn_shortcut_products);
-        btnShortcutScan = view.findViewById(R.id.btn_shortcut_scan);
-        btnShortcutDamage = view.findViewById(R.id.btn_shortcut_damage);
-        btnShortcutInventario = view.findViewById(R.id.btn_shortcut_inventario);
-        btnShortcutAvarias = view.findViewById(R.id.btn_shortcut_avarias);
-        btnShortcutFornecedores = view.findViewById(R.id.btn_shortcut_fornecedores);
-        btnShortcutEquipe = view.findViewById(R.id.btn_shortcut_equipe);
-        btnShortcutConfig = view.findViewById(R.id.btn_shortcut_config);
 
         // Listas
         rvAlerts = view.findViewById(R.id.rv_alerts);
@@ -237,9 +211,9 @@ public class HomeFragment extends Fragment {
         tvDate.setText(dateFormat.format(new Date()).toUpperCase(new Locale("pt", "BR")));
 
         if (name != null && !name.isEmpty()) {
-            tvWelcome.setText("Olá, " + name + " 👋");
+            tvWelcome.setText("Olá, " + name);
         } else {
-            tvWelcome.setText("Olá 👋");
+            tvWelcome.setText("Olá");
         }
 
         String roleLabel = RoleHelper.roleToLabel(role);
@@ -255,44 +229,10 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void setupShortcuts() {
+    private void setupCameraLink() {
         View cameraButton = requireView().findViewById(R.id.btn_abrir_camera);
         if (cameraButton != null) {
             cameraButton.setOnClickListener(v -> navigateTo(R.id.scannerFragment));
-        }
-
-        // Estoquista
-        if (btnShortcutProducts != null) {
-            btnShortcutProducts.setOnClickListener(v -> navigateTo(R.id.productsListFragment));
-        }
-        if (btnShortcutScan != null) {
-            btnShortcutScan.setOnClickListener(v -> navigateTo(R.id.scannerFragment));
-        }
-        if (btnShortcutDamage != null) {
-            // A avaria exige um produto; o scanner é o ponto de entrada que
-            // identifica o produto antes de abrir o formulário de registro.
-            btnShortcutDamage.setOnClickListener(v -> navigateTo(R.id.scannerFragment));
-        }
-
-        // Gerente - atalhos de gestão
-        if (btnShortcutInventario != null) {
-            btnShortcutInventario.setOnClickListener(v -> navigateToProductsTab(1));
-        }
-        if (btnShortcutAvarias != null) {
-            // Não existe uma lista de avarias nesta versão; iniciar pelo
-            // scanner mantém o fluxo conectado ao formulário existente.
-            btnShortcutAvarias.setOnClickListener(v -> navigateTo(R.id.scannerFragment));
-        }
-        if (btnShortcutFornecedores != null) {
-            btnShortcutFornecedores.setOnClickListener(v -> navigateToProductsTab(2));
-        }
-
-        // Dono
-        if (btnShortcutEquipe != null) {
-            btnShortcutEquipe.setOnClickListener(v -> showComingSoon());
-        }
-        if (btnShortcutConfig != null) {
-            btnShortcutConfig.setOnClickListener(v -> navigateTo(R.id.configFragment));
         }
     }
 
@@ -303,16 +243,6 @@ public class HomeFragment extends Fragment {
     private void navigateTo(int destinationId) {
         try {
             navController.navigate(destinationId);
-        } catch (IllegalArgumentException e) {
-            showComingSoon();
-        }
-    }
-
-    private void navigateToProductsTab(int tabIndex) {
-        Bundle args = new Bundle();
-        args.putInt(ProductsListFragment.ARG_INITIAL_TAB, tabIndex);
-        try {
-            navController.navigate(R.id.productsListFragment, args);
         } catch (IllegalArgumentException e) {
             showComingSoon();
         }
@@ -329,29 +259,20 @@ public class HomeFragment extends Fragment {
         // Esconde todos primeiro
         layoutCardsGerente.setVisibility(View.GONE);
         layoutCardsDono.setVisibility(View.GONE);
-        layoutShortcuts.setVisibility(View.GONE);
-        layoutShortcutsGestao.setVisibility(View.GONE);
-        layoutShortcutsDono.setVisibility(View.GONE);
         tvSuggestionsTitle.setVisibility(View.GONE);
         rvSuggestions.setVisibility(View.GONE);
 
         if (Constants.ROLE_ESTOQUISTA.equals(role)) {
-            // Estoquista: atalhos básicos
-            layoutShortcuts.setVisibility(View.VISIBLE);
             tvAlertsTitle.setText("Alertas de estoque");
         } else if (isGerente) {
-            // Gerente: cards de gestão + atalhos básicos + atalhos de gestão
+            // Gerente: cards de gestão
             layoutCardsGerente.setVisibility(View.VISIBLE);
-            layoutShortcuts.setVisibility(View.VISIBLE); // Produtos, Escanear, Avaria
-            layoutShortcutsGestao.setVisibility(View.VISIBLE); // Inventário, Avarias e Fornecedores
             tvAlertsTitle.setText("Alertas");
             tvSuggestionsTitle.setVisibility(View.VISIBLE);
             rvSuggestions.setVisibility(View.VISIBLE);
         } else if (isDono) {
-            // Dono: cards financeiros + atalhos + config
+            // Dono: cards financeiros
             layoutCardsDono.setVisibility(View.VISIBLE);
-            layoutShortcuts.setVisibility(View.VISIBLE);
-            layoutShortcutsGestao.setVisibility(View.VISIBLE);
             tvAlertsTitle.setText("Visão geral");
             tvSuggestionsTitle.setVisibility(View.VISIBLE);
             rvSuggestions.setVisibility(View.VISIBLE);
