@@ -25,6 +25,11 @@
         <item name="colorOnErrorContainer">@color/colorOnErrorContainer</item>
         <item name="colorOutline">@color/colorOutline</item>
         <item name="colorOutlineVariant">@color/colorOutlineVariant</item>
+        <!-- Todas as telas usam fundo claro (bege/branco): os ícones da barra de
+             status precisam ser escuros para ficarem legíveis. O values-night
+             mantém o padrão claro para o tema escuro. -->
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">@color/background_beige</item>
     </style>
 
     <style name="Theme.MottainaiOperacional" parent="Base.Theme.MottainaiOperacional" />
