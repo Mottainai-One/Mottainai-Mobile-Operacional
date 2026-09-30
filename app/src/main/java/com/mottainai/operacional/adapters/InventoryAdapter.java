@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.textfield.TextInputLayout;
 import com.mottainai.operacional.R;
+import com.mottainai.operacional.databinding.ItemInventoryBinding;
 import com.mottainai.operacional.models.InventoryItem;
 
 import java.util.ArrayList;
@@ -51,9 +52,8 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.Inve
     @NonNull
     @Override
     public InventoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_inventory, parent, false);
-        return new InventoryViewHolder(view, listener);
+        return new InventoryViewHolder(ItemInventoryBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false), listener);
     }
 
     @Override
@@ -81,18 +81,18 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.Inve
         private final TextWatcher countWatcher;
         private final TextWatcher observationWatcher;
 
-        InventoryViewHolder(@NonNull View itemView, Listener listener) {
-            super(itemView);
+        InventoryViewHolder(@NonNull ItemInventoryBinding binding, Listener listener) {
+            super(binding.getRoot());
             this.listener = listener;
-            tvName = itemView.findViewById(R.id.tv_item_name);
-            tvSku = itemView.findViewById(R.id.tv_item_sku);
-            tvExpected = itemView.findViewById(R.id.tv_expected_quantity);
-            tvVariance = itemView.findViewById(R.id.tv_item_variance);
-            tvStatus = itemView.findViewById(R.id.tv_item_status);
-            tilCount = itemView.findViewById(R.id.til_physical_quantity);
-            tilObservation = itemView.findViewById(R.id.til_observation);
-            etCount = itemView.findViewById(R.id.et_physical_quantity);
-            etObservation = itemView.findViewById(R.id.et_observation);
+            tvName = binding.tvItemName;
+            tvSku = binding.tvItemSku;
+            tvExpected = binding.tvExpectedQuantity;
+            tvVariance = binding.tvItemVariance;
+            tvStatus = binding.tvItemStatus;
+            tilCount = binding.tilPhysicalQuantity;
+            tilObservation = binding.tilObservation;
+            etCount = binding.etPhysicalQuantity;
+            etObservation = binding.etObservation;
 
             countWatcher = new SimpleTextWatcher() {
                 @Override

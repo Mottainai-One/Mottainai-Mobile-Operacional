@@ -12,12 +12,15 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.mottainai.operacional.R;
+import com.mottainai.operacional.databinding.ActivityProductDetailBinding;
 import com.mottainai.operacional.models.Product;
 import com.mottainai.operacional.utils.RoleHelper;
 import com.mottainai.operacional.utils.SessionManager;
 import com.mottainai.operacional.viewmodels.ProductDetailViewModel;
 
 public class ProductDetailActivity extends AppCompatActivity {
+
+    private ActivityProductDetailBinding binding;
 
     private ProductDetailViewModel viewModel;
     private SessionManager sessionManager;
@@ -47,7 +50,8 @@ public class ProductDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_product_detail);
+        binding = ActivityProductDetailBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         sessionManager = new SessionManager(this);
         productId = getIntent().getStringExtra("product_id");
@@ -67,21 +71,21 @@ public class ProductDetailActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        findViewById(R.id.btn_back).setOnClickListener(v -> finish());
-        ivProductImage = findViewById(R.id.iv_product_image);
-        tvProductName = findViewById(R.id.tv_product_name);
-        tvProductSku = findViewById(R.id.tv_product_sku);
-        tvProductQuantity = findViewById(R.id.tv_product_quantity);
-        tvProductMinQuantity = findViewById(R.id.tv_product_min_quantity);
-        tvProductBatch = findViewById(R.id.tv_product_batch);
-        tvProductExpiry = findViewById(R.id.tv_product_expiry);
-        tvProductSupplier = findViewById(R.id.tv_product_supplier);
-        tvProductStore = findViewById(R.id.tv_product_store);
-        btnRegisterDamage = findViewById(R.id.btn_register_damage);
-        btnEditProduct = findViewById(R.id.btn_edit_product);
-        progressContainer = findViewById(R.id.progress_container);
-        errorContainer = findViewById(R.id.error_container);
-        tvError = findViewById(R.id.tv_error);
+        binding.btnBack.setOnClickListener(v -> finish());
+        ivProductImage = binding.ivProductImage;
+        tvProductName = binding.tvProductName;
+        tvProductSku = binding.tvProductSku;
+        tvProductQuantity = binding.tvProductQuantity;
+        tvProductMinQuantity = binding.tvProductMinQuantity;
+        tvProductBatch = binding.tvProductBatch;
+        tvProductExpiry = binding.tvProductExpiry;
+        tvProductSupplier = binding.tvProductSupplier;
+        tvProductStore = binding.tvProductStore;
+        btnRegisterDamage = binding.btnRegisterDamage;
+        btnEditProduct = binding.btnEditProduct;
+        progressContainer = binding.progressContainer;
+        errorContainer = binding.errorContainer;
+        tvError = binding.tvError;
     }
 
     private void setupViewModel() {

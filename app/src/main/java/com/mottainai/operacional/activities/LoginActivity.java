@@ -15,6 +15,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GetTokenResult;
 import com.mottainai.operacional.MainActivity;
 import com.mottainai.operacional.R;
+import com.mottainai.operacional.databinding.ActivityLoginBinding;
 import com.mottainai.operacional.utils.AuthErrorTranslator;
 import com.mottainai.operacional.utils.SessionManager;
 import com.mottainai.operacional.utils.ValidationUtils;
@@ -24,6 +25,8 @@ import com.mottainai.operacional.repository.NotificationRepository;
 import com.mottainai.operacional.repository.UserRepository;
 
 public class LoginActivity extends AppCompatActivity {
+
+    private ActivityLoginBinding binding;
 
     private EditText etEmail;
     private EditText etPassword;
@@ -35,11 +38,12 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        binding = ActivityLoginBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        etEmail = findViewById(R.id.et_email);
-        etPassword = findViewById(R.id.et_password);
-        btnLogin = findViewById(R.id.btn_login);
+        etEmail = binding.etEmail;
+        etPassword = binding.etPassword;
+        btnLogin = binding.btnLogin;
 
         session = new SessionManager(this);
         authRepository = new AuthRepository();

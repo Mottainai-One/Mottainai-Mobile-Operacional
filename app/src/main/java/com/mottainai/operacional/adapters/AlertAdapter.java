@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.mottainai.operacional.models.Alert;
 import com.mottainai.operacional.R;
+import com.mottainai.operacional.databinding.ItemAlertBinding;
 
 import java.util.List;
 
@@ -34,9 +35,8 @@ public class AlertAdapter extends RecyclerView.Adapter<AlertAdapter.AlertViewHol
     @NonNull
     @Override
     public AlertViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_alert, parent, false);
-        return new AlertViewHolder(view);
+        return new AlertViewHolder(ItemAlertBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false));
     }
 
     @Override
@@ -72,11 +72,11 @@ public class AlertAdapter extends RecyclerView.Adapter<AlertAdapter.AlertViewHol
         TextView tvAlertMessage;
         TextView tvAlertSeverity;
 
-        public AlertViewHolder(View view) {
-            super(view);
-            tvAlertTitle = view.findViewById(R.id.tv_alert_title);
-            tvAlertMessage = view.findViewById(R.id.tv_alert_message);
-            tvAlertSeverity = view.findViewById(R.id.tv_alert_severity);
+        public AlertViewHolder(ItemAlertBinding binding) {
+            super(binding.getRoot());
+            tvAlertTitle = binding.tvAlertTitle;
+            tvAlertMessage = binding.tvAlertMessage;
+            tvAlertSeverity = binding.tvAlertSeverity;
         }
     }
 }

@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.mottainai.operacional.R;
+import com.mottainai.operacional.databinding.FragmentApproveSuggestionBinding;
 
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -30,11 +31,14 @@ import java.util.Locale;
  */
 public class ApproveSuggestionFragment extends Fragment {
 
+    private FragmentApproveSuggestionBinding binding;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                               @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_approve_suggestion, container, false);
+        binding = FragmentApproveSuggestionBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
@@ -45,12 +49,12 @@ public class ApproveSuggestionFragment extends Fragment {
         String title = args != null ? args.getString("suggestion_title") : null;
         String description = args != null ? args.getString("suggestion_description") : null;
 
-        TextView tvTitle = view.findViewById(R.id.tv_suggestion_title);
-        TextView tvDescription = view.findViewById(R.id.tv_suggestion_description);
-        TextView tvStatus = view.findViewById(R.id.tv_suggestion_status);
-        TextView tvAiDiscount = view.findViewById(R.id.tv_ai_discount);
-        TextInputEditText inputDiscount = view.findViewById(R.id.input_discount_value);
-        TextView tvFinalPrice = view.findViewById(R.id.tv_suggested_final_price);
+        TextView tvTitle = binding.suggestionSummary.tvSuggestionTitle;
+        TextView tvDescription = binding.suggestionSummary.tvSuggestionDescription;
+        TextView tvStatus = binding.suggestionSummary.tvSuggestionStatus;
+        TextView tvAiDiscount = binding.tvAiDiscount;
+        TextInputEditText inputDiscount = binding.inputDiscountValue;
+        TextView tvFinalPrice = binding.tvSuggestedFinalPrice;
         tvTitle.setText(title != null ? title : getString(R.string.suggestion_fallback_title));
         tvDescription.setText(description != null ? description
                 : getString(R.string.suggestion_description_unavailable));
@@ -71,13 +75,13 @@ public class ApproveSuggestionFragment extends Fragment {
             @Override public void afterTextChanged(Editable s) { }
         });
 
-        view.findViewById(R.id.btn_back).setOnClickListener(v ->
+        binding.btnBack.setOnClickListener(v ->
                 Navigation.findNavController(view).popBackStack());
 
-        view.findViewById(R.id.btn_approve).setOnClickListener(v ->
+        binding.btnApprove.setOnClickListener(v ->
                 Toast.makeText(requireContext(), R.string.suggestion_decision_pending, Toast.LENGTH_SHORT).show());
 
-        view.findViewById(R.id.btn_reject).setOnClickListener(v ->
+        binding.btnReject.setOnClickListener(v ->
                 Toast.makeText(requireContext(), R.string.suggestion_decision_pending, Toast.LENGTH_SHORT).show());
     }
 
@@ -89,5 +93,11 @@ public class ApproveSuggestionFragment extends Fragment {
         double finalPrice = currentPrice * (1 - discount / 100d);
         view.setText(getString(R.string.suggestion_final_price,
                 NumberFormat.getCurrencyInstance(new Locale("pt", "BR")).format(finalPrice)));
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

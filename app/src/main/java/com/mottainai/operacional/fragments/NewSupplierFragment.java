@@ -14,6 +14,7 @@ import androidx.navigation.Navigation;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.mottainai.operacional.R;
+import com.mottainai.operacional.databinding.FragmentNewSupplierBinding;
 import com.mottainai.operacional.utils.SessionManager;
 import com.mottainai.operacional.utils.ValidationUtils;
 import com.mottainai.operacional.viewmodels.SupplierViewModel;
@@ -23,23 +24,26 @@ import com.mottainai.operacional.viewmodels.SupplierViewModel;
  */
 public class NewSupplierFragment extends Fragment {
 
+    private FragmentNewSupplierBinding binding;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                               @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_new_supplier, container, false);
+        binding = FragmentNewSupplierBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        view.findViewById(R.id.btn_back).setOnClickListener(v ->
+        binding.btnBack.setOnClickListener(v ->
                 Navigation.findNavController(view).popBackStack());
 
-        EditText etName = view.findViewById(R.id.et_supplier_name);
-        EditText etCnpj = view.findViewById(R.id.et_supplier_cnpj);
-        EditText etContact = view.findViewById(R.id.et_supplier_contact);
+        EditText etName = binding.etSupplierName;
+        EditText etCnpj = binding.etSupplierCnpj;
+        EditText etContact = binding.etSupplierContact;
         SupplierViewModel viewModel = new ViewModelProvider(requireActivity()).get(SupplierViewModel.class);
         SessionManager session = new SessionManager(requireContext());
         viewModel.clearCompletion();
@@ -49,7 +53,7 @@ public class NewSupplierFragment extends Fragment {
         viewModel.getError().observe(getViewLifecycleOwner(), message -> {
             if (message != null) Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
         });
-        view.findViewById(R.id.btn_save_supplier).setOnClickListener(v -> {
+        binding.btnSaveSupplier.setOnClickListener(v -> {
             String name = etName.getText().toString().trim();
             String cnpj = etCnpj.getText().toString().replaceAll("\\D", "");
             String contact = etContact.getText().toString().trim();
@@ -67,5 +71,11 @@ public class NewSupplierFragment extends Fragment {
             }
             viewModel.create(session.getStoreId(), name, cnpj, contact);
         });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

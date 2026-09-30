@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.mottainai.operacional.R;
+import com.mottainai.operacional.databinding.ActivityProductFormBinding;
 import com.mottainai.operacional.models.OpenFoodFactsResponse;
 import com.mottainai.operacional.models.ProductForm;
 import com.mottainai.operacional.repository.OpenFoodFactsRepository;
@@ -19,6 +20,8 @@ import com.mottainai.operacional.utils.SessionManager;
 import com.mottainai.operacional.viewmodels.ProductFormViewModel;
 
 public class ProductFormActivity extends AppCompatActivity {
+
+    private ActivityProductFormBinding binding;
 
     private ProductFormViewModel viewModel;
     private SessionManager sessionManager;
@@ -41,9 +44,10 @@ public class ProductFormActivity extends AppCompatActivity {
             finish();
             return;
         }
-        setContentView(R.layout.activity_product_form);
-        findViewById(R.id.btn_back).setOnClickListener(v -> finish());
-        android.widget.TextView tvTitle = findViewById(R.id.tv_title);
+        binding = ActivityProductFormBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        binding.btnBack.setOnClickListener(v -> finish());
+        android.widget.TextView tvTitle = binding.tvTitle;
 
         offRepo = new OpenFoodFactsRepository();
         initViews();
@@ -63,34 +67,34 @@ public class ProductFormActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        etBarcode = findViewById(R.id.et_barcode);
-        etName = findViewById(R.id.et_name);
-        etDescription = findViewById(R.id.et_description);
-        etCategory = findViewById(R.id.et_category);
-        etBrand = findViewById(R.id.et_brand);
-        etUnit = findViewById(R.id.et_unit);
-        etWeight = findViewById(R.id.et_weight);
-        etQuantity = findViewById(R.id.et_quantity);
-        etMinQuantity = findViewById(R.id.et_min_quantity);
-        etBatch = findViewById(R.id.et_batch);
-        etSupplier = findViewById(R.id.et_supplier);
-        etExpiry = findViewById(R.id.et_expiry);
-        swActive = findViewById(R.id.sw_active);
-        progress = findViewById(R.id.progress_form);
-        tvFormError = findViewById(R.id.tv_form_error);
-        tvErrorBarcode = findViewById(R.id.tv_error_barcode);
-        tvErrorName = findViewById(R.id.tv_error_name);
-        tvErrorCategory = findViewById(R.id.tv_error_category);
-        tvErrorBrand = findViewById(R.id.tv_error_brand);
-        tvErrorUnit = findViewById(R.id.tv_error_unit);
-        tvErrorWeight = findViewById(R.id.tv_error_weight);
-        tvErrorQuantity = findViewById(R.id.tv_error_quantity);
-        tvErrorMinQuantity = findViewById(R.id.tv_error_min_quantity);
-        tvErrorExpiry = findViewById(R.id.tv_error_expiry);
-        tvOffInfo = findViewById(R.id.tv_off_info);
-        btnSearchOff = findViewById(R.id.btn_search_off);
-        btnSave = findViewById(R.id.btn_save);
-        findViewById(R.id.btn_cancel).setOnClickListener(v -> finish());
+        etBarcode = binding.etBarcode;
+        etName = binding.etName;
+        etDescription = binding.etDescription;
+        etCategory = binding.etCategory;
+        etBrand = binding.etBrand;
+        etUnit = binding.etUnit;
+        etWeight = binding.etWeight;
+        etQuantity = binding.etQuantity;
+        etMinQuantity = binding.etMinQuantity;
+        etBatch = binding.etBatch;
+        etSupplier = binding.etSupplier;
+        etExpiry = binding.etExpiry;
+        swActive = binding.swActive;
+        progress = binding.progressForm;
+        tvFormError = binding.tvFormError;
+        tvErrorBarcode = binding.tvErrorBarcode;
+        tvErrorName = binding.tvErrorName;
+        tvErrorCategory = binding.tvErrorCategory;
+        tvErrorBrand = binding.tvErrorBrand;
+        tvErrorUnit = binding.tvErrorUnit;
+        tvErrorWeight = binding.tvErrorWeight;
+        tvErrorQuantity = binding.tvErrorQuantity;
+        tvErrorMinQuantity = binding.tvErrorMinQuantity;
+        tvErrorExpiry = binding.tvErrorExpiry;
+        tvOffInfo = binding.tvOffInfo;
+        btnSearchOff = binding.btnSearchOff;
+        btnSave = binding.btnSave;
+        binding.btnCancel.setOnClickListener(v -> finish());
         btnSearchOff.setOnClickListener(v -> searchOff());
         btnSave.setOnClickListener(v -> onSave());
     }
@@ -115,17 +119,17 @@ public class ProductFormActivity extends AppCompatActivity {
             showFieldError(tvErrorMinQuantity, errors.get("minQuantity"));
             showFieldError(tvErrorExpiry, errors.get("expiryDate"));
             if (!errors.isEmpty()) {
-                android.widget.TextView tv = findViewById(R.id.tv_form_error);
+                android.widget.TextView tv = binding.tvFormError;
                 tv.setText("Corrija os campos destacados");
                 tv.setVisibility(View.VISIBLE);
                 focusFirstError(errors);
             } else {
-                findViewById(R.id.tv_form_error).setVisibility(View.GONE);
+                binding.tvFormError.setVisibility(View.GONE);
             }
         });
         viewModel.getSubmitError().observe(this, msg -> {
             if (msg != null) {
-                android.widget.TextView tv = findViewById(R.id.tv_form_error);
+                android.widget.TextView tv = binding.tvFormError;
                 tv.setText(msg);
                 tv.setVisibility(View.VISIBLE);
             }
@@ -139,7 +143,7 @@ public class ProductFormActivity extends AppCompatActivity {
         });
         viewModel.getLoadError().observe(this, msg -> {
             if (msg != null) {
-                android.widget.TextView tv = findViewById(R.id.tv_form_error);
+                android.widget.TextView tv = binding.tvFormError;
                 tv.setText(msg);
                 tv.setVisibility(View.VISIBLE);
             }

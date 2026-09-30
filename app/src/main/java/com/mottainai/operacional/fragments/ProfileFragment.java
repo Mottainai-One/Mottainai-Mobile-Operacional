@@ -18,6 +18,7 @@ import androidx.navigation.Navigation;
 import com.google.android.material.button.MaterialButton;
 
 import com.mottainai.operacional.R;
+import com.mottainai.operacional.databinding.FragmentProfileBinding;
 import com.mottainai.operacional.activities.LoginActivity;
 import com.mottainai.operacional.repository.NotificationRepository;
 import com.mottainai.operacional.utils.RoleHelper;
@@ -27,6 +28,8 @@ import com.mottainai.operacional.viewmodels.ProfileViewModel;
 
 /** Presents the authenticated identity without using the displayed data for authorization. */
 public class ProfileFragment extends Fragment {
+
+    private FragmentProfileBinding binding;
 
     private View profileContent;
     private View profileInfoGroup;
@@ -44,7 +47,8 @@ public class ProfileFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        binding = FragmentProfileBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
@@ -55,7 +59,7 @@ public class ProfileFragment extends Fragment {
         ProfileViewModel viewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
         viewModel.getUiState().observe(getViewLifecycleOwner(), this::render);
 
-        View btnOpenConfig = view.findViewById(R.id.btn_open_config);
+        View btnOpenConfig = binding.btnOpenConfig;
         if (RoleHelper.isOwner(new SessionManager(requireContext()).getRole())) {
             btnOpenConfig.setVisibility(View.VISIBLE);
             btnOpenConfig.setOnClickListener(v -> Navigation.findNavController(view)
@@ -66,16 +70,16 @@ public class ProfileFragment extends Fragment {
     }
 
     private void bindViews(View view) {
-        profileContent = view.findViewById(R.id.profile_content);
-        profileInfoGroup = view.findViewById(R.id.profile_info_group);
-        progressBar = view.findViewById(R.id.progress_profile);
-        tvAvatarInitials = view.findViewById(R.id.tv_avatar_initials);
-        tvName = view.findViewById(R.id.tv_profile_name);
-        tvEmail = view.findViewById(R.id.tv_profile_email);
-        tvRole = view.findViewById(R.id.tv_profile_role);
-        tvStore = view.findViewById(R.id.tv_profile_store);
-        tvStatus = view.findViewById(R.id.tv_profile_status);
-        btnLogout = view.findViewById(R.id.btn_logout);
+        profileContent = binding.profileContent;
+        profileInfoGroup = binding.profileInfoGroup;
+        progressBar = binding.progressProfile;
+        tvAvatarInitials = binding.tvAvatarInitials;
+        tvName = binding.tvProfileName;
+        tvEmail = binding.tvProfileEmail;
+        tvRole = binding.tvProfileRole;
+        tvStore = binding.tvProfileStore;
+        tvStatus = binding.tvProfileStatus;
+        btnLogout = binding.btnLogout;
     }
 
     private void render(ProfileUiState state) {
@@ -134,5 +138,21 @@ public class ProfileFragment extends Fragment {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         requireActivity().finish();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+        profileContent = null;
+        profileInfoGroup = null;
+        progressBar = null;
+        tvAvatarInitials = null;
+        tvName = null;
+        tvEmail = null;
+        tvRole = null;
+        tvStore = null;
+        tvStatus = null;
+        btnLogout = null;
     }
 }

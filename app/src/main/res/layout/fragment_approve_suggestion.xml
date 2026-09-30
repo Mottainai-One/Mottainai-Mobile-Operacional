@@ -52,7 +52,9 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <include layout="@layout/include_suggestion_summary" />
+            <include
+                android:id="@+id/suggestion_summary"
+                layout="@layout/include_suggestion_summary" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 

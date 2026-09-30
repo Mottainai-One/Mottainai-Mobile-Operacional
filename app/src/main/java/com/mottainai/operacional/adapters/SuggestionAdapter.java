@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.mottainai.operacional.models.Suggestion;
 import com.mottainai.operacional.R;
+import com.mottainai.operacional.databinding.ItemSuggestionBinding;
 import com.mottainai.operacional.utils.Constants;
 
 import java.util.List;
@@ -57,9 +58,8 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.Su
     @NonNull
     @Override
     public SuggestionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_suggestion, parent, false);
-        return new SuggestionViewHolder(view);
+        return new SuggestionViewHolder(ItemSuggestionBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false));
     }
 
     @Override
@@ -111,13 +111,13 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.Su
         View btnApprove;
         View btnReject;
 
-        public SuggestionViewHolder(View view) {
-            super(view);
-            tvSuggestionTitle = view.findViewById(R.id.tv_suggestion_title);
-            tvSuggestionDescription = view.findViewById(R.id.tv_suggestion_description);
-            tvSuggestionStatus = view.findViewById(R.id.tv_suggestion_status);
-            btnApprove = view.findViewById(R.id.btn_suggestion_approve);
-            btnReject = view.findViewById(R.id.btn_suggestion_reject);
+        public SuggestionViewHolder(ItemSuggestionBinding binding) {
+            super(binding.getRoot());
+            tvSuggestionTitle = binding.suggestionSummary.tvSuggestionTitle;
+            tvSuggestionDescription = binding.suggestionSummary.tvSuggestionDescription;
+            tvSuggestionStatus = binding.suggestionSummary.tvSuggestionStatus;
+            btnApprove = binding.btnSuggestionApprove;
+            btnReject = binding.btnSuggestionReject;
         }
     }
 }

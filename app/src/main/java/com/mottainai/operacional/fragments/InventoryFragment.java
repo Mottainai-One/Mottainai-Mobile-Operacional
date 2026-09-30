@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.mottainai.operacional.R;
+import com.mottainai.operacional.databinding.FragmentInventoryBinding;
 import com.mottainai.operacional.adapters.InventoryAdapter;
 import com.mottainai.operacional.models.InventorySession;
 import com.mottainai.operacional.utils.SessionManager;
@@ -28,6 +29,8 @@ import com.mottainai.operacional.viewmodels.InventoryViewModel;
 
 /** Conteúdo da aba Inventário no modo de demonstração local. */
 public class InventoryFragment extends Fragment {
+
+    private FragmentInventoryBinding binding;
 
     private InventoryViewModel viewModel;
     private InventoryAdapter adapter;
@@ -51,7 +54,8 @@ public class InventoryFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_inventory, container, false);
+        binding = FragmentInventoryBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
@@ -62,20 +66,20 @@ public class InventoryFragment extends Fragment {
         storeId = sessionManager.getStoreId();
         userName = sessionManager.getName();
 
-        progressInventory = view.findViewById(R.id.progress_inventory);
-        progressLoading = view.findViewById(R.id.progress_inventory_loading);
-        inventoryHeader = view.findViewById(R.id.inventory_header);
-        tvState = view.findViewById(R.id.tv_inventory_state);
-        tvMeta = view.findViewById(R.id.tv_inventory_meta);
-        tvProgress = view.findViewById(R.id.tv_progress_label);
-        tvInfo = view.findViewById(R.id.tv_inventory_info);
-        cardDivergences = view.findViewById(R.id.card_inventory_divergences);
-        tvDivergenceTitle = view.findViewById(R.id.tv_inventory_divergence_title);
-        tvDivergenceMessage = view.findViewById(R.id.tv_inventory_divergence_message);
-        btnStart = view.findViewById(R.id.btn_inventory_start);
-        btnFinish = view.findViewById(R.id.btn_inventory_finish);
+        progressInventory = binding.progressInventory;
+        progressLoading = binding.progressInventoryLoading;
+        inventoryHeader = binding.inventoryHeader;
+        tvState = binding.tvInventoryState;
+        tvMeta = binding.tvInventoryMeta;
+        tvProgress = binding.tvProgressLabel;
+        tvInfo = binding.tvInventoryInfo;
+        cardDivergences = binding.cardInventoryDivergences;
+        tvDivergenceTitle = binding.tvInventoryDivergenceTitle;
+        tvDivergenceMessage = binding.tvInventoryDivergenceMessage;
+        btnStart = binding.btnInventoryStart;
+        btnFinish = binding.btnInventoryFinish;
 
-        recyclerView = view.findViewById(R.id.rv_inventory);
+        recyclerView = binding.rvInventory;
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         recyclerView.setHasFixedSize(false);
         adapter = new InventoryAdapter(new InventoryAdapter.Listener() {
@@ -235,5 +239,24 @@ public class InventoryFragment extends Fragment {
         btnStart.setVisibility(View.VISIBLE);
         btnFinish.setVisibility(View.GONE);
         if (adapter != null) adapter.submitItems(null, false);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+        progressInventory = null;
+        progressLoading = null;
+        inventoryHeader = null;
+        tvState = null;
+        tvMeta = null;
+        tvProgress = null;
+        tvInfo = null;
+        cardDivergences = null;
+        tvDivergenceTitle = null;
+        tvDivergenceMessage = null;
+        btnStart = null;
+        btnFinish = null;
+        recyclerView = null;
     }
 }

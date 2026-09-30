@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.mottainai.operacional.R;
+import com.mottainai.operacional.databinding.FragmentInviteMemberBinding;
 import com.mottainai.operacional.utils.ValidationUtils;
 
 /**
@@ -22,22 +23,25 @@ import com.mottainai.operacional.utils.ValidationUtils;
  */
 public class InviteMemberFragment extends Fragment {
 
+    private FragmentInviteMemberBinding binding;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                               @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_invite_member, container, false);
+        binding = FragmentInviteMemberBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        view.findViewById(R.id.btn_back).setOnClickListener(v ->
+        binding.btnBack.setOnClickListener(v ->
                 Navigation.findNavController(view).popBackStack());
 
-        EditText etEmail = view.findViewById(R.id.et_invite_email);
-        view.findViewById(R.id.btn_send_invite).setOnClickListener(v -> {
+        EditText etEmail = binding.etInviteEmail;
+        binding.btnSendInvite.setOnClickListener(v -> {
             String email = etEmail.getText().toString().trim();
             if (email.isEmpty()) {
                 etEmail.setError("Informe um e-mail");
@@ -49,5 +53,11 @@ public class InviteMemberFragment extends Fragment {
             }
             Toast.makeText(requireContext(), "Convite — pendente (aguarda endpoint)", Toast.LENGTH_SHORT).show();
         });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

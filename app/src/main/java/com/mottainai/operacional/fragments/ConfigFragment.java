@@ -17,6 +17,7 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.tabs.TabLayout;
 
 import com.mottainai.operacional.R;
+import com.mottainai.operacional.databinding.FragmentConfigBinding;
 import com.mottainai.operacional.utils.NotificationPreferences;
 import com.mottainai.operacional.utils.RoleHelper;
 import com.mottainai.operacional.utils.SessionManager;
@@ -36,6 +37,8 @@ import com.mottainai.operacional.utils.SessionManager;
  */
 public class ConfigFragment extends Fragment {
 
+    private FragmentConfigBinding binding;
+
     private View contentRules;
     private View contentNotifications;
     private View contentTeam;
@@ -51,7 +54,8 @@ public class ConfigFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                               @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_config, container, false);
+        binding = FragmentConfigBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
@@ -61,21 +65,21 @@ public class ConfigFragment extends Fragment {
         NavController navController = Navigation.findNavController(view);
         SessionManager sessionManager = new SessionManager(requireContext());
 
-        view.findViewById(R.id.btn_back).setOnClickListener(v -> navController.popBackStack());
+        binding.btnBack.setOnClickListener(v -> navController.popBackStack());
 
         boolean isOwner = RoleHelper.isOwner(sessionManager.getRole());
-        view.findViewById(R.id.scroll_config).setVisibility(isOwner ? View.VISIBLE : View.GONE);
-        view.findViewById(R.id.tv_not_owner).setVisibility(isOwner ? View.GONE : View.VISIBLE);
+        binding.scrollConfig.setVisibility(isOwner ? View.VISIBLE : View.GONE);
+        binding.tvNotOwner.setVisibility(isOwner ? View.GONE : View.VISIBLE);
         if (!isOwner) {
             return;
         }
 
-        contentRules = view.findViewById(R.id.tab_content_rules);
-        contentNotifications = view.findViewById(R.id.tab_content_notifications);
-        contentTeam = view.findViewById(R.id.tab_content_team);
+        contentRules = binding.tabContentRules;
+        contentNotifications = binding.tabContentNotifications;
+        contentTeam = binding.tabContentTeam;
         showTab(0);
 
-        TabLayout tabLayout = view.findViewById(R.id.tab_config);
+        TabLayout tabLayout = binding.tabConfig;
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override public void onTabSelected(TabLayout.Tab tab) { showTab(tab.getPosition()); }
             @Override public void onTabUnselected(TabLayout.Tab tab) {}
@@ -83,11 +87,11 @@ public class ConfigFragment extends Fragment {
         });
 
         notificationPreferences = new NotificationPreferences(requireContext());
-        switchAutoPromo = view.findViewById(R.id.switch_auto_promo);
-        switchRequireApproval = view.findViewById(R.id.switch_require_approval);
-        switchPushAlerts = view.findViewById(R.id.switch_push_alerts);
-        switchPushSuggestions = view.findViewById(R.id.switch_push_suggestions);
-        switchPushInventory = view.findViewById(R.id.switch_push_inventory);
+        switchAutoPromo = binding.switchAutoPromo;
+        switchRequireApproval = binding.switchRequireApproval;
+        switchPushAlerts = binding.switchPushAlerts;
+        switchPushSuggestions = binding.switchPushSuggestions;
+        switchPushInventory = binding.switchPushInventory;
 
         switchAutoPromo.setChecked(notificationPreferences.isAutoPromoEnabled());
         switchRequireApproval.setChecked(notificationPreferences.isApprovalRequired());
@@ -95,23 +99,23 @@ public class ConfigFragment extends Fragment {
         switchPushSuggestions.setChecked(notificationPreferences.isPushSuggestionsEnabled());
         switchPushInventory.setChecked(notificationPreferences.isPushInventoryEnabled());
 
-        view.findViewById(R.id.btn_save_config).setOnClickListener(v -> {
+        binding.btnSaveConfig.setOnClickListener(v -> {
             notificationPreferences.saveRulesPrefs(switchAutoPromo.isChecked(), switchRequireApproval.isChecked());
             Toast.makeText(requireContext(), "Regras salvas neste dispositivo", Toast.LENGTH_SHORT).show();
         });
 
-        view.findViewById(R.id.btn_save_notifications).setOnClickListener(v -> {
+        binding.btnSaveNotifications.setOnClickListener(v -> {
             notificationPreferences.saveNotificationPrefs(switchPushAlerts.isChecked(),
                     switchPushSuggestions.isChecked(), switchPushInventory.isChecked());
             Toast.makeText(requireContext(), "Notificações salvas neste dispositivo", Toast.LENGTH_SHORT).show();
         });
 
-        view.findViewById(R.id.btn_invite_member).setOnClickListener(v ->
+        binding.btnInviteMember.setOnClickListener(v ->
                 navController.navigate(R.id.action_configFragment_to_inviteMemberFragment));
 
-        view.findViewById(R.id.card_member_example).setOnClickListener(v -> {
-            String name = ((TextView) view.findViewById(R.id.tv_member_name)).getText().toString();
-            String role = ((TextView) view.findViewById(R.id.tv_member_role)).getText().toString();
+        binding.cardMemberExample.setOnClickListener(v -> {
+            String name = ((TextView) binding.tvMemberName).getText().toString();
+            String role = ((TextView) binding.tvMemberRole).getText().toString();
             Bundle args = new Bundle();
             args.putString("member_name", name);
             args.putString("member_role", role);
@@ -123,5 +127,19 @@ public class ConfigFragment extends Fragment {
         contentRules.setVisibility(position == 0 ? View.VISIBLE : View.GONE);
         contentNotifications.setVisibility(position == 1 ? View.VISIBLE : View.GONE);
         contentTeam.setVisibility(position == 2 ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+        contentRules = null;
+        contentNotifications = null;
+        contentTeam = null;
+        switchAutoPromo = null;
+        switchRequireApproval = null;
+        switchPushAlerts = null;
+        switchPushSuggestions = null;
+        switchPushInventory = null;
     }
 }

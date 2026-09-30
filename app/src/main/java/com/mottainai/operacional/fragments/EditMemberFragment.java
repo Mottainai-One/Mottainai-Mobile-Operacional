@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.mottainai.operacional.R;
+import com.mottainai.operacional.databinding.FragmentEditMemberBinding;
 
 /**
  * Edição de um membro da equipe. Sem endpoint de equipe ainda — "Salvar" e
@@ -22,13 +23,16 @@ import com.mottainai.operacional.R;
  */
 public class EditMemberFragment extends Fragment {
 
+    private FragmentEditMemberBinding binding;
+
     private static final String[] ROLES = {"Estoquista", "Gerente", "Dono"};
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                               @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_edit_member, container, false);
+        binding = FragmentEditMemberBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
@@ -39,9 +43,9 @@ public class EditMemberFragment extends Fragment {
         String name = args != null ? args.getString("member_name") : null;
         String role = args != null ? args.getString("member_role") : null;
 
-        ((TextView) view.findViewById(R.id.tv_member_name)).setText(name != null ? name : "");
+        ((TextView) binding.tvMemberName).setText(name != null ? name : "");
 
-        Spinner spinner = view.findViewById(R.id.spinner_member_role);
+        Spinner spinner = binding.spinnerMemberRole;
         ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(),
                 android.R.layout.simple_spinner_dropdown_item, ROLES);
         spinner.setAdapter(adapter);
@@ -54,13 +58,19 @@ public class EditMemberFragment extends Fragment {
             }
         }
 
-        view.findViewById(R.id.btn_back).setOnClickListener(v ->
+        binding.btnBack.setOnClickListener(v ->
                 Navigation.findNavController(view).popBackStack());
 
-        view.findViewById(R.id.btn_save_member).setOnClickListener(v ->
+        binding.btnSaveMember.setOnClickListener(v ->
                 Toast.makeText(requireContext(), "Salvar membro — pendente (aguarda endpoint)", Toast.LENGTH_SHORT).show());
 
-        view.findViewById(R.id.btn_remove_member).setOnClickListener(v ->
+        binding.btnRemoveMember.setOnClickListener(v ->
                 Toast.makeText(requireContext(), "Remover membro — pendente (aguarda endpoint)", Toast.LENGTH_SHORT).show());
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.mottainai.operacional.R;
+import com.mottainai.operacional.databinding.FragmentHomeBinding;
 import com.mottainai.operacional.adapters.AlertAdapter;
 import com.mottainai.operacional.adapters.SuggestionAdapter;
 import com.mottainai.operacional.models.Alert;
@@ -34,6 +35,8 @@ import java.util.List;
 import java.util.Locale;
 
 public class HomeFragment extends Fragment {
+
+    private FragmentHomeBinding binding;
 
     private HomeViewModel viewModel;
     private SessionManager sessionManager;
@@ -80,7 +83,8 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_home, container, false);
+        binding = FragmentHomeBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
@@ -97,38 +101,38 @@ public class HomeFragment extends Fragment {
     }
 
     private void initViews(View view) {
-        tvDate = view.findViewById(R.id.tv_date);
-        progressBar = view.findViewById(R.id.progress_home);
-        containerError = view.findViewById(R.id.container_error);
-        tvError = view.findViewById(R.id.tv_error);
-        btnRetry = view.findViewById(R.id.btn_retry);
-        containerEmpty = view.findViewById(R.id.container_empty);
-        tvEmpty = view.findViewById(R.id.tv_empty);
-        tvWelcome = view.findViewById(R.id.tv_welcome);
-        tvStoreInfo = view.findViewById(R.id.tv_store_info);
-        contentContainer = view.findViewById(R.id.content_container);
+        tvDate = binding.tvDate;
+        progressBar = binding.progressHome;
+        containerError = binding.containerError;
+        tvError = binding.tvError;
+        btnRetry = binding.btnRetry;
+        containerEmpty = binding.containerEmpty;
+        tvEmpty = binding.tvEmpty;
+        tvWelcome = binding.tvWelcome;
+        tvStoreInfo = binding.tvStoreInfo;
+        contentContainer = binding.contentContainer;
 
         // Resumo por severidade
-        tvCountCritico = view.findViewById(R.id.tv_count_critico);
-        tvCountAtencao = view.findViewById(R.id.tv_count_atencao);
-        tvCountMonitor = view.findViewById(R.id.tv_count_monitor);
+        tvCountCritico = binding.tvCountCritico;
+        tvCountAtencao = binding.tvCountAtencao;
+        tvCountMonitor = binding.tvCountMonitor;
 
         // Cards Gerente
-        layoutCardsGerente = view.findViewById(R.id.layout_cards_gerente);
-        tvPendingApprovals = view.findViewById(R.id.tv_pending_approvals);
-        tvFinancialRisk = view.findViewById(R.id.tv_financial_risk);
+        layoutCardsGerente = binding.layoutCardsGerente;
+        tvPendingApprovals = binding.tvPendingApprovals;
+        tvFinancialRisk = binding.tvFinancialRisk;
 
         // Cards Dono
-        layoutCardsDono = view.findViewById(R.id.layout_cards_dono);
-        tvLossRisk = view.findViewById(R.id.tv_loss_risk);
-        tvValueSaved = view.findViewById(R.id.tv_value_saved);
-        tvActiveStores = view.findViewById(R.id.tv_active_stores);
+        layoutCardsDono = binding.layoutCardsDono;
+        tvLossRisk = binding.tvLossRisk;
+        tvValueSaved = binding.tvValueSaved;
+        tvActiveStores = binding.tvActiveStores;
 
         // Listas
-        rvAlerts = view.findViewById(R.id.rv_alerts);
-        rvSuggestions = view.findViewById(R.id.rv_suggestions);
-        tvAlertsTitle = view.findViewById(R.id.tv_alerts_title);
-        tvSuggestionsTitle = view.findViewById(R.id.tv_suggestions_title);
+        rvAlerts = binding.rvAlerts;
+        rvSuggestions = binding.rvSuggestions;
+        tvAlertsTitle = binding.tvAlertsTitle;
+        tvSuggestionsTitle = binding.tvSuggestionsTitle;
     }
 
     private void setupRecyclerViews() {
@@ -230,7 +234,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void setupCameraLink() {
-        View cameraButton = requireView().findViewById(R.id.btn_abrir_camera);
+        View cameraButton = binding.btnAbrirCamera;
         if (cameraButton != null) {
             cameraButton.setOnClickListener(v -> navigateTo(R.id.scannerFragment));
         }
@@ -361,5 +365,35 @@ public class HomeFragment extends Fragment {
         containerError.setVisibility(View.VISIBLE);
         tvError.setText("Sessão incompleta. Faça login novamente.");
         containerEmpty.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+        tvDate = null;
+        progressBar = null;
+        containerError = null;
+        tvError = null;
+        btnRetry = null;
+        containerEmpty = null;
+        tvEmpty = null;
+        tvWelcome = null;
+        tvStoreInfo = null;
+        contentContainer = null;
+        tvCountCritico = null;
+        tvCountAtencao = null;
+        tvCountMonitor = null;
+        layoutCardsGerente = null;
+        tvPendingApprovals = null;
+        tvFinancialRisk = null;
+        layoutCardsDono = null;
+        tvLossRisk = null;
+        tvValueSaved = null;
+        tvActiveStores = null;
+        rvAlerts = null;
+        rvSuggestions = null;
+        tvAlertsTitle = null;
+        tvSuggestionsTitle = null;
     }
 }

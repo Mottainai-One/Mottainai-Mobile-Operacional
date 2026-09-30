@@ -38,11 +38,13 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.mottainai.operacional.R;
+import com.mottainai.operacional.databinding.FragmentScannerBinding;
 import com.mottainai.operacional.activities.ProductDetailActivity;
 import com.mottainai.operacional.activities.ProductFormActivity;
 import com.mottainai.operacional.models.Product;
 import com.mottainai.operacional.models.ScannerUiState;
 import com.mottainai.operacional.scanner.BarcodeAnalyzer;
+import com.mottainai.operacional.utils.Constants;
 import com.mottainai.operacional.utils.RoleHelper;
 import com.mottainai.operacional.utils.SessionManager;
 import com.mottainai.operacional.viewmodels.ScannerViewModel;
@@ -51,6 +53,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ScannerFragment extends Fragment {
+
+    private FragmentScannerBinding binding;
 
     private ScannerViewModel viewModel;
     private SessionManager sessionManager;
@@ -109,7 +113,8 @@ public class ScannerFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_scanner, container, false);
+        binding = FragmentScannerBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
@@ -117,7 +122,8 @@ public class ScannerFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         // Initialize tone generator and vibrator
-        toneGenerator = new ToneGenerator(android.media.AudioManager.STREAM_NOTIFICATION, 100);
+        toneGenerator = new ToneGenerator(android.media.AudioManager.STREAM_NOTIFICATION,
+                Constants.SCANNER_TONE_VOLUME);
         vibrator = (Vibrator) requireContext().getSystemService(Context.VIBRATOR_SERVICE);
 
         initViews(view);
@@ -129,44 +135,44 @@ public class ScannerFragment extends Fragment {
     }
 
     private void initViews(View view) {
-        previewView = view.findViewById(R.id.previewView);
-        viewfinderOverlay = view.findViewById(R.id.viewfinderOverlay);
-        tvScanHint = view.findViewById(R.id.tvScanHint);
+        previewView = binding.previewView;
+        viewfinderOverlay = binding.viewfinderOverlay;
+        tvScanHint = binding.tvScanHint;
 
-        containerPermissionDenied = view.findViewById(R.id.containerPermissionDenied);
-        tvPermissionMessage = view.findViewById(R.id.tvPermissionMessage);
-        btnRequestPermission = view.findViewById(R.id.btnRequestPermission);
-        btnOpenSettings = view.findViewById(R.id.btnOpenSettings);
+        containerPermissionDenied = binding.containerPermissionDenied;
+        tvPermissionMessage = binding.tvPermissionMessage;
+        btnRequestPermission = binding.btnRequestPermission;
+        btnOpenSettings = binding.btnOpenSettings;
 
-        containerCameraUnavailable = view.findViewById(R.id.containerCameraUnavailable);
-        tvCameraUnavailableMessage = view.findViewById(R.id.tvCameraUnavailableMessage);
-        btnRetryCamera = view.findViewById(R.id.btnRetryCamera);
+        containerCameraUnavailable = binding.containerCameraUnavailable;
+        tvCameraUnavailableMessage = binding.tvCameraUnavailableMessage;
+        btnRetryCamera = binding.btnRetryCamera;
 
-        cardResult = view.findViewById(R.id.cardResult);
-        tvResultTitle = view.findViewById(R.id.tvResultTitle);
-        tvProductName = view.findViewById(R.id.tvProductName);
-        tvProductSku = view.findViewById(R.id.tvProductSku);
-        tvProductQuantity = view.findViewById(R.id.tvProductQuantity);
-        tvProductMinQuantity = view.findViewById(R.id.tvProductMinQuantity);
-        tvProductExpiry = view.findViewById(R.id.tvProductExpiry);
-        btnOpenDetail = view.findViewById(R.id.btnOpenDetail);
-        btnRegisterDamage = view.findViewById(R.id.btnRegisterDamage);
-        btnScanAgain = view.findViewById(R.id.btnScanAgain);
+        cardResult = binding.cardResult;
+        tvResultTitle = binding.tvResultTitle;
+        tvProductName = binding.tvProductName;
+        tvProductSku = binding.tvProductSku;
+        tvProductQuantity = binding.tvProductQuantity;
+        tvProductMinQuantity = binding.tvProductMinQuantity;
+        tvProductExpiry = binding.tvProductExpiry;
+        btnOpenDetail = binding.btnOpenDetail;
+        btnRegisterDamage = binding.btnRegisterDamage;
+        btnScanAgain = binding.btnScanAgain;
 
-        cardNotFound = view.findViewById(R.id.cardNotFound);
-        tvNotFoundBarcode = view.findViewById(R.id.tvNotFoundBarcode);
-        btnCreateProduct = view.findViewById(R.id.btnCreateProduct);
-        btnScanAgainNotFound = view.findViewById(R.id.btnScanAgainNotFound);
+        cardNotFound = binding.cardNotFound;
+        tvNotFoundBarcode = binding.tvNotFoundBarcode;
+        btnCreateProduct = binding.btnCreateProduct;
+        btnScanAgainNotFound = binding.btnScanAgainNotFound;
 
-        cardError = view.findViewById(R.id.cardError);
-        tvErrorMessage = view.findViewById(R.id.tvErrorMessage);
-        btnRetry = view.findViewById(R.id.btnRetry);
-        btnScanAgainError = view.findViewById(R.id.btnScanAgainError);
+        cardError = binding.cardError;
+        tvErrorMessage = binding.tvErrorMessage;
+        btnRetry = binding.btnRetry;
+        btnScanAgainError = binding.btnScanAgainError;
 
-        progressLookup = view.findViewById(R.id.progressLookup);
-        btnToggleTorch = view.findViewById(R.id.btnToggleTorch);
-        btnCloseScanner = view.findViewById(R.id.btnCloseScanner);
-        btnManualEntry = view.findViewById(R.id.btnManualEntry);
+        progressLookup = binding.progressLookup;
+        btnToggleTorch = binding.btnToggleTorch;
+        btnCloseScanner = binding.btnCloseScanner;
+        btnManualEntry = binding.btnManualEntry;
     }
 
     private void setupPermissionLauncher() {
@@ -253,10 +259,10 @@ public class ScannerFragment extends Fragment {
         if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
             // Show rationale dialog
             new androidx.appcompat.app.AlertDialog.Builder(requireContext())
-                    .setTitle("Permissão de Câmera")
-                    .setMessage("O scanner precisa acessar a câmera para ler códigos de barras.")
-                    .setPositiveButton("Permitir", (dialog, which) -> permissionLauncher.launch(Manifest.permission.CAMERA))
-                    .setNegativeButton("Cancelar", (dialog, which) -> showPermissionDenied(false))
+                    .setTitle(R.string.scanner_permission_title)
+                    .setMessage(R.string.scanner_permission_explanation)
+                    .setPositiveButton(R.string.scanner_permission_allow, (dialog, which) -> permissionLauncher.launch(Manifest.permission.CAMERA))
+                    .setNegativeButton(R.string.cancel, (dialog, which) -> showPermissionDenied(false))
                     .setOnCancelListener(dialog -> showPermissionDenied(false))
                     .show();
         } else {
@@ -275,6 +281,7 @@ public class ScannerFragment extends Fragment {
     }
 
     private void startCamera() {
+        if (binding == null || !isAdded()) return;
         cameraUnavailable = false;
         if (cameraStarting || cameraBound) {
             Log.d("ScannerFragment", "startCamera skipped starting=" + cameraStarting + " bound=" + cameraBound);
@@ -283,7 +290,7 @@ public class ScannerFragment extends Fragment {
 
         if (previewView == null) {
             Log.e("ScannerFragment", "startCamera: previewView null");
-            showCameraUnavailable("Preview não inicializado");
+            showCameraUnavailable(getString(R.string.scanner_preview_uninitialized));
             return;
         }
         // Aguarda PreviewView anexar antes de obter surfaceProvider
@@ -298,7 +305,7 @@ public class ScannerFragment extends Fragment {
         // Permissão já verificada pelo caller, mas revalida
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             Log.e("ScannerFragment", "startCamera sem permissão");
-            showCameraUnavailable("Permissão de câmera negada");
+            showCameraUnavailable(getString(R.string.scanner_permission_denied));
             return;
         }
 
@@ -309,12 +316,13 @@ public class ScannerFragment extends Fragment {
 
         cameraProviderFuture.addListener(() -> {
             try {
+                if (binding == null || !isAdded()) return;
                 cameraProvider = cameraProviderFuture.get();
                 Log.d("ScannerFragment", "CameraProvider obtido, chamando bindPreview");
                 bindPreview(cameraProvider);
             } catch (Exception e) {
                 Log.e("ScannerFragment", "Falha ao obter CameraProvider", e);
-                showCameraUnavailable("Falha ao obter câmera: " + e.getMessage());
+                showCameraUnavailable(getString(R.string.scanner_camera_provider_error, e.getMessage()));
             } finally {
                 cameraStarting = false;
             }
@@ -322,22 +330,23 @@ public class ScannerFragment extends Fragment {
     }
 
     private void bindPreview(@NonNull ProcessCameraProvider cameraProvider) {
+        if (binding == null || !isAdded()) return;
         CameraSelector cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA;
         try {
             if (!cameraProvider.hasCamera(cameraSelector)) {
                 Log.e("ScannerFragment", "Câmera traseira não disponível no dispositivo");
-                showCameraUnavailable("Câmera traseira não disponível");
+                showCameraUnavailable(getString(R.string.scanner_back_camera_unavailable));
                 return;
             }
         } catch (Exception e) {
             Log.e("ScannerFragment", "Falha ao verificar câmera traseira", e);
-            showCameraUnavailable("Erro ao verificar câmera: " + e.getMessage());
+            showCameraUnavailable(getString(R.string.scanner_camera_check_error, e.getMessage()));
             return;
         }
 
         if (previewView == null || previewView.getSurfaceProvider() == null) {
             Log.e("ScannerFragment", "bindPreview: surfaceProvider null");
-            showCameraUnavailable("Preview não pronto");
+            showCameraUnavailable(getString(R.string.scanner_preview_not_ready));
             return;
         }
 
@@ -376,10 +385,10 @@ public class ScannerFragment extends Fragment {
             btnToggleTorch.setVisibility(View.VISIBLE);
         } catch (IllegalArgumentException e) {
             Log.e("ScannerFragment", "bind falhou - câmera ocupada ou argumento inválido", e);
-            showCameraUnavailable("Câmera ocupada por outro app");
+            showCameraUnavailable(getString(R.string.scanner_camera_busy));
         } catch (Exception e) {
             Log.e("ScannerFragment", "Falha ao fazer bind da câmera", e);
-            showCameraUnavailable("Falha ao iniciar câmera: " + e.getMessage());
+            showCameraUnavailable(getString(R.string.scanner_camera_start_error, e.getMessage()));
         }
     }
 
@@ -391,7 +400,7 @@ public class ScannerFragment extends Fragment {
     }
 
     private void showCameraUnavailable() {
-        showCameraUnavailable("Câmera indisponível");
+        showCameraUnavailable(getString(R.string.scanner_camera_unavailable));
     }
 
     /**
@@ -402,6 +411,7 @@ public class ScannerFragment extends Fragment {
      */
     private void showCameraUnavailable(String reason) {
         Log.e("ScannerFragment", "showCameraUnavailable: " + reason);
+        if (binding == null) return;
         cameraUnavailable = true;
         hideAllStates();
         hideCameraGuidance();
@@ -434,7 +444,7 @@ public class ScannerFragment extends Fragment {
     }
 
     private void renderState(ScannerUiState state) {
-        if (!isAdded() || getView() == null || cameraUnavailable) {
+        if (!isAdded() || binding == null || cameraUnavailable) {
             return;
         }
         hideAllStates();
@@ -446,8 +456,8 @@ public class ScannerFragment extends Fragment {
         } else if (state instanceof ScannerUiState.PermissionDenied) {
             ScannerUiState.PermissionDenied pd = (ScannerUiState.PermissionDenied) state;
             tvPermissionMessage.setText(pd.permanentlyDenied
-                    ? "Permissão de câmera negada permanentemente. Habilite nas configurações."
-                    : "Permissão de câmera necessária para escanear códigos de barras.");
+                    ? R.string.scanner_permission_permanent
+                    : R.string.scanner_permission_required);
             // Quando negada permanentemente, o launcher de permissão não mostra
             // mais nenhum diálogo ao ser acionado; só "Abrir Configurações" funciona.
             btnRequestPermission.setVisibility(pd.permanentlyDenied ? View.GONE : View.VISIBLE);
@@ -504,12 +514,14 @@ public class ScannerFragment extends Fragment {
         // Play beep and vibrate on successful scan
         playBeepAndVibrate();
 
-        tvResultTitle.setText("Produto Encontrado");
+        tvResultTitle.setText(R.string.scanner_product_found);
         tvProductName.setText(product.getName());
-        tvProductSku.setText("Código: " + (product.getSku() != null ? product.getSku() : "—"));
-        tvProductQuantity.setText("Quantidade: " + product.getQuantity() + " (contrato pendente)");
-        tvProductMinQuantity.setText("Mínimo: " + product.getMinQuantity() + " (contrato pendente)");
-        tvProductExpiry.setText("Validade: " + (product.getExpiryDate() != null ? product.getExpiryDate() : "— (pendente)"));
+        tvProductSku.setText(getString(R.string.scanner_product_code,
+                product.getSku() != null ? product.getSku() : getString(R.string.scanner_value_unavailable)));
+        tvProductQuantity.setText(getString(R.string.scanner_product_quantity, product.getQuantity()));
+        tvProductMinQuantity.setText(getString(R.string.scanner_product_min_quantity, product.getMinQuantity()));
+        tvProductExpiry.setText(getString(R.string.scanner_product_expiry,
+                product.getExpiryDate() != null ? product.getExpiryDate() : getString(R.string.scanner_expiry_pending)));
 
         btnOpenDetail.setOnClickListener(v -> {
             if (foundAutoDismiss != null) foundHandler.removeCallbacks(foundAutoDismiss);
@@ -528,7 +540,7 @@ public class ScannerFragment extends Fragment {
                 viewModel.onRetryFromNotFound();
             }
         };
-        foundHandler.postDelayed(foundAutoDismiss, 10000);
+        foundHandler.postDelayed(foundAutoDismiss, Constants.SCANNER_RESULT_DISMISS_MS);
     }
 
     private void showNotFoundState(String barcode) {
@@ -536,7 +548,7 @@ public class ScannerFragment extends Fragment {
         cardNotFound.setVisibility(View.VISIBLE);
         btnToggleTorch.setVisibility(View.GONE);
 
-        tvNotFoundBarcode.setText("Código: " + barcode);
+        tvNotFoundBarcode.setText(getString(R.string.scanner_product_code, barcode));
 
         btnCreateProduct.setOnClickListener(v -> openNewProductForm(barcode));
         btnScanAgainNotFound.setOnClickListener(v -> viewModel.onRetryFromNotFound());
@@ -562,7 +574,7 @@ public class ScannerFragment extends Fragment {
 
     private void openDamageRegistration(Product product) {
         if (product == null || product.getId() == null || product.getId().isEmpty()) {
-            Toast.makeText(requireContext(), "Produto inválido para registrar avaria", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), R.string.scanner_invalid_product_damage, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -577,7 +589,7 @@ public class ScannerFragment extends Fragment {
     private void openNewProductForm(String barcode) {
         boolean canCreate = com.mottainai.operacional.utils.RoleHelper.canRegisterProduct(sessionManager.getRole());
         if (!canCreate) {
-            Toast.makeText(requireContext(), "Sem permissão para criar produto", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), R.string.scanner_create_forbidden, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -590,12 +602,12 @@ public class ScannerFragment extends Fragment {
 
     private void toggleTorch() {
         if (camera == null) {
-            Toast.makeText(requireContext(), "Câmera ainda não está pronta", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), R.string.scanner_camera_not_ready, Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (!camera.getCameraInfo().hasFlashUnit()) {
-            Toast.makeText(requireContext(), "Este dispositivo não possui flash disponível", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), R.string.scanner_no_flash, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -604,6 +616,7 @@ public class ScannerFragment extends Fragment {
         camera.getCameraControl()
                 .enableTorch(newState)
                 .addListener(() -> {
+                    if (binding == null) return;
                     torchEnabled = newState;
                     btnToggleTorch.setImageResource(
                             torchEnabled
@@ -615,13 +628,14 @@ public class ScannerFragment extends Fragment {
 
     private void playBeepAndVibrate() {
         if (toneGenerator != null) {
-            toneGenerator.startTone(ToneGenerator.TONE_PROP_BEEP, 100);
+            toneGenerator.startTone(ToneGenerator.TONE_PROP_BEEP, Constants.SCANNER_FEEDBACK_MS);
         }
         if (vibrator != null && vibrator.hasVibrator()) {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                vibrator.vibrate(android.os.VibrationEffect.createOneShot(100, -1));
+                vibrator.vibrate(android.os.VibrationEffect.createOneShot(
+                        Constants.SCANNER_FEEDBACK_MS, android.os.VibrationEffect.DEFAULT_AMPLITUDE));
             } else {
-                vibrator.vibrate(100);
+                vibrator.vibrate(Constants.SCANNER_FEEDBACK_MS);
             }
         }
     }
@@ -653,23 +667,23 @@ public class ScannerFragment extends Fragment {
 
     private void showManualEntryDialog() {
         androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(requireContext());
-        builder.setTitle("Digitar código manualmente");
-        builder.setMessage("Digite o código de barras ou SKU do produto:");
+        builder.setTitle(R.string.scanner_manual_title);
+        builder.setMessage(R.string.scanner_manual_message);
 
         final androidx.appcompat.widget.AppCompatEditText input = new androidx.appcompat.widget.AppCompatEditText(requireContext());
         input.setInputType(android.text.InputType.TYPE_CLASS_TEXT);
         builder.setView(input);
 
-        builder.setPositiveButton("Buscar", (dialog, which) -> {
+        builder.setPositiveButton(R.string.scanner_manual_search, (dialog, which) -> {
             String barcode = input.getText().toString().trim();
             if (!barcode.isEmpty()) {
                 viewModel.onBarcodeScanned(barcode);
             } else {
                 // Keep dialog open if empty
-                Toast.makeText(requireContext(), "Digite um código válido", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), R.string.scanner_invalid_code, Toast.LENGTH_SHORT).show();
             }
         });
-        builder.setNegativeButton("Cancelar", null);
+        builder.setNegativeButton(R.string.cancel, null);
         builder.setCancelable(false);
         builder.show();
     }
@@ -698,5 +712,47 @@ public class ScannerFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         stopCamera();
+        if (foundAutoDismiss != null) {
+            foundHandler.removeCallbacks(foundAutoDismiss);
+            foundAutoDismiss = null;
+        }
+        if (toneGenerator != null) {
+            toneGenerator.release();
+            toneGenerator = null;
+        }
+        vibrator = null;
+        binding = null;
+        previewView = null;
+        viewfinderOverlay = null;
+        tvScanHint = null;
+        containerPermissionDenied = null;
+        tvPermissionMessage = null;
+        btnRequestPermission = null;
+        btnOpenSettings = null;
+        containerCameraUnavailable = null;
+        tvCameraUnavailableMessage = null;
+        btnRetryCamera = null;
+        cardResult = null;
+        tvResultTitle = null;
+        tvProductName = null;
+        tvProductSku = null;
+        tvProductQuantity = null;
+        tvProductMinQuantity = null;
+        tvProductExpiry = null;
+        btnOpenDetail = null;
+        btnRegisterDamage = null;
+        btnScanAgain = null;
+        cardNotFound = null;
+        tvNotFoundBarcode = null;
+        btnCreateProduct = null;
+        btnScanAgainNotFound = null;
+        cardError = null;
+        tvErrorMessage = null;
+        btnRetry = null;
+        btnScanAgainError = null;
+        progressLookup = null;
+        btnToggleTorch = null;
+        btnCloseScanner = null;
+        btnManualEntry = null;
     }
 }

@@ -16,6 +16,7 @@ import androidx.navigation.Navigation;
 
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.mottainai.operacional.R;
+import com.mottainai.operacional.databinding.FragmentRegisterDamageBinding;
 
 /**
  * Registro de avaria de um produto, aberto a partir do scanner
@@ -26,13 +27,14 @@ import com.mottainai.operacional.R;
  */
 public class RegisterDamageFragment extends Fragment {
 
-    private static final String[] REASONS = {"Vencido", "Embalagem danificada", "Quebra", "Contaminação", "Outro"};
+    private FragmentRegisterDamageBinding binding;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                               @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_register_damage, container, false);
+        binding = FragmentRegisterDamageBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
@@ -42,32 +44,33 @@ public class RegisterDamageFragment extends Fragment {
         Bundle args = getArguments();
         String productName = args != null ? args.getString("product_name") : null;
         String productSku = args != null ? args.getString("product_sku") : null;
-        if (productName == null) productName = "Produto";
+        if (productName == null) productName = getString(R.string.damage_product_fallback);
 
-        ((TextView) view.findViewById(R.id.tv_product_name)).setText(productName);
-        TextView tvSku = view.findViewById(R.id.tv_product_sku);
+        binding.tvProductName.setText(productName);
+        TextView tvSku = binding.tvProductSku;
         if (productSku != null) {
-            tvSku.setText("SKU " + productSku);
+            tvSku.setText(getString(R.string.damage_product_sku, productSku));
         } else {
             tvSku.setVisibility(View.GONE);
         }
 
         NavController navController = Navigation.findNavController(view);
-        view.findViewById(R.id.btn_back).setOnClickListener(v -> navController.popBackStack());
+        binding.btnBack.setOnClickListener(v -> navController.popBackStack());
 
-        MaterialAutoCompleteTextView actvReason = view.findViewById(R.id.actv_damage_reason);
-        ArrayAdapter<String> reasonAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, REASONS);
+        MaterialAutoCompleteTextView actvReason = binding.actvDamageReason;
+        ArrayAdapter<String> reasonAdapter = new ArrayAdapter<>(requireContext(),
+                android.R.layout.simple_dropdown_item_1line, getResources().getStringArray(R.array.damage_reasons));
         actvReason.setAdapter(reasonAdapter);
-        TextView tvErrorReason = view.findViewById(R.id.tv_error_reason);
+        TextView tvErrorReason = binding.tvErrorReason;
 
-        EditText etQuantity = view.findViewById(R.id.et_damage_quantity);
-        TextView tvErrorQuantity = view.findViewById(R.id.tv_error_quantity);
+        EditText etQuantity = binding.etDamageQuantity;
+        TextView tvErrorQuantity = binding.tvErrorQuantity;
 
         String finalProductName = productName;
-        view.findViewById(R.id.btn_submit_damage).setOnClickListener(v -> {
+        binding.btnSubmitDamage.setOnClickListener(v -> {
             String reason = actvReason.getText() != null ? actvReason.getText().toString().trim() : "";
             if (reason.isEmpty()) {
-                tvErrorReason.setText("Selecione o motivo da avaria");
+                tvErrorReason.setText(R.string.damage_reason_required);
                 tvErrorReason.setVisibility(View.VISIBLE);
                 return;
             }
@@ -77,12 +80,12 @@ public class RegisterDamageFragment extends Fragment {
             try {
                 quantity = Integer.parseInt(etQuantity.getText().toString().trim());
             } catch (NumberFormatException e) {
-                tvErrorQuantity.setText("Quantidade inválida");
+                tvErrorQuantity.setText(R.string.damage_quantity_invalid);
                 tvErrorQuantity.setVisibility(View.VISIBLE);
                 return;
             }
             if (quantity <= 0) {
-                tvErrorQuantity.setText("Deve ser maior que zero");
+                tvErrorQuantity.setText(R.string.damage_quantity_positive);
                 tvErrorQuantity.setVisibility(View.VISIBLE);
                 return;
             }
@@ -93,5 +96,11 @@ public class RegisterDamageFragment extends Fragment {
             successArgs.putString("damage_quantity", String.valueOf(quantity));
             navController.navigate(R.id.action_registerDamageFragment_to_damageSuccessFragment, successArgs);
         });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

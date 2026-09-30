@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.mottainai.operacional.R;
+import com.mottainai.operacional.databinding.ItemProductBinding;
 import com.mottainai.operacional.models.Product;
 
 import java.util.ArrayList;
@@ -37,8 +38,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     @NonNull
     @Override
     public ProductViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_product, parent, false);
-        return new ProductViewHolder(view);
+        return new ProductViewHolder(ItemProductBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false));
     }
 
     @Override
@@ -108,14 +109,14 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         private final ImageView ivProductImage;
         private final View vStockIndicator;
 
-        public ProductViewHolder(@NonNull View itemView) {
-            super(itemView);
-            tvProductName = itemView.findViewById(R.id.tv_product_name);
-            tvProductSku = itemView.findViewById(R.id.tv_product_sku);
-            tvProductQuantity = itemView.findViewById(R.id.tv_product_quantity);
-            tvProductStatus = itemView.findViewById(R.id.tv_product_status);
-            ivProductImage = itemView.findViewById(R.id.iv_product_image);
-            vStockIndicator = itemView.findViewById(R.id.v_stock_indicator);
+        public ProductViewHolder(@NonNull ItemProductBinding binding) {
+            super(binding.getRoot());
+            tvProductName = binding.tvProductName;
+            tvProductSku = binding.tvProductSku;
+            tvProductQuantity = binding.tvProductQuantity;
+            tvProductStatus = binding.tvProductStatus;
+            ivProductImage = binding.ivProductImage;
+            vStockIndicator = binding.vStockIndicator;
 
             itemView.setOnClickListener(v -> {
                 int position = getBindingAdapterPosition();

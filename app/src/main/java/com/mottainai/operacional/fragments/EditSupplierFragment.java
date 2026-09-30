@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import com.mottainai.operacional.R;
+import com.mottainai.operacional.databinding.FragmentEditSupplierBinding;
 import com.mottainai.operacional.repository.MockSupplierRepository;
 import com.mottainai.operacional.models.Supplier;
 import com.mottainai.operacional.utils.SessionManager;
@@ -26,11 +27,14 @@ import com.mottainai.operacional.viewmodels.SupplierViewModel;
  */
 public class EditSupplierFragment extends Fragment {
 
+    private FragmentEditSupplierBinding binding;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                               @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_edit_supplier, container, false);
+        binding = FragmentEditSupplierBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
@@ -39,9 +43,9 @@ public class EditSupplierFragment extends Fragment {
 
         Bundle args = getArguments();
         String supplierId = args == null ? null : args.getString("supplier_id");
-        EditText etName = view.findViewById(R.id.et_supplier_name);
-        EditText etCnpj = view.findViewById(R.id.et_supplier_cnpj);
-        EditText etContact = view.findViewById(R.id.et_supplier_contact);
+        EditText etName = binding.etSupplierName;
+        EditText etCnpj = binding.etSupplierCnpj;
+        EditText etContact = binding.etSupplierContact;
         SupplierViewModel viewModel = new ViewModelProvider(requireActivity()).get(SupplierViewModel.class);
         SessionManager session = new SessionManager(requireContext());
         viewModel.clearCompletion();
@@ -55,10 +59,10 @@ public class EditSupplierFragment extends Fragment {
             if (message != null) Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
         });
 
-        view.findViewById(R.id.btn_back).setOnClickListener(v ->
+        binding.btnBack.setOnClickListener(v ->
                 Navigation.findNavController(view).popBackStack());
 
-        view.findViewById(R.id.btn_save_supplier).setOnClickListener(v -> {
+        binding.btnSaveSupplier.setOnClickListener(v -> {
             String name = etName.getText().toString().trim();
             String cnpj = etCnpj.getText().toString().replaceAll("\\D", "");
             String contact = etContact.getText().toString().trim();
@@ -68,8 +72,14 @@ public class EditSupplierFragment extends Fragment {
             viewModel.update(session.getStoreId(), supplierId, name, cnpj, contact);
         });
 
-        view.findViewById(R.id.btn_remove_supplier).setOnClickListener(v -> new MaterialAlertDialogBuilder(requireContext())
+        binding.btnRemoveSupplier.setOnClickListener(v -> new MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Remover fornecedor?").setMessage("Esta ação remove o fornecedor salvo neste dispositivo.")
                 .setNegativeButton("Cancelar", null).setPositiveButton("Remover", (dialog, which) -> viewModel.delete(session.getStoreId(), supplierId)).show());
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

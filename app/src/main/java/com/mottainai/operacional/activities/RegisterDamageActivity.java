@@ -17,12 +17,15 @@ import androidx.lifecycle.ViewModelProvider;
 import com.bumptech.glide.Glide;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.mottainai.operacional.R;
+import com.mottainai.operacional.databinding.ActivityRegisterDamageBinding;
 import com.mottainai.operacional.models.DamageUiState;
 import com.mottainai.operacional.viewmodels.DamageViewModel;
 
 import java.io.File;
 
 public class RegisterDamageActivity extends AppCompatActivity {
+
+    private ActivityRegisterDamageBinding binding;
 
     private DamageViewModel viewModel;
     private MaterialAutoCompleteTextView actvReason;
@@ -59,8 +62,9 @@ public class RegisterDamageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register_damage);
-        findViewById(R.id.btn_back).setOnClickListener(v -> finish());
+        binding = ActivityRegisterDamageBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        binding.btnBack.setOnClickListener(v -> finish());
 
         String productId = getIntent().getStringExtra("product_id");
         if (productId == null) { finish(); return; }
@@ -73,19 +77,19 @@ public class RegisterDamageActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        tvProductName = findViewById(R.id.tv_product_name);
-        tvProductSku = findViewById(R.id.tv_product_sku);
-        actvReason = findViewById(R.id.actv_reason);
-        etQuantity = findViewById(R.id.et_quantity);
-        etNote = findViewById(R.id.et_note);
-        tvErrorReason = findViewById(R.id.tv_error_reason);
-        tvErrorQuantity = findViewById(R.id.tv_error_quantity);
-        tvErrorNote = findViewById(R.id.tv_error_note);
-        tvDamageError = findViewById(R.id.tv_damage_error);
-        ivPreview = findViewById(R.id.iv_preview);
-        progress = findViewById(R.id.progress_damage);
-        btnSubmit = findViewById(R.id.btn_submit);
-        findViewById(R.id.btn_cancel).setOnClickListener(v -> finish());
+        tvProductName = binding.tvProductName;
+        tvProductSku = binding.tvProductSku;
+        actvReason = binding.actvReason;
+        etQuantity = binding.etQuantity;
+        etNote = binding.etNote;
+        tvErrorReason = binding.tvErrorReason;
+        tvErrorQuantity = binding.tvErrorQuantity;
+        tvErrorNote = binding.tvErrorNote;
+        tvDamageError = binding.tvDamageError;
+        ivPreview = binding.ivPreview;
+        progress = binding.progressDamage;
+        btnSubmit = binding.btnSubmit;
+        binding.btnCancel.setOnClickListener(v -> finish());
     }
 
     private void setupViewModel(String productId) {
@@ -134,17 +138,17 @@ public class RegisterDamageActivity extends AppCompatActivity {
     }
 
     private void setupReasonDropdown() {
-        String[] reasons = new String[]{"Vencido", "Embalagem danificada", "Quebra", "Contaminação", "Outro"};
+        String[] reasons = getResources().getStringArray(R.array.damage_reasons);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, reasons);
         actvReason.setAdapter(adapter);
     }
 
     private void setupPhotoButtons() {
-        findViewById(R.id.btn_camera).setOnClickListener(v -> {
+        binding.btnCamera.setOnClickListener(v -> {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) launchCamera();
             else permissionLauncher.launch(Manifest.permission.CAMERA);
         });
-        findViewById(R.id.btn_gallery).setOnClickListener(v -> galleryLauncher.launch("image/*"));
+        binding.btnGallery.setOnClickListener(v -> galleryLauncher.launch("image/*"));
     }
 
     private void launchCamera() {
