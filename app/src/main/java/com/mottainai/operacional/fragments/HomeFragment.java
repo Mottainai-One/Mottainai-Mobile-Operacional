@@ -24,15 +24,15 @@ import com.mottainai.operacional.adapters.AlertAdapter;
 import com.mottainai.operacional.adapters.SuggestionAdapter;
 import com.mottainai.operacional.models.Alert;
 import com.mottainai.operacional.models.Suggestion;
+import com.mottainai.operacional.utils.AppLocales;
+import com.mottainai.operacional.utils.Constants;
 import com.mottainai.operacional.utils.RoleHelper;
 import com.mottainai.operacional.utils.SessionManager;
-import com.mottainai.operacional.utils.Constants;
 import com.mottainai.operacional.viewmodels.HomeViewModel;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class HomeFragment extends Fragment {
 
@@ -211,8 +211,8 @@ public class HomeFragment extends Fragment {
         String storeId = sessionManager.getStoreId();
         String role = sessionManager.getRole();
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, d MMM", new Locale("pt", "BR"));
-        tvDate.setText(dateFormat.format(new Date()).toUpperCase(new Locale("pt", "BR")));
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, d MMM", AppLocales.PT_BR);
+        tvDate.setText(dateFormat.format(new Date()).toUpperCase(AppLocales.PT_BR));
 
         if (name != null && !name.isEmpty()) {
             tvWelcome.setText("Olá, " + name);

@@ -7,12 +7,12 @@ import android.os.Looper;
 import com.mottainai.operacional.models.InventoryItem;
 import com.mottainai.operacional.models.InventorySession;
 import com.mottainai.operacional.models.Product;
+import com.mottainai.operacional.utils.AppLocales;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -75,7 +75,7 @@ public class MockInventoryRepository {
                         key,
                         isBlank(startedBy) ? "Usuário autenticado" : startedBy,
                         DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT,
-                                new Locale("pt", "BR")).format(new Date()),
+                                AppLocales.PT_BR).format(new Date()),
                         InventorySession.Status.IN_PROGRESS,
                         items
                 );

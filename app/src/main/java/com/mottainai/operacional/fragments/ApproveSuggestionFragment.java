@@ -18,9 +18,9 @@ import androidx.navigation.Navigation;
 
 import com.mottainai.operacional.R;
 import com.mottainai.operacional.databinding.FragmentApproveSuggestionBinding;
+import com.mottainai.operacional.utils.AppLocales;
 
 import java.text.NumberFormat;
-import java.util.Locale;
 
 /**
  * Tela de decisão de uma sugestão da IA (aprovar/recusar).
@@ -92,7 +92,7 @@ public class ApproveSuggestionFragment extends Fragment {
         }
         double finalPrice = currentPrice * (1 - discount / 100d);
         view.setText(getString(R.string.suggestion_final_price,
-                NumberFormat.getCurrencyInstance(new Locale("pt", "BR")).format(finalPrice)));
+                NumberFormat.getCurrencyInstance(AppLocales.PT_BR).format(finalPrice)));
     }
 
     @Override
