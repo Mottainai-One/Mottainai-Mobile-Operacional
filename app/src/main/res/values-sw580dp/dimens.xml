@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- O firmware Samsung pode expor o Tab A7 Lite como ~582dp (220 dpi). -->
+    <dimen name="screen_padding">40dp</dimen>
+    <dimen name="screen_padding_vertical">32dp</dimen>
+    <dimen name="login_padding_horizontal">80dp</dimen>
+    <dimen name="login_padding_vertical">32dp</dimen>
+</resources>
