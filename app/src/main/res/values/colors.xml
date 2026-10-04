@@ -1,60 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Material3 required colors -->
-    <color name="colorPrimary">#2E7D32</color>
-    <color name="colorPrimaryContainer">#A5D6A7</color>
-    <color name="colorSecondary">#1B5E20</color>
-    <color name="colorSecondaryContainer">#C8E6C9</color>
-    <color name="colorTertiary">#E65100</color>
-    <color name="colorTertiaryContainer">#FFE0B2</color>
+    <color name="colorPrimary">#102A43</color>
+    <color name="colorPrimaryContainer">#F6F0EA</color>
+    <color name="colorSecondary">#2F664E</color>
+    <color name="colorSecondaryContainer">#F1F8F4</color>
+    <color name="colorTertiary">#DD7B2D</color>
+    <color name="colorTertiaryContainer">#FFF4EB</color>
     <color name="colorSurface">#FFFFFF</color>
-    <color name="colorSurfaceVariant">#F5F5F5</color>
-    <color name="colorBackground">#FFFFFF</color>
-    <color name="colorError">#D32F2F</color>
-    <color name="colorErrorContainer">#FCEEEE</color>
+    <color name="colorSurfaceVariant">#F6F0EA</color>
+    <color name="colorBackground">#FFF7F0</color>
+    <color name="colorError">#D96052</color>
+    <color name="colorErrorContainer">#FFF4F2</color>
     <color name="colorOnPrimary">#FFFFFF</color>
-    <color name="colorOnPrimaryContainer">#002E04</color>
+    <color name="colorOnPrimaryContainer">#132736</color>
     <color name="colorOnSecondary">#FFFFFF</color>
-    <color name="colorOnSecondaryContainer">#001F00</color>
+    <color name="colorOnSecondaryContainer">#2F664E</color>
     <color name="colorOnTertiary">#FFFFFF</color>
-    <color name="colorOnTertiaryContainer">#2E1500</color>
-    <color name="colorOnSurface">#212121</color>
-    <color name="colorOnSurfaceVariant">#49454F</color>
-    <color name="colorOnBackground">#212121</color>
+    <color name="colorOnTertiaryContainer">#DD7B2D</color>
+    <color name="colorOnSurface">#132736</color>
+    <color name="colorOnSurfaceVariant">#6C7D8B</color>
+    <color name="colorOnBackground">#132736</color>
     <color name="colorOnError">#FFFFFF</color>
-    <color name="colorOnErrorContainer">#690005</color>
-    <color name="colorOutline">#7C7C7C</color>
-    <color name="colorOutlineVariant">#CAC4D0</color>
-    <color name="colorInverseSurface">#313033</color>
-    <color name="colorInversePrimary">#A5D6A7</color>
+    <color name="colorOnErrorContainer">#D96052</color>
+    <color name="colorOutline">#E4D8CE</color>
+    <color name="colorOutlineVariant">#E4D8CE</color>
+    <color name="colorInverseSurface">#132736</color>
+    <color name="colorInversePrimary">#FFFFFF</color>
     <color name="colorShadow">#000000</color>
     <color name="colorScrim">#000000</color>
 
     <!-- Severidades -->
-    <color name="severity_critico">#D32F2F</color>
-    <color name="severity_atencao">#F57C00</color>
-    <color name="severity_monitor">#1976D2</color>
+    <color name="severity_critico">#D96052</color>
+    <color name="severity_atencao">#DD7B2D</color>
+    <color name="severity_monitor">#56802B</color>
 
     <!-- UI geral -->
-    <color name="surface_card">#F5F5F5</color>
-    <color name="text_primary">#212121</color>
-    <color name="text_secondary">#757575</color>
-    <color name="accent">#4CAF50</color>
+    <color name="surface_card">#F6F0EA</color>
+    <color name="text_primary">#132736</color>
+    <color name="text_secondary">#6C7D8B</color>
+    <color name="accent">#2F664E</color>
 
     <!-- Legacy colors -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
     <!-- Paleta das telas do frontend mergeado -->
-    <color name="primary_green">#1F5233</color>
-    <color name="primary_green_dark">#183D26</color>
-    <color name="background_beige">#F8F7F2</color>
-    <color name="background_beige_dark">#E8E7E2</color>
-    <color name="card_light_green">#E9F5EF</color>
-    <color name="accent_red">#D32F2F</color>
-    <color name="accent_red_dark">#B71C1C</color>
-    <color name="accent_orange">#F57C00</color>
-    <color name="text_grey">#757575</color>
-    <color name="text_grey_light">#BDBDBD</color>
-    <color name="divider_grey">#EEEEEE</color>
+    <color name="primary_green">#102A43</color>
+    <color name="primary_green_dark">#102A43</color>
+    <color name="background_beige">#FFF7F0</color>
+    <color name="background_beige_dark">#F6F0EA</color>
+    <color name="card_light_green">#F1F8F4</color>
+    <color name="accent_red">#D96052</color>
+    <color name="accent_red_dark">#D96052</color>
+    <color name="accent_orange">#DD7B2D</color>
+    <color name="text_grey">#6C7D8B</color>
+    <color name="text_grey_light">#6C7D8B</color>
+    <color name="divider_grey">#E4D8CE</color>
 </resources>
