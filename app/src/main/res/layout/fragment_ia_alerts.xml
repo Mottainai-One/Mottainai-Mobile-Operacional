@@ -53,13 +53,11 @@
                 android:text="Alertas" />
 
             <com.google.android.material.tabs.TabItem
-                android:id="@+id/tab_item_suggestions"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Sugestões" />
 
             <com.google.android.material.tabs.TabItem
-                android:id="@+id/tab_item_chat"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Chat" />
