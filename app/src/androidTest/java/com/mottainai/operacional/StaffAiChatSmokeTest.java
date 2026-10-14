@@ -63,8 +63,10 @@ public class StaffAiChatSmokeTest {
             onView(withId(R.id.btn_login)).perform(click());
             await(() -> assertEquals(role, session.getRole()), 90_000);
             await(() -> onView(withId(R.id.iaAlertsFragment)).perform(click()), 60_000);
-            onView(withText("Chat")).perform(click());
-            await(() -> onView(withId(R.id.btn_chat_send)).check(matches(isEnabled())), 60_000);
+            await(() -> {
+                onView(withText("Chat")).perform(click());
+                onView(withId(R.id.btn_chat_send)).check(matches(isEnabled()));
+            }, 60_000);
             onView(withId(R.id.et_chat_message)).perform(replaceText(question), closeSoftKeyboard());
             onView(withId(R.id.btn_chat_send)).perform(click());
             String[] reply = {""};
