@@ -19,20 +19,31 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.mottainai.operacional.R;
+import com.mottainai.operacional.databinding.FragmentHomeBinding;
 import com.mottainai.operacional.adapters.AlertAdapter;
 import com.mottainai.operacional.adapters.SuggestionAdapter;
+import com.mottainai.operacional.models.Alert;
+import com.mottainai.operacional.models.Suggestion;
+import com.mottainai.operacional.utils.AppLocales;
+import com.mottainai.operacional.utils.Constants;
 import com.mottainai.operacional.utils.RoleHelper;
 import com.mottainai.operacional.utils.SessionManager;
-import com.mottainai.operacional.utils.Constants;
 import com.mottainai.operacional.viewmodels.HomeViewModel;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
 public class HomeFragment extends Fragment {
+
+    private FragmentHomeBinding binding;
 
     private HomeViewModel viewModel;
     private SessionManager sessionManager;
     private NavController navController;
 
     // Views
+    private TextView tvDate;
     private ProgressBar progressBar;
     private View containerError;
     private TextView tvError;
@@ -41,13 +52,12 @@ public class HomeFragment extends Fragment {
     private TextView tvEmpty;
     private TextView tvWelcome;
     private TextView tvStoreInfo;
-    private View headerContainer;
+    private View contentContainer;
 
-    // Cards Estoquista
-    private View layoutCardsEstoque;
-    private TextView tvExpiringCount;
-    private TextView tvLowStockCount;
-    private TextView tvPromotionsCount;
+    // Resumo por severidade (todos os papéis)
+    private TextView tvCountCritico;
+    private TextView tvCountAtencao;
+    private TextView tvCountMonitor;
 
     // Cards Gerente
     private View layoutCardsGerente;
@@ -59,19 +69,6 @@ public class HomeFragment extends Fragment {
     private TextView tvLossRisk;
     private TextView tvValueSaved;
     private TextView tvActiveStores;
-
-    // Atalhos
-    private View layoutShortcuts;
-    private View layoutShortcutsGestao;
-    private View layoutShortcutsDono;
-    private View btnShortcutProducts;
-    private View btnShortcutScan;
-    private View btnShortcutDamage;
-    private View btnShortcutInventario;
-    private View btnShortcutAvarias;
-    private View btnShortcutFornecedores;
-    private View btnShortcutEquipe;
-    private View btnShortcutConfig;
 
     // Listas
     private RecyclerView rvAlerts;
@@ -86,7 +83,8 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_home, container, false);
+        binding = FragmentHomeBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
@@ -98,56 +96,43 @@ public class HomeFragment extends Fragment {
         setupRecyclerViews();
         setupViewModel();
         setupRetryButton();
-        setupShortcuts();
+        setupCameraLink();
         setupHeader();
     }
 
     private void initViews(View view) {
-        progressBar = view.findViewById(R.id.progress_home);
-        containerError = view.findViewById(R.id.container_error);
-        tvError = view.findViewById(R.id.tv_error);
-        btnRetry = view.findViewById(R.id.btn_retry);
-        containerEmpty = view.findViewById(R.id.container_empty);
-        tvEmpty = view.findViewById(R.id.tv_empty);
-        tvWelcome = view.findViewById(R.id.tv_welcome);
-        tvStoreInfo = view.findViewById(R.id.tv_store_info);
-        headerContainer = view.findViewById(R.id.header_container);
+        tvDate = binding.tvDate;
+        progressBar = binding.progressHome;
+        containerError = binding.containerError;
+        tvError = binding.tvError;
+        btnRetry = binding.btnRetry;
+        containerEmpty = binding.containerEmpty;
+        tvEmpty = binding.tvEmpty;
+        tvWelcome = binding.tvWelcome;
+        tvStoreInfo = binding.tvStoreInfo;
+        contentContainer = binding.contentContainer;
 
-        // Cards Estoquista
-        layoutCardsEstoque = view.findViewById(R.id.layout_cards_estoque);
-        tvExpiringCount = view.findViewById(R.id.tv_expiring_count);
-        tvLowStockCount = view.findViewById(R.id.tv_low_stock_count);
-        tvPromotionsCount = view.findViewById(R.id.tv_promotions_count);
+        // Resumo por severidade
+        tvCountCritico = binding.tvCountCritico;
+        tvCountAtencao = binding.tvCountAtencao;
+        tvCountMonitor = binding.tvCountMonitor;
 
         // Cards Gerente
-        layoutCardsGerente = view.findViewById(R.id.layout_cards_gerente);
-        tvPendingApprovals = view.findViewById(R.id.tv_pending_approvals);
-        tvFinancialRisk = view.findViewById(R.id.tv_financial_risk);
+        layoutCardsGerente = binding.layoutCardsGerente;
+        tvPendingApprovals = binding.tvPendingApprovals;
+        tvFinancialRisk = binding.tvFinancialRisk;
 
         // Cards Dono
-        layoutCardsDono = view.findViewById(R.id.layout_cards_dono);
-        tvLossRisk = view.findViewById(R.id.tv_loss_risk);
-        tvValueSaved = view.findViewById(R.id.tv_value_saved);
-        tvActiveStores = view.findViewById(R.id.tv_active_stores);
-
-        // Atalhos
-        layoutShortcuts = view.findViewById(R.id.layout_shortcuts);
-        layoutShortcutsGestao = view.findViewById(R.id.layout_shortcuts_gestao);
-        layoutShortcutsDono = view.findViewById(R.id.layout_shortcuts_dono);
-        btnShortcutProducts = view.findViewById(R.id.btn_shortcut_products);
-        btnShortcutScan = view.findViewById(R.id.btn_shortcut_scan);
-        btnShortcutDamage = view.findViewById(R.id.btn_shortcut_damage);
-        btnShortcutInventario = view.findViewById(R.id.btn_shortcut_inventario);
-        btnShortcutAvarias = view.findViewById(R.id.btn_shortcut_avarias);
-        btnShortcutFornecedores = view.findViewById(R.id.btn_shortcut_fornecedores);
-        btnShortcutEquipe = view.findViewById(R.id.btn_shortcut_equipe);
-        btnShortcutConfig = view.findViewById(R.id.btn_shortcut_config);
+        layoutCardsDono = binding.layoutCardsDono;
+        tvLossRisk = binding.tvLossRisk;
+        tvValueSaved = binding.tvValueSaved;
+        tvActiveStores = binding.tvActiveStores;
 
         // Listas
-        rvAlerts = view.findViewById(R.id.rv_alerts);
-        rvSuggestions = view.findViewById(R.id.rv_suggestions);
-        tvAlertsTitle = view.findViewById(R.id.tv_alerts_title);
-        tvSuggestionsTitle = view.findViewById(R.id.tv_suggestions_title);
+        rvAlerts = binding.rvAlerts;
+        rvSuggestions = binding.rvSuggestions;
+        tvAlertsTitle = binding.tvAlertsTitle;
+        tvSuggestionsTitle = binding.tvSuggestionsTitle;
     }
 
     private void setupRecyclerViews() {
@@ -173,6 +158,7 @@ public class HomeFragment extends Fragment {
         // Observa loading
         viewModel.getLoading().observe(getViewLifecycleOwner(), isLoading -> {
             progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+            contentContainer.setVisibility(isLoading ? View.GONE : View.VISIBLE);
             if (isLoading) {
                 hideError();
                 hideEmpty();
@@ -197,6 +183,7 @@ public class HomeFragment extends Fragment {
         viewModel.getAlerts().observe(getViewLifecycleOwner(), alerts -> {
             alertAdapter.setAlerts(alerts);
             updateEmptyState();
+            updateCounts(alerts, suggestionAdapter.getSuggestions());
             String role = sessionManager.getRole();
             if (role != null) {
                 applyRoleRules(role);
@@ -207,6 +194,7 @@ public class HomeFragment extends Fragment {
         viewModel.getSuggestions().observe(getViewLifecycleOwner(), suggestions -> {
             suggestionAdapter.setSuggestions(suggestions);
             updateEmptyState();
+            updateCounts(alertAdapter.getAlerts(), suggestions);
         });
 
         // Carrega dados
@@ -223,10 +211,13 @@ public class HomeFragment extends Fragment {
         String storeId = sessionManager.getStoreId();
         String role = sessionManager.getRole();
 
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, d MMM", AppLocales.PT_BR);
+        tvDate.setText(dateFormat.format(new Date()).toUpperCase(AppLocales.PT_BR));
+
         if (name != null && !name.isEmpty()) {
-            tvWelcome.setText("Olá, " + name + " 👋");
+            tvWelcome.setText("Olá, " + name);
         } else {
-            tvWelcome.setText("Olá 👋");
+            tvWelcome.setText("Olá");
         }
 
         String roleLabel = RoleHelper.roleToLabel(role);
@@ -242,54 +233,10 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void setupShortcuts() {
-        View cameraButton = requireView().findViewById(R.id.btn_abrir_camera);
+    private void setupCameraLink() {
+        View cameraButton = binding.btnAbrirCamera;
         if (cameraButton != null) {
             cameraButton.setOnClickListener(v -> navigateTo(R.id.scannerFragment));
-        }
-
-        View expiringCard = requireView().findViewById(R.id.cv_produtos_vencendo);
-        if (expiringCard != null) {
-            expiringCard.setOnClickListener(v -> navigateTo(R.id.productsListFragment));
-        }
-
-        View lowStockCard = requireView().findViewById(R.id.cv_estoque_baixo);
-        if (lowStockCard != null) {
-            lowStockCard.setOnClickListener(v -> navigateTo(R.id.productsListFragment));
-        }
-
-        // Estoquista
-        if (btnShortcutProducts != null) {
-            btnShortcutProducts.setOnClickListener(v -> navigateTo(R.id.productsListFragment));
-        }
-        if (btnShortcutScan != null) {
-            btnShortcutScan.setOnClickListener(v -> navigateTo(R.id.scannerFragment));
-        }
-        if (btnShortcutDamage != null) {
-            // A avaria exige um produto; o scanner é o ponto de entrada que
-            // identifica o produto antes de abrir o formulário de registro.
-            btnShortcutDamage.setOnClickListener(v -> navigateTo(R.id.scannerFragment));
-        }
-
-        // Gerente - atalhos de gestão
-        if (btnShortcutInventario != null) {
-            btnShortcutInventario.setOnClickListener(v -> navigateToProductsTab(1));
-        }
-        if (btnShortcutAvarias != null) {
-            // Não existe uma lista de avarias nesta versão; iniciar pelo
-            // scanner mantém o fluxo conectado ao formulário existente.
-            btnShortcutAvarias.setOnClickListener(v -> navigateTo(R.id.scannerFragment));
-        }
-        if (btnShortcutFornecedores != null) {
-            btnShortcutFornecedores.setOnClickListener(v -> navigateToProductsTab(2));
-        }
-
-        // Dono
-        if (btnShortcutEquipe != null) {
-            btnShortcutEquipe.setOnClickListener(v -> showComingSoon());
-        }
-        if (btnShortcutConfig != null) {
-            btnShortcutConfig.setOnClickListener(v -> navigateTo(R.id.configFragment));
         }
     }
 
@@ -305,63 +252,63 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    private void navigateToProductsTab(int tabIndex) {
-        Bundle args = new Bundle();
-        args.putInt(ProductsListFragment.ARG_INITIAL_TAB, tabIndex);
-        try {
-            navController.navigate(R.id.productsListFragment, args);
-        } catch (IllegalArgumentException e) {
-            showComingSoon();
-        }
-    }
-
-    private void applyRoleRules(String role) {
-        boolean isEstoque = Constants.ROLE_ESTOQUISTA.equals(role);
+    private void applyRoleRules(String rawRole) {
+        // O token do Firebase traz o papel em maiúsculas (ex.: "GERENTE"), não
+        // no formato exato das constantes; sem normalizar aqui, esta tela
+        // inteira de regras por papel silenciosamente não ativava nada.
+        String role = RoleHelper.normalize(rawRole);
         boolean isGerente = Constants.ROLE_GERENTE.equals(role);
         boolean isDono = Constants.ROLE_DONO.equals(role);
 
         // Esconde todos primeiro
-        layoutCardsEstoque.setVisibility(View.GONE);
         layoutCardsGerente.setVisibility(View.GONE);
         layoutCardsDono.setVisibility(View.GONE);
-        layoutShortcuts.setVisibility(View.GONE);
-        layoutShortcutsGestao.setVisibility(View.GONE);
-        layoutShortcutsDono.setVisibility(View.GONE);
+        tvSuggestionsTitle.setVisibility(View.GONE);
+        rvSuggestions.setVisibility(View.GONE);
 
-        if (isEstoque) {
-            // Estoquista: cards de estoque + atalhos básicos
-            layoutCardsEstoque.setVisibility(View.VISIBLE);
-            layoutShortcuts.setVisibility(View.VISIBLE);
+        if (Constants.ROLE_ESTOQUISTA.equals(role)) {
             tvAlertsTitle.setText("Alertas de estoque");
         } else if (isGerente) {
-            // Gerente: cards de gestão + atalhos básicos + atalhos de gestão
+            // Gerente: cards de gestão
             layoutCardsGerente.setVisibility(View.VISIBLE);
-            layoutShortcuts.setVisibility(View.VISIBLE); // Produtos, Escanear, Avaria
-            layoutShortcutsGestao.setVisibility(View.VISIBLE); // Inventário, Avarias e Fornecedores
             tvAlertsTitle.setText("Alertas");
             tvSuggestionsTitle.setVisibility(View.VISIBLE);
             rvSuggestions.setVisibility(View.VISIBLE);
         } else if (isDono) {
-            // Dono: cards financeiros + atalhos + config
+            // Dono: cards financeiros
             layoutCardsDono.setVisibility(View.VISIBLE);
-            layoutShortcuts.setVisibility(View.VISIBLE);
-            layoutShortcutsGestao.setVisibility(View.VISIBLE);
-            layoutShortcutsDono.setVisibility(View.GONE); // Equipe não existe
             tvAlertsTitle.setText("Visão geral");
             tvSuggestionsTitle.setVisibility(View.VISIBLE);
             rvSuggestions.setVisibility(View.VISIBLE);
         }
-
-        // Atualiza contadores dos cards (placeholder - integração com backend futuramente)
-        updateCardCounts(role);
     }
 
-    private void updateCardCounts(String role) {
-        // Por enquanto usa valores zerados - quando houver API de resumo, preencher aqui
-        tvExpiringCount.setText("Vencendo em breve: 0");
-        tvLowStockCount.setText("Estoque baixo: 0");
-        tvPromotionsCount.setText("Promoções ativas: 0");
-        tvPendingApprovals.setText("Aprovações pendentes: 0");
+    /** Deriva os números do resumo a partir dos alertas/sugestões já carregados (nada é inventado). */
+    private void updateCounts(List<Alert> alerts, List<Suggestion> suggestions) {
+        int critico = 0, atencao = 0, monitor = 0;
+        if (alerts != null) {
+            for (Alert alert : alerts) {
+                String severity = alert.getSeverity();
+                if ("CRITICO".equals(severity)) critico++;
+                else if ("ATENCAO".equals(severity)) atencao++;
+                else if ("MONITOR".equals(severity)) monitor++;
+            }
+        }
+        tvCountCritico.setText(String.valueOf(critico));
+        tvCountAtencao.setText(String.valueOf(atencao));
+        tvCountMonitor.setText(String.valueOf(monitor));
+
+        int pending = 0;
+        if (suggestions != null) {
+            for (Suggestion suggestion : suggestions) {
+                String status = suggestion.getStatus();
+                if (status == null || status.trim().isEmpty() || "pending".equalsIgnoreCase(status.trim())) {
+                    pending++;
+                }
+            }
+        }
+        tvPendingApprovals.setText("Aprovações pendentes: " + pending);
+        // Sem fonte de dados ainda para estas métricas: mantidas honestas com "—" em vez de valor inventado.
         tvFinancialRisk.setText("Risco financeiro: —");
         tvLossRisk.setText("Risco de perda: —");
         tvValueSaved.setText("Valor salvo: —");
@@ -371,7 +318,7 @@ public class HomeFragment extends Fragment {
     private void updateEmptyState() {
         boolean hasAlerts = alertAdapter.getItemCount() > 0;
         boolean hasSuggestions = suggestionAdapter.getItemCount() > 0;
-        String role = sessionManager.getRole();
+        String role = RoleHelper.normalize(sessionManager.getRole());
 
         if (!hasAlerts && !hasSuggestions) {
             String emptyMsg;
@@ -387,19 +334,15 @@ public class HomeFragment extends Fragment {
         } else {
             hideEmpty();
             rvAlerts.setVisibility(View.VISIBLE);
-            if (hasSuggestions || Constants.ROLE_GERENTE.equals(role) || Constants.ROLE_DONO.equals(role)) {
-                rvSuggestions.setVisibility(View.VISIBLE);
-            }
         }
     }
 
     private void showError(String message) {
         progressBar.setVisibility(View.GONE);
+        contentContainer.setVisibility(View.GONE);
         containerError.setVisibility(View.VISIBLE);
         tvError.setText(message);
         containerEmpty.setVisibility(View.GONE);
-        rvAlerts.setVisibility(View.GONE);
-        rvSuggestions.setVisibility(View.GONE);
     }
 
     private void hideError() {
@@ -410,7 +353,6 @@ public class HomeFragment extends Fragment {
         progressBar.setVisibility(View.GONE);
         containerEmpty.setVisibility(View.VISIBLE);
         rvAlerts.setVisibility(View.GONE);
-        rvSuggestions.setVisibility(View.GONE);
     }
 
     private void hideEmpty() {
@@ -419,11 +361,39 @@ public class HomeFragment extends Fragment {
 
     private void showSessionError() {
         progressBar.setVisibility(View.GONE);
+        contentContainer.setVisibility(View.GONE);
         containerError.setVisibility(View.VISIBLE);
         tvError.setText("Sessão incompleta. Faça login novamente.");
         containerEmpty.setVisibility(View.GONE);
-        rvAlerts.setVisibility(View.GONE);
-        rvSuggestions.setVisibility(View.GONE);
-        headerContainer.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+        tvDate = null;
+        progressBar = null;
+        containerError = null;
+        tvError = null;
+        btnRetry = null;
+        containerEmpty = null;
+        tvEmpty = null;
+        tvWelcome = null;
+        tvStoreInfo = null;
+        contentContainer = null;
+        tvCountCritico = null;
+        tvCountAtencao = null;
+        tvCountMonitor = null;
+        layoutCardsGerente = null;
+        tvPendingApprovals = null;
+        tvFinancialRisk = null;
+        layoutCardsDono = null;
+        tvLossRisk = null;
+        tvValueSaved = null;
+        tvActiveStores = null;
+        rvAlerts = null;
+        rvSuggestions = null;
+        tvAlertsTitle = null;
+        tvSuggestionsTitle = null;
     }
 }

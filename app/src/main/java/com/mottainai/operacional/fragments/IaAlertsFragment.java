@@ -22,6 +22,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.firestore.ListenerRegistration;
 
 import com.mottainai.operacional.R;
+import com.mottainai.operacional.databinding.FragmentIaAlertsBinding;
 import com.mottainai.operacional.adapters.AlertAdapter;
 import com.mottainai.operacional.adapters.SuggestionAdapter;
 import com.mottainai.operacional.repository.AlertRepository;
@@ -35,6 +36,8 @@ import com.mottainai.operacional.utils.SessionManager;
  * filho para preservar a conversa ao alternar entre as abas.
  */
 public class IaAlertsFragment extends Fragment {
+
+    private FragmentIaAlertsBinding binding;
 
     public static final String ARG_INITIAL_TAB = "initial_ia_tab";
     public static final String TAB_ALERTS = "alerts";
@@ -67,7 +70,8 @@ public class IaAlertsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                               @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_ia_alerts, container, false);
+        binding = FragmentIaAlertsBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
@@ -87,11 +91,11 @@ public class IaAlertsFragment extends Fragment {
                 suggestion -> openSuggestionDecision(suggestion),
                 this::confirmSuggestionRejection);
 
-        tabLayout = view.findViewById(R.id.tab_ia);
-        progressBar = view.findViewById(R.id.progress_ia);
-        tvEmpty = view.findViewById(R.id.tv_ia_empty);
-        recyclerView = view.findViewById(R.id.rv_ia);
-        chatContainer = view.findViewById(R.id.chat_tab_container);
+        tabLayout = binding.tabIa;
+        progressBar = binding.progressIa;
+        tvEmpty = binding.tvIaEmpty;
+        recyclerView = binding.rvIa;
+        chatContainer = binding.chatTabContainer;
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
         configureTabs(canViewSuggestions);
@@ -274,5 +278,11 @@ public class IaAlertsFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         detachListeners();
+        binding = null;
+        tabLayout = null;
+        progressBar = null;
+        tvEmpty = null;
+        recyclerView = null;
+        chatContainer = null;
     }
 }

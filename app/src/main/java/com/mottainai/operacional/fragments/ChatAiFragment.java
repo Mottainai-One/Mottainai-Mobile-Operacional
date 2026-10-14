@@ -24,6 +24,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
 import com.mottainai.operacional.R;
+import com.mottainai.operacional.databinding.FragmentChatAiBinding;
 import com.mottainai.operacional.adapters.ChatMessageAdapter;
 import com.mottainai.operacional.models.AiAccessTokenResponse;
 import com.mottainai.operacional.models.AiChatHistoryMessage;
@@ -53,6 +54,8 @@ import retrofit2.Response;
  */
 public class ChatAiFragment extends Fragment {
 
+    private FragmentChatAiBinding binding;
+
     private enum RetryAction { NONE, SEND, HISTORY }
 
     private final ChatMessageAdapter messageAdapter = new ChatMessageAdapter();
@@ -77,7 +80,8 @@ public class ChatAiFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_chat_ai, container, false);
+        binding = FragmentChatAiBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
@@ -91,15 +95,15 @@ public class ChatAiFragment extends Fragment {
             sessionId = UUID.randomUUID().toString();
         }
 
-        messagesView = view.findViewById(R.id.rv_chat_messages);
-        emptyChatState = view.findViewById(R.id.empty_chat_state);
-        messageInput = view.findViewById(R.id.et_chat_message);
-        sendButton = view.findViewById(R.id.btn_chat_send);
-        retryButton = view.findViewById(R.id.btn_chat_retry);
-        progressBar = view.findViewById(R.id.progress_chat);
-        statusView = view.findViewById(R.id.tv_chat_status);
-        errorView = view.findViewById(R.id.tv_chat_error);
-        View composer = view.findViewById(R.id.chat_composer);
+        messagesView = binding.rvChatMessages;
+        emptyChatState = binding.emptyChatState;
+        messageInput = binding.etChatMessage;
+        sendButton = binding.btnChatSend;
+        retryButton = binding.btnChatRetry;
+        progressBar = binding.progressChat;
+        statusView = binding.tvChatStatus;
+        errorView = binding.tvChatError;
+        View composer = binding.chatComposer;
         configureComposerInsets(view, composer);
 
         messagesView.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -365,5 +369,19 @@ public class ChatAiFragment extends Fragment {
 
     private interface AiTokenCallback {
         void onToken(String accessToken);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+        messagesView = null;
+        emptyChatState = null;
+        messageInput = null;
+        sendButton = null;
+        retryButton = null;
+        progressBar = null;
+        statusView = null;
+        errorView = null;
     }
 }

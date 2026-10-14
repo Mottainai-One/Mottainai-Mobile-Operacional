@@ -87,14 +87,6 @@ public class ScannerViewModel extends AndroidViewModel {
         });
     }
 
-    public void onProductHandled() {
-        // Called when user has seen the result and wants to scan again
-        isProcessing = false;
-        lastScannedBarcode = null;
-        lastScanTime = 0;
-        uiState.postValue(ScannerUiState.Idle.INSTANCE);
-    }
-
     public void onRetryFromNotFound() {
         isProcessing = false;
         lastScannedBarcode = null;
@@ -107,12 +99,6 @@ public class ScannerViewModel extends AndroidViewModel {
         lastScannedBarcode = null;
         lastScanTime = 0;
         uiState.postValue(ScannerUiState.Idle.INSTANCE);
-    }
-
-    public void clearProcessingState() {
-        isProcessing = false;
-        lastScannedBarcode = null;
-        lastScanTime = 0;
     }
 
     public void onPause() {

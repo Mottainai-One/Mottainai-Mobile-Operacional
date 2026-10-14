@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorBackground">
+    android:background="@color/background_beige">
 
     <ImageButton
         android:id="@+id/btn_back"
@@ -91,7 +91,7 @@
                 android:layout_marginTop="8dp"
                 android:background="@drawable/bg_edittext"
                 android:gravity="center_vertical"
-                android:hint="00.000.000/0001-00"
+                android:hint="CNPJ (14 dígitos)"
                 android:inputType="number"
                 android:minHeight="56dp"
                 android:paddingHorizontal="16dp" />

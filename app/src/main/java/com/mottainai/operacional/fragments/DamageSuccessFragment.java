@@ -13,6 +13,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.mottainai.operacional.R;
+import com.mottainai.operacional.databinding.FragmentDamageSuccessBinding;
 
 /**
  * Confirmação após registrar uma avaria. O back stack já foi limpo até o
@@ -21,11 +22,14 @@ import com.mottainai.operacional.R;
  */
 public class DamageSuccessFragment extends Fragment {
 
+    private FragmentDamageSuccessBinding binding;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                               @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_damage_success, container, false);
+        binding = FragmentDamageSuccessBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
@@ -36,20 +40,26 @@ public class DamageSuccessFragment extends Fragment {
         String productName = args != null ? args.getString("product_name") : null;
         String quantity = args != null ? args.getString("damage_quantity") : null;
 
-        ((TextView) view.findViewById(R.id.tv_product_name)).setText(productName != null ? productName : "Produto");
-        ((TextView) view.findViewById(R.id.tv_damage_summary))
+        ((TextView) binding.tvProductName).setText(productName != null ? productName : "Produto");
+        ((TextView) binding.tvDamageSummary)
                 .setText((quantity != null ? quantity : "1") + " unidade(s) - registrado agora");
 
         NavController navController = Navigation.findNavController(view);
 
-        view.findViewById(R.id.btn_back_to_scanner).setOnClickListener(v -> navController.popBackStack());
+        binding.btnBackToScanner.setOnClickListener(v -> navController.popBackStack());
 
-        view.findViewById(R.id.btn_go_to_products).setOnClickListener(v -> {
+        binding.btnGoToProducts.setOnClickListener(v -> {
             try {
                 navController.navigate(R.id.productsListFragment);
             } catch (IllegalArgumentException e) {
                 navController.popBackStack();
             }
         });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

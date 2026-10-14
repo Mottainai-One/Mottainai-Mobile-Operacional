@@ -1,0 +1,9 @@
+<resources>
+    <string-array name="damage_reasons">
+        <item>Vencido</item>
+        <item>Embalagem danificada</item>
+        <item>Quebra</item>
+        <item>Contaminação</item>
+        <item>Outro</item>
+    </string-array>
+</resources>

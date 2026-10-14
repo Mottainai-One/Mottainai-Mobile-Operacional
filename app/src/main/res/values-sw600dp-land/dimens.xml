@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Galaxy Tab A7 Lite: mantém a coluna de conteúdo legível em 1340x800. -->
+    <dimen name="screen_padding">40dp</dimen>
+    <dimen name="screen_padding_vertical">16dp</dimen>
+    <dimen name="window_content_gutter">120dp</dimen>
+    <dimen name="login_padding_horizontal">200dp</dimen>
+    <dimen name="login_padding_vertical">16dp</dimen>
+</resources>

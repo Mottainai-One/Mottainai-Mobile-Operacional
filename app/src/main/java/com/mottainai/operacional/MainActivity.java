@@ -16,6 +16,7 @@ import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.mottainai.operacional.activities.LoginActivity;
+import com.mottainai.operacional.databinding.ActivityMainBinding;
 import com.mottainai.operacional.notifications.NotificationChannelManager;
 import com.mottainai.operacional.notifications.NotificationPermissionManager;
 import com.mottainai.operacional.notifications.NotificationRouter;
@@ -23,6 +24,8 @@ import com.mottainai.operacional.repository.NotificationRepository;
 import com.mottainai.operacional.utils.SessionManager;
 
 public class MainActivity extends AppCompatActivity {
+
+    private ActivityMainBinding binding;
 
     private SessionManager session;
     private NavController navController;
@@ -48,7 +51,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Só monta a UI depois de validar a sessão
-        setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.nav_host_fragment);
@@ -60,9 +64,9 @@ public class MainActivity extends AppCompatActivity {
 
         navController = navHostFragment.getNavController();
 
-        BottomNavigationView bottomNav = findViewById(R.id.bottom_nav);
+        BottomNavigationView bottomNav = binding.bottomNav;
         NavigationUI.setupWithNavController(bottomNav, navController);
-        View fabScan = findViewById(R.id.fab_scan);
+        View fabScan = binding.fabScan;
         fabScan.setOnClickListener(v -> {
             if (navController.getCurrentDestination() == null
                     || navController.getCurrentDestination().getId() != R.id.scannerFragment) {
@@ -85,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void applyWindowInsets(View bottomNav) {
         View root = findViewById(android.R.id.content);
-        View navHost = findViewById(R.id.nav_host_fragment);
+        View navHost = binding.navHostFragment;
         ViewCompat.setOnApplyWindowInsetsListener(root, (v, windowInsets) -> {
             Insets bars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(bars.left, bars.top, bars.right, 0);

@@ -6,10 +6,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.mottainai.operacional.models.Alert;
 import com.mottainai.operacional.R;
+import com.mottainai.operacional.databinding.ItemAlertBinding;
 
 import java.util.List;
 
@@ -26,12 +28,15 @@ public class AlertAdapter extends RecyclerView.Adapter<AlertAdapter.AlertViewHol
         notifyDataSetChanged();
     }
 
+    public List<Alert> getAlerts() {
+        return alertList;
+    }
+
     @NonNull
     @Override
     public AlertViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_alert, parent, false);
-        return new AlertViewHolder(view);
+        return new AlertViewHolder(ItemAlertBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false));
     }
 
     @Override
@@ -39,20 +44,22 @@ public class AlertAdapter extends RecyclerView.Adapter<AlertAdapter.AlertViewHol
         Alert alert = alertList.get(position);
         holder.tvAlertTitle.setText(alert.getTitle());
         holder.tvAlertMessage.setText(alert.getMessage());
-        holder.tvAlertSeverity.setText(alert.getSeverity());
-        int color = android.graphics.Color.BLACK;
-        switch (alert.getSeverity()) {
+        String severity = alert.getSeverity() != null ? alert.getSeverity() : "";
+        holder.tvAlertSeverity.setText(severity);
+        android.content.Context context = holder.tvAlertSeverity.getContext();
+        int colorRes = R.color.text_primary;
+        switch (severity) {
             case "CRITICO":
-                color = android.graphics.Color.RED;
+                colorRes = R.color.severity_critico;
                 break;
             case "ATENCAO":
-                color = android.graphics.Color.parseColor("#F57C00");
+                colorRes = R.color.severity_atencao;
                 break;
             case "MONITOR":
-                color = android.graphics.Color.parseColor("#1976D2");
+                colorRes = R.color.severity_monitor;
                 break;
         }
-        holder.tvAlertSeverity.setTextColor(color);
+        holder.tvAlertSeverity.setTextColor(ContextCompat.getColor(context, colorRes));
     }
 
     @Override
@@ -65,11 +72,11 @@ public class AlertAdapter extends RecyclerView.Adapter<AlertAdapter.AlertViewHol
         TextView tvAlertMessage;
         TextView tvAlertSeverity;
 
-        public AlertViewHolder(View view) {
-            super(view);
-            tvAlertTitle = view.findViewById(R.id.tv_alert_title);
-            tvAlertMessage = view.findViewById(R.id.tv_alert_message);
-            tvAlertSeverity = view.findViewById(R.id.tv_alert_severity);
+        public AlertViewHolder(ItemAlertBinding binding) {
+            super(binding.getRoot());
+            tvAlertTitle = binding.tvAlertTitle;
+            tvAlertMessage = binding.tvAlertMessage;
+            tvAlertSeverity = binding.tvAlertSeverity;
         }
     }
 }

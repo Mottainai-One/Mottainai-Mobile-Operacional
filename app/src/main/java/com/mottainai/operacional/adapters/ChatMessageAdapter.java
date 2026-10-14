@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.mottainai.operacional.R;
+import com.mottainai.operacional.databinding.ItemChatMessageBinding;
 import com.mottainai.operacional.models.ChatMessage;
 
 import java.util.ArrayList;
@@ -38,9 +39,8 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
     @NonNull
     @Override
     public ChatMessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_chat_message, parent, false);
-        return new ChatMessageViewHolder(view);
+        return new ChatMessageViewHolder(ItemChatMessageBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false));
     }
 
     @Override
@@ -75,12 +75,12 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
         final TextView sender;
         final TextView message;
 
-        ChatMessageViewHolder(@NonNull View itemView) {
-            super(itemView);
-            container = itemView.findViewById(R.id.chat_message_container);
-            assistantAvatar = itemView.findViewById(R.id.iv_chat_assistant_avatar);
-            sender = itemView.findViewById(R.id.tv_chat_sender);
-            message = itemView.findViewById(R.id.tv_chat_message);
+        ChatMessageViewHolder(@NonNull ItemChatMessageBinding binding) {
+            super(binding.getRoot());
+            container = binding.chatMessageContainer;
+            assistantAvatar = binding.ivChatAssistantAvatar;
+            sender = binding.tvChatSender;
+            message = binding.tvChatMessage;
         }
     }
 }

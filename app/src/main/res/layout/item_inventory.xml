@@ -4,8 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="12dp"
-    app:cardBackgroundColor="@color/white"
-    app:cardCornerRadius="16dp"
+    app:cardBackgroundColor="@color/colorSurface"
+    app:cardCornerRadius="@dimen/card_corner_radius"
     app:cardElevation="0dp"
     app:strokeColor="@color/background_beige_dark"
     app:strokeWidth="1dp">

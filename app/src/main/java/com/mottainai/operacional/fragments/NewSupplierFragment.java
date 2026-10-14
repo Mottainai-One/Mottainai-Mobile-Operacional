@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,7 +14,9 @@ import androidx.navigation.Navigation;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.mottainai.operacional.R;
+import com.mottainai.operacional.databinding.FragmentNewSupplierBinding;
 import com.mottainai.operacional.utils.SessionManager;
+import com.mottainai.operacional.utils.ValidationUtils;
 import com.mottainai.operacional.viewmodels.SupplierViewModel;
 
 /**
@@ -21,41 +24,58 @@ import com.mottainai.operacional.viewmodels.SupplierViewModel;
  */
 public class NewSupplierFragment extends Fragment {
 
+    private FragmentNewSupplierBinding binding;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                               @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_new_supplier, container, false);
+        binding = FragmentNewSupplierBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        view.findViewById(R.id.btn_back).setOnClickListener(v ->
+        binding.btnBack.setOnClickListener(v ->
                 Navigation.findNavController(view).popBackStack());
 
-        EditText etName = view.findViewById(R.id.et_supplier_name);
-        EditText etCnpj = view.findViewById(R.id.et_supplier_cnpj);
-        EditText etContact = view.findViewById(R.id.et_supplier_contact);
+        EditText etName = binding.etSupplierName;
+        EditText etCnpj = binding.etSupplierCnpj;
+        EditText etContact = binding.etSupplierContact;
         SupplierViewModel viewModel = new ViewModelProvider(requireActivity()).get(SupplierViewModel.class);
         SessionManager session = new SessionManager(requireContext());
         viewModel.clearCompletion();
         viewModel.getCompleted().observe(getViewLifecycleOwner(), completed -> {
             if (Boolean.TRUE.equals(completed)) Navigation.findNavController(view).popBackStack();
         });
-        view.findViewById(R.id.btn_save_supplier).setOnClickListener(v -> {
+        viewModel.getError().observe(getViewLifecycleOwner(), message -> {
+            if (message != null) Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+        });
+        binding.btnSaveSupplier.setOnClickListener(v -> {
             String name = etName.getText().toString().trim();
             String cnpj = etCnpj.getText().toString().replaceAll("\\D", "");
+            String contact = etContact.getText().toString().trim();
             if (name.isEmpty()) {
                 etName.setError("Informe o nome da empresa");
                 return;
             }
-            if (cnpj.length() != 14) {
-                etCnpj.setError("Informe os 14 dígitos do CNPJ");
+            if (!ValidationUtils.isValidCnpj(cnpj)) {
+                etCnpj.setError("CNPJ inválido");
                 return;
             }
-            viewModel.create(session.getStoreId(), name, cnpj, etContact.getText().toString().trim());
+            if (!contact.isEmpty() && !ValidationUtils.isValidEmail(contact)) {
+                etContact.setError("Informe um e-mail válido");
+                return;
+            }
+            viewModel.create(session.getStoreId(), name, cnpj, contact);
         });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

@@ -6,12 +6,12 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.mottainai.operacional.R;
+import com.mottainai.operacional.databinding.ActivityProductFormBinding;
 import com.mottainai.operacional.models.OpenFoodFactsResponse;
 import com.mottainai.operacional.models.ProductForm;
 import com.mottainai.operacional.repository.OpenFoodFactsRepository;
@@ -21,6 +21,8 @@ import com.mottainai.operacional.viewmodels.ProductFormViewModel;
 
 public class ProductFormActivity extends AppCompatActivity {
 
+    private ActivityProductFormBinding binding;
+
     private ProductFormViewModel viewModel;
     private SessionManager sessionManager;
     private OpenFoodFactsRepository offRepo;
@@ -29,7 +31,7 @@ public class ProductFormActivity extends AppCompatActivity {
     private SwitchMaterial swActive;
     private View progress;
     private View tvFormError;
-    private android.widget.TextView tvErrorBarcode, tvErrorName, tvErrorCategory, tvErrorUnit, tvErrorWeight, tvErrorExpiry, tvOffInfo;
+    private android.widget.TextView tvErrorBarcode, tvErrorName, tvErrorCategory, tvErrorBrand, tvErrorUnit, tvErrorWeight, tvErrorQuantity, tvErrorMinQuantity, tvErrorExpiry, tvOffInfo;
     private com.google.android.material.button.MaterialButton btnSearchOff, btnSave;
 
     @Override
@@ -42,10 +44,10 @@ public class ProductFormActivity extends AppCompatActivity {
             finish();
             return;
         }
-        setContentView(R.layout.activity_product_form);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        binding = ActivityProductFormBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        binding.btnBack.setOnClickListener(v -> finish());
+        android.widget.TextView tvTitle = binding.tvTitle;
 
         offRepo = new OpenFoodFactsRepository();
         initViews();
@@ -53,10 +55,10 @@ public class ProductFormActivity extends AppCompatActivity {
 
         String productId = getIntent().getStringExtra("product_id");
         if (productId != null && !productId.isEmpty()) {
-            setTitle("Editar produto");
+            tvTitle.setText("Editar produto");
             viewModel.initEdit(productId);
         } else {
-            setTitle("Novo produto");
+            tvTitle.setText("Novo produto");
             viewModel.initNew();
             // Se veio barcode do scanner
             String barcode = getIntent().getStringExtra("barcode");
@@ -65,36 +67,36 @@ public class ProductFormActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        etBarcode = findViewById(R.id.et_barcode);
-        etName = findViewById(R.id.et_name);
-        etDescription = findViewById(R.id.et_description);
-        etCategory = findViewById(R.id.et_category);
-        etBrand = findViewById(R.id.et_brand);
-        etUnit = findViewById(R.id.et_unit);
-        etWeight = findViewById(R.id.et_weight);
-        etQuantity = findViewById(R.id.et_quantity);
-        etMinQuantity = findViewById(R.id.et_min_quantity);
-        etBatch = findViewById(R.id.et_batch);
-        etSupplier = findViewById(R.id.et_supplier);
-        etExpiry = findViewById(R.id.et_expiry);
-        swActive = findViewById(R.id.sw_active);
-        progress = findViewById(R.id.progress_form);
-        tvFormError = findViewById(R.id.tv_form_error);
-        tvErrorBarcode = findViewById(R.id.tv_error_barcode);
-        tvErrorName = findViewById(R.id.tv_error_name);
-        tvErrorCategory = findViewById(R.id.tv_error_category);
-        tvErrorUnit = findViewById(R.id.tv_error_unit);
-        tvErrorWeight = findViewById(R.id.tv_error_weight);
-        tvErrorExpiry = findViewById(R.id.tv_error_expiry);
-        tvOffInfo = findViewById(R.id.tv_off_info);
-        btnSearchOff = findViewById(R.id.btn_search_off);
-        btnSave = findViewById(R.id.btn_save);
-        findViewById(R.id.btn_cancel).setOnClickListener(v -> finish());
+        etBarcode = binding.etBarcode;
+        etName = binding.etName;
+        etDescription = binding.etDescription;
+        etCategory = binding.etCategory;
+        etBrand = binding.etBrand;
+        etUnit = binding.etUnit;
+        etWeight = binding.etWeight;
+        etQuantity = binding.etQuantity;
+        etMinQuantity = binding.etMinQuantity;
+        etBatch = binding.etBatch;
+        etSupplier = binding.etSupplier;
+        etExpiry = binding.etExpiry;
+        swActive = binding.swActive;
+        progress = binding.progressForm;
+        tvFormError = binding.tvFormError;
+        tvErrorBarcode = binding.tvErrorBarcode;
+        tvErrorName = binding.tvErrorName;
+        tvErrorCategory = binding.tvErrorCategory;
+        tvErrorBrand = binding.tvErrorBrand;
+        tvErrorUnit = binding.tvErrorUnit;
+        tvErrorWeight = binding.tvErrorWeight;
+        tvErrorQuantity = binding.tvErrorQuantity;
+        tvErrorMinQuantity = binding.tvErrorMinQuantity;
+        tvErrorExpiry = binding.tvErrorExpiry;
+        tvOffInfo = binding.tvOffInfo;
+        btnSearchOff = binding.btnSearchOff;
+        btnSave = binding.btnSave;
+        binding.btnCancel.setOnClickListener(v -> finish());
         btnSearchOff.setOnClickListener(v -> searchOff());
         btnSave.setOnClickListener(v -> onSave());
-        // Validade: categorias padrão se vazio
-        if (etCategory.getText() != null && TextUtils.isEmpty(etCategory.getText().toString())) etCategory.setText("1");
-        if (etUnit.getText() != null && TextUtils.isEmpty(etUnit.getText().toString())) etUnit.setText("UN");
     }
 
     private void setupViewModel() {
@@ -110,20 +112,24 @@ public class ProductFormActivity extends AppCompatActivity {
             showFieldError(tvErrorBarcode, errors.get("barcode"));
             showFieldError(tvErrorName, errors.get("name"));
             showFieldError(tvErrorCategory, errors.get("categoryId"));
+            showFieldError(tvErrorBrand, errors.get("brand"));
             showFieldError(tvErrorUnit, errors.get("unitMeasure"));
             showFieldError(tvErrorWeight, errors.get("weight"));
+            showFieldError(tvErrorQuantity, errors.get("quantity"));
+            showFieldError(tvErrorMinQuantity, errors.get("minQuantity"));
             showFieldError(tvErrorExpiry, errors.get("expiryDate"));
             if (!errors.isEmpty()) {
-                android.widget.TextView tv = findViewById(R.id.tv_form_error);
+                android.widget.TextView tv = binding.tvFormError;
                 tv.setText("Corrija os campos destacados");
                 tv.setVisibility(View.VISIBLE);
+                focusFirstError(errors);
             } else {
-                findViewById(R.id.tv_form_error).setVisibility(View.GONE);
+                binding.tvFormError.setVisibility(View.GONE);
             }
         });
         viewModel.getSubmitError().observe(this, msg -> {
             if (msg != null) {
-                android.widget.TextView tv = findViewById(R.id.tv_form_error);
+                android.widget.TextView tv = binding.tvFormError;
                 tv.setText(msg);
                 tv.setVisibility(View.VISIBLE);
             }
@@ -137,7 +143,7 @@ public class ProductFormActivity extends AppCompatActivity {
         });
         viewModel.getLoadError().observe(this, msg -> {
             if (msg != null) {
-                android.widget.TextView tv = findViewById(R.id.tv_form_error);
+                android.widget.TextView tv = binding.tvFormError;
                 tv.setText(msg);
                 tv.setVisibility(View.VISIBLE);
             }
@@ -195,14 +201,18 @@ public class ProductFormActivity extends AppCompatActivity {
         ProductForm f = collectForm();
         viewModel.updateForm(f);
         viewModel.submit();
-        // Foco no primeiro erro após validação
-        viewModel.getErrors().observe(this, errors -> {
-            if (errors.containsKey("barcode")) etBarcode.requestFocus();
-            else if (errors.containsKey("name")) etName.requestFocus();
-            else if (errors.containsKey("categoryId")) etCategory.requestFocus();
-            else if (errors.containsKey("unitMeasure")) etUnit.requestFocus();
-            else if (errors.containsKey("weight")) etWeight.requestFocus();
-        });
+    }
+
+    private void focusFirstError(java.util.Map<String, String> errors) {
+        if (errors.containsKey("barcode")) etBarcode.requestFocus();
+        else if (errors.containsKey("name")) etName.requestFocus();
+        else if (errors.containsKey("categoryId")) etCategory.requestFocus();
+        else if (errors.containsKey("brand")) etBrand.requestFocus();
+        else if (errors.containsKey("unitMeasure")) etUnit.requestFocus();
+        else if (errors.containsKey("weight")) etWeight.requestFocus();
+        else if (errors.containsKey("quantity")) etQuantity.requestFocus();
+        else if (errors.containsKey("minQuantity")) etMinQuantity.requestFocus();
+        else if (errors.containsKey("expiryDate")) etExpiry.requestFocus();
     }
 
     private void searchOff() {
@@ -244,6 +254,4 @@ public class ProductFormActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public boolean onSupportNavigateUp() { finish(); return true; }
 }
