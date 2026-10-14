@@ -10,7 +10,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
- * Cliente singleton para a Mottainai-IA. O token de acesso curto é informado
+ * Cliente singleton para a Mottainai-IA. O ID token Firebase é informado
  * por chamada em AiApiService, evitando que credenciais sejam mantidas no cliente.
  */
 public final class AiRetrofitClient {
@@ -37,7 +37,7 @@ public final class AiRetrofitClient {
         OkHttpClient client = new OkHttpClient.Builder()
                 .addInterceptor(logging)
                 .connectTimeout(30, TimeUnit.SECONDS)
-                .readTimeout(60, TimeUnit.SECONDS)
+                .readTimeout(120, TimeUnit.SECONDS)
                 .writeTimeout(30, TimeUnit.SECONDS)
                 .build();
 
