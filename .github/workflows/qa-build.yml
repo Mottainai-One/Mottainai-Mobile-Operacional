@@ -1,0 +1,31 @@
+name: Mobile QA build
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  qa-debug:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+      - name: Build debug app with QA endpoints
+        run: |
+          chmod +x ./gradlew
+          ./gradlew assembleDebug --no-daemon \
+            -PapiBaseUrl=http://10.0.2.2:18080/ \
+            -PiaBaseUrl=http://10.0.2.2:18000/
