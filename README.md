@@ -1,141 +1,55 @@
-<h1 align="center">
-  🍱 Mottainai Operacional
-</h1>
+# Mottainai Mobile Operacional
 
-<p align="center">
-  <b>Gestão de estoque anti-desperdício para o time interno da loja</b><br>
-  Projeto interdisciplinar · Instituto Germinare · 2026
-</p>
+Aplicativo Android em Java para apoiar operações de loja, com telas de produtos, scanner, avarias, inventário, fornecedores, alertas, sugestões e chat com IA.
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white" alt="Java">
-  <img src="https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Android">
-  <img src="https://img.shields.io/badge/Retrofit-2-blue?style=for-the-badge&logo=square&logoColor=white" alt="Retrofit 2">
-  <img src="https://img.shields.io/badge/Firebase%20Cloud%20Messaging-FFCA28?style=for-the-badge&logo=firebase&logoColor=black" alt="FCM">
-</p>
+## Estado das integrações
 
----
+O aplicativo contém clientes Retrofit para produtos, autenticação, alertas, sugestões e chat. A configuração atual também mantém repositórios mock ativados para alguns fluxos: USE_MOCK_REPOSITORY, USE_MOCK_DAMAGE e USE_MOCK_INVENTORY estão definidos como true em Constants.java. Fornecedores e inventário também usam repositórios mock. Portanto, a presença de uma tela ou interface HTTP não significa que o fluxo esteja conectado ao serviço de produção.
 
-## 🌱 O que é o Mottainai?
+O projeto não inclui uma definição de backend que confirme todos os endpoints anteriormente listados. Consulte app/src/main/java/com/mottainai/operacional/network/ApiService.java e confirme o contrato no serviço correspondente antes de integrar um ambiente real.
 
-> *"Mottainai" (もったいない) é uma expressão japonesa que significa "que desperdício!".*
+A documentação funcional do [Mottainai-Hub](https://github.com/Mottainai-One/Mottainai-Hub/blob/main/Docs/mobile/MOTTAINAI-OPERACIONAL-FUNCIONAL-E-TECNICO.md) registra uma branch local de integração, não uma auditoria da branch main deste repositório. Use-a como contexto de arquitetura e confira a implementação da branch que será compilada.
 
-O Mottainai é um ecossistema anti-desperdício de alimentos. Este repositório contém o app **Operacional**, usado pelo time interno das lojas para gerenciar estoque, registrar avarias, fazer inventário e agir contra a perda de produtos — com ajuda de inteligência artificial.
+## Tecnologias
 
-## 🏗️ O ecossistema completo
+- Android nativo, Java e layouts XML com View Binding.
+- Android Gradle Plugin 9.0.1, compile/target SDK 36 e minSdk 26.
+- Retrofit 2 e OkHttp para chamadas HTTP.
+- Firebase Authentication, Firestore, Storage e Cloud Messaging.
+- CameraX e ZXing para leitura de códigos de barras.
+- AndroidX Navigation, Lifecycle, RecyclerView e ViewModel.
 
-```
-┌─────────────────┐     ┌─────────────────┐
-│   🏪 Operacional │     │   🛍️ Cliente    │
-│   (este app)     │     │  (app do lojista)│
-└────────┬────────┘     └────────┬────────┘
-         │            Retrofit            │
-         └──────────────┬─────────────────┘
-                        ▼
-              ┌──────────────────┐
-              │    API REST 🌐   │
-              │   (PostgreSQL)   │
-              └────────┬─────────┘
-                       ▼
-             ┌──────────────────┐
-             │ 🤖 Agentes IA    │
-             │    (LangGraph)   │
-             └──────────────────┘
-```
+## Executar localmente
 
-- **App Operacional** → time interno (estoquista, gerente, dono)
-- **App Cliente** → consumidor final
-- **API REST** → comunicação com o banco (PostgreSQL)
-- **Agentes IA** → motor preditivo, alertas e sugestões
+1. Abra o projeto no Android Studio e sincronize o Gradle.
+2. Use JDK compatível com o Android Gradle Plugin configurado.
+3. Para Firebase, forneça um google-services.json válido para o projeto de desenvolvimento.
+4. Para apontar a API do build debug para serviços locais, crie local.properties na raiz:
 
-> 🔒 O app **nunca** acessa o banco diretamente. Tudo passa pela API REST.
+    apiBaseUrl=http://10.0.2.2:8080/
+    iaBaseUrl=http://10.0.2.2:8000/
 
-## 👥 Perfis de acesso
+O endereço 10.0.2.2 permite que o emulador Android acesse o loopback da máquina host. Os valores também podem ser passados como propriedades Gradle. O build release usa endpoints HTTPS configuráveis por releaseApiBaseUrl e releaseIaBaseUrl; não publique endereços ou credenciais de desenvolvimento.
 
-| Perfil | Responsabilidades |
-|---|---|
-| **🧹 Estoquista** | Buscar produtos, escanear código de barras, registrar avarias, inventário, ver alertas e chat com o Agente Funcionário |
-| **👔 Gerente** | Tudo do estoquista + cadastro/edição de produtos, fornecedores, aprovar/recusar sugestões da IA, indicadores operacionais |
-| **👑 Dono** | Tudo do gerente + regras automáticas, gestão de equipe, visão multi-loja, indicadores financeiros e chat com o Agente Dono |
+Compile no Windows:
 
-O perfil é detectado **automaticamente após o login** — não existe tela de seleção.
+    .\gradlew.bat assembleDebug
 
-## 🧩 Funcionalidades
+## Testes
 
-- 📦 **Produtos** — listagem, busca por nome/SKU e cadastro
-- 📷 **Scanner** — leitura de código de barras via CameraX + ZXing (escaneamento contínuo em loop)
-- 💔 **Avaria** — registro com motivo, quantidade e foto
-- 📋 **Inventário** — contagem física vs. sistema, com cálculo automático de divergência
-- ⚠️ **Alertas da IA** — níveis CRÍTICO / ATENÇÃO / MONITOR
-- 💡 **Sugestões da IA** — aprovadas ou recusadas pelo gerente
-- 🤖 **Chat com Agentes IA** — Agente Funcionário (estoque) e Agente Dono (KPIs)
+    .\gradlew.bat testDebugUnitTest
 
-## 🛠️ Stack técnica
+Para testes instrumentados, conecte um dispositivo ou emulador e execute .\gradlew.bat connectedDebugAndroidTest.
 
-| Camada | Tecnologia |
-|---|---|
-| Linguagem | Java |
-| IDE | Android Studio |
-| UI | XML + Navigation Component + Bottom Navigation |
-| Rede | Retrofit 2 + OkHttp (interceptor de token JWT) |
-| Câmera | CameraX + ZXing |
-| Push | Firebase Cloud Messaging |
-| Localização por CEP | ViaCEP |
-| Catálogo por código de barras | Open Food Facts API |
+## Estrutura
 
-## 🗂️ Estrutura de pastas
+- app/src/main/java/com/mottainai/operacional/activities e fragments: telas e fluxos.
+- viewmodels e models: estado de apresentação e dados.
+- repository: acesso a APIs e implementações mock.
+- network: serviços Retrofit para API operacional, IA e Open Food Facts.
+- notifications e scanner: notificações e leitura de códigos.
 
-```
-app/src/main/java/com/mottainai/operacional/
-├── activities/     → telas que abrem "por cima" (login, formulários, detalhe)
-├── fragments/      → telas do bottom nav
-├── models/         → classes de dados (Product, User, Damage...)
-├── viewmodels/     → lógica separada da tela (ViewModel + LiveData)
-├── adapters/       → listas RecyclerView
-├── repository/     → chamadas à API REST (Retrofit)
-├── network/        → ApiClient + ApiService
-└── utils/          → Constants, SessionManager...
-```
+## Documentação relacionada
 
-## 🔌 Endpoints principais
-
-```
-POST /auth/login                  → login (retorna token + role + storeId)
-GET  /auth/me                     → dados do usuário logado
-GET  /products?storeId=           → lista de produtos da loja
-POST /products                    → cadastrar produto (Gerente/Dono)
-GET  /products/expiring           → produtos próximos do vencimento
-POST /damages                     → registrar avaria
-GET  /alerts?storeId=             → alertas do Motor Preditivo
-GET  /suggestions?storeId=        → sugestões pendentes de aprovação
-PUT  /suggestions/{id}/approve    → aprovar sugestão
-PUT  /suggestions/{id}/reject     → recusar sugestão
-POST /chat                        → chat com agente IA
-```
-
-## 🚀 Como rodar
-
-1. Abra o projeto no **Android Studio** (JDK 17+)
-2. Synchronize o Gradle (`File → Sync Project with Gradle Files`)
-3. Para usar a API local no emulador, crie/edite `local.properties` (arquivo ignorado pelo Git):
-   ```properties
-   apiBaseUrl=http://10.0.2.2:8080/
-   iaBaseUrl=http://10.0.2.2:8000/
-   ```
-   Os endpoints HTTP locais só são aceitos no build `debug`; o `release` usa HTTPS e
-   pode receber outros endpoints seguros por `-PreleaseApiBaseUrl=https://.../` e
-   `-PreleaseIaBaseUrl=https://.../` no CI.
-4. Adicione o arquivo `google-services.json` do Firebase (para push)
-5. Rode em um emulador ou dispositivo físico
-
-## 🤝 Time
-
-| Membro | Responsabilidade |
-|---|---|
-| **Mobile** (eu) | Este app + App Cliente |
-| **Backend** | API REST + PostgreSQL + JWT |
-| **IA** | Agentes LangGraph + motor preditivo |
-
----
-
-Feito com 💚 no Instituto Germinare — *contra o desperdício, um produto de cada vez.*
+- [Contrato da API operacional](https://github.com/Mottainai-One/Mottainai-Api-SQL-Operacional)
+- [Mottainai IA](https://github.com/Mottainai-One/Mottainai-IA)
