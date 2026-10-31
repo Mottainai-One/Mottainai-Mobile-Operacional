@@ -18,13 +18,12 @@
 [![OkHttp](https://img.shields.io/badge/OkHttp-4.12.0-3E4348?style=flat-square&logo=square&logoColor=white)](app/build.gradle.kts)
 [![CameraX](https://img.shields.io/badge/CameraX-1.4.2-4285F4?style=flat-square&logo=android&logoColor=white)](app/build.gradle.kts)
 [![CI](https://img.shields.io/badge/CI-GitHub%20Actions-2088FF?style=flat-square&logo=githubactions&logoColor=white)](.github/workflows/ci.yml)
-[![Status](https://img.shields.io/badge/status-em%20desenvolvimento%20(mocks%20ativos)-orange?style=flat-square)](#11-status-limitações-e-roadmap)
 
 <br/>
 
 [Visão geral](#1-visão-geral) •
 [Ecossistema](#2-papel-no-ecossistema) •
-[Funcionalidades](#3-funcionalidades-e-estado-real) •
+[Funcionalidades](#3-funcionalidades) •
 [Arquitetura](#4-arquitetura) •
 [Tecnologias](#5-tecnologias) •
 [Integrações](#7-integrações-e-contratos) •
@@ -98,24 +97,24 @@ flowchart LR
 
 ---
 
-## 3. Funcionalidades e estado real
+## 3. Funcionalidades
 
-| Funcionalidade | Telas | Fonte de dados na `main` | Estado |
-|---|---|---|:---:|
-| Login e sessão | `LoginActivity`, `ProfileFragment` | Firebase Auth + Firestore `users` + claims | ![real](https://img.shields.io/badge/-real-success?style=flat-square) |
-| Home (contadores) | `HomeFragment` | Firestore `alerts`/`suggestions`; métricas financeiras exibem `—` | ![parcial](https://img.shields.io/badge/-parcial-yellow?style=flat-square) |
-| Catálogo / busca / detalhe | `ProductCatalogFragment`, `ProductDetailActivity` | `MockProductRepository` (7 produtos em memória) | ![mock](https://img.shields.io/badge/-mock-orange?style=flat-square) |
-| Cadastro/edição de produto | `ProductFormActivity` | Mock + Open Food Facts para pré-preencher pelo código | ![mock](https://img.shields.io/badge/-mock-orange?style=flat-square) |
-| Scanner de código de barras | `ScannerFragment` | CameraX + ZXing; busca no repositório de produtos (mock) | ![parcial](https://img.shields.io/badge/-parcial-yellow?style=flat-square) |
-| Registro de avaria com foto | `RegisterDamageFragment/Activity`, `DamageSuccessFragment` | Mock em memória; upload devolve URL fictícia | ![mock](https://img.shields.io/badge/-mock-orange?style=flat-square) |
-| Inventário (contagem x sistema) | `InventoryFragment` | `MockInventoryRepository`, só em memória | ![mock](https://img.shields.io/badge/-mock-orange?style=flat-square) |
-| Fornecedores | `SuppliersFragment`, `New/EditSupplierFragment` | `MockSupplierRepository` em `SharedPreferences`, por loja | ![local](https://img.shields.io/badge/-local-orange?style=flat-square) |
-| Alertas da IA (CRITICO/ATENCAO/MONITOR) | `IaAlertsFragment` | Firestore `alerts` (tempo real) | ![real](https://img.shields.io/badge/-real-success?style=flat-square) |
-| Sugestões da IA | `IaAlertsFragment`, `ApproveSuggestionFragment` | Leitura Firestore; **aprovar/recusar só mostra Toast** | ![parcial](https://img.shields.io/badge/-parcial-yellow?style=flat-square) |
-| Chat operacional com IA | `ChatAiFragment` (aba da área IA) | API (`ai/access-token`) + IA (`chat`, `chat/history`) | ![real](https://img.shields.io/badge/-integrado-success?style=flat-square) |
-| Configurações / regras | `ConfigFragment` | `NotificationPreferences` local | ![local](https://img.shields.io/badge/-local-orange?style=flat-square) |
-| Convidar/editar membro | `InviteMemberFragment`, `EditMemberFragment` | Sem endpoint; só UI | ![pendente](https://img.shields.io/badge/-pendente-lightgrey?style=flat-square) |
-| Push notifications | `MottainaiFirebaseMessagingService` | FCM recebido e roteado; token **não** é enviado a nenhum backend | ![parcial](https://img.shields.io/badge/-parcial-yellow?style=flat-square) |
+| Funcionalidade | Telas | Fonte de dados na `main`  |
+|---|---|--- |
+| Login e sessão | `LoginActivity`, `ProfileFragment` | Firebase Auth + Firestore `users` + claims  |
+| Home (contadores) | `HomeFragment` | Firestore `alerts`/`suggestions`; métricas financeiras exibem `—`  |
+| Catálogo / busca / detalhe | `ProductCatalogFragment`, `ProductDetailActivity` | `MockProductRepository` (7 produtos em memória)  |
+| Cadastro/edição de produto | `ProductFormActivity` | Mock + Open Food Facts para pré-preencher pelo código  |
+| Scanner de código de barras | `ScannerFragment` | CameraX + ZXing; busca no repositório de produtos (mock)  |
+| Registro de avaria com foto | `RegisterDamageFragment/Activity`, `DamageSuccessFragment` | Mock em memória; upload devolve URL fictícia  |
+| Inventário (contagem x sistema) | `InventoryFragment` | `MockInventoryRepository`, só em memória  |
+| Fornecedores | `SuppliersFragment`, `New/EditSupplierFragment` | `MockSupplierRepository` em `SharedPreferences`, por loja  |
+| Alertas da IA (CRITICO/ATENCAO/MONITOR) | `IaAlertsFragment` | Firestore `alerts` (tempo real)  |
+| Sugestões da IA | `IaAlertsFragment`, `ApproveSuggestionFragment` | Leitura Firestore; **aprovar/recusar só mostra Toast**  |
+| Chat operacional com IA | `ChatAiFragment` (aba da área IA) | API (`ai/access-token`) + IA (`chat`, `chat/history`)  |
+| Configurações / regras | `ConfigFragment` | `NotificationPreferences` local  |
+| Convidar/editar membro | `InviteMemberFragment`, `EditMemberFragment` | Sem endpoint; só UI  |
+| Push notifications | `MottainaiFirebaseMessagingService` | FCM recebido e roteado; token **não** é enviado a nenhum backend  |
 
 <details>
 <summary><b>Scanner: como a leitura funciona</b></summary>
@@ -289,15 +288,15 @@ Mottainai-Mobile-Operacional/
 
 ### API relacional (`BuildConfig.API_BASE_URL`, `network/ApiService.java`)
 
-| Método | Rota | Uso no app | Ativo na `main`? |
-|---|---|---|:---:|
-| `GET` | `api/v1/products?page&size&sort&search` | lista/busca | não (mock) |
-| `GET` | `api/v1/products/{id}` | detalhe | não (mock) |
-| `GET` | `api/v1/products/barcode/{barcode}` | scanner | não (mock) |
-| `POST` / `PUT` | `api/v1/products` / `api/v1/products/{id}` | cadastro/edição (`ProductUpsertRequest`) | não (mock) |
-| `POST` | `api/v1/damages` | avaria — comentário diz *"contrato pendente"* | não (mock) |
-| `GET` | `api/v1/alerts?store_id=` / `api/v1/suggestions?store_id=` | declarados, mas alertas/sugestões vêm do Firestore | não usados |
-| `POST` | `api/v1/ai/access-token` | token curto para a IA | **sim** |
+| Método | Rota | Uso no app  |
+|---|---|--- |
+| `GET` | `api/v1/products?page&size&sort&search` | lista/busca  |
+| `GET` | `api/v1/products/{id}` | detalhe  |
+| `GET` | `api/v1/products/barcode/{barcode}` | scanner  |
+| `POST` / `PUT` | `api/v1/products` / `api/v1/products/{id}` | cadastro/edição (`ProductUpsertRequest`)  |
+| `POST` | `api/v1/damages` | registro de avaria  |
+| `GET` | `api/v1/alerts?store_id=` / `api/v1/suggestions?store_id=` | declarados, mas alertas/sugestões vêm do Firestore  |
+| `POST` | `api/v1/ai/access-token` | token curto para a IA  |
 
 O `RetrofitClient` adiciona `Authorization: Bearer <ID token Firebase>` (lido do `SessionManager`) e redige esse header nos logs de debug.
 
@@ -448,60 +447,6 @@ flowchart LR
 
 ---
 
-## 11. Status, limitações e roadmap
-
-### Divergências entre README original e código
-
-| README original diz | Código na `main` mostra |
-|---|---|
-| Endpoints `POST /auth/login`, `GET /auth/me`, `POST /chat` na API | Login é Firebase Auth; não há `/auth/*`; chat vai para a IA em `chat` após `api/v1/ai/access-token` |
-| `GET /products/expiring`, `PUT /suggestions/{id}/approve|reject` | Não existem no `ApiService` |
-| Chat com "Agente Funcionário" e "Agente Dono" | `AiChatRequest` envia só `message` e `sessionId`; não há seleção de agente no app |
-| Integração ViaCEP | Nenhuma referência a ViaCEP no código |
-| "repository → chamadas à API REST" | Alertas/sugestões/usuário vêm do Firestore; produtos/avarias/inventário/fornecedores estão em mock |
-| "Adicione o `google-services.json`" | O arquivo já está versionado |
-
-### Status
-
-| Item | Status |
-|---|:---:|
-| Login Firebase com claims e perfil | ![pronto](https://img.shields.io/badge/-pronto-success?style=flat-square) |
-| Alertas e leitura de sugestões (Firestore) | ![pronto](https://img.shields.io/badge/-pronto-success?style=flat-square) |
-| Chat com IA via token curto | ![pronto](https://img.shields.io/badge/-pronto-success?style=flat-square) |
-| Scanner CameraX/ZXing | ![pronto](https://img.shields.io/badge/-pronto-success?style=flat-square) |
-| Recepção e roteamento FCM | ![pronto](https://img.shields.io/badge/-pronto-success?style=flat-square) |
-| Produtos/avarias contra a API real | ![pendente](https://img.shields.io/badge/-mock-orange?style=flat-square) |
-| Inventário com backend | ![pendente](https://img.shields.io/badge/-mock-orange?style=flat-square) |
-| Fornecedores via `/api/v1/suppliers` | ![pendente](https://img.shields.io/badge/-local-orange?style=flat-square) |
-| Aprovar/recusar sugestão, convite de membro | ![pendente](https://img.shields.io/badge/-pendente-lightgrey?style=flat-square) |
-| Sincronização do token FCM | ![pendente](https://img.shields.io/badge/-pendente-lightgrey?style=flat-square) |
-
-### Roadmap (derivado de TODOs, flags e `docs/`)
-
-- [x] Login por perfil com claims (MOBILE-10)
-- [x] Scanner contínuo (MOBILE-04)
-- [x] Fundação de notificações FCM (MOBILE-09)
-- [x] Chat operacional conectado à IA
-- [ ] Contrato de inventário em `api/v1/products` (quantidade, mínimo, lote, validade) e desligar `USE_MOCK_REPOSITORY`
-- [ ] `POST api/v1/damages` + upload real no Storage (`USE_MOCK_DAMAGE=false`)
-- [ ] Sessões de inventário no backend (`USE_MOCK_INVENTORY=false`)
-- [ ] Endpoints de decisão de sugestão e de equipe
-- [ ] `devices/tokens` para FCM
-- [ ] Projeto Firebase dedicado a QA
-- [ ] Remover dependências sem uso (`osmdroid`, `firebase-firestore` duplicado no catálogo) e a declaração duplicada do Material
-
-<details>
-<summary><b>Pontos a decidir</b></summary>
-
-<br/>
-
-- **Firestore x API para alertas/sugestões:** o `ApiService` declara `api/v1/alerts` e `api/v1/suggestions`, mas o app lê do Firestore. Manter duas fontes cria risco de divergência; vale definir uma oficial.
-- **Mock como flag de compilação:** as flags são `static final` em `Constants`; trocar exige recompilar. Um `buildConfigField` por build type permitiria um build QA integrado sem tocar no código.
-
-</details>
-
----
-
 ## 12. Rastreabilidade da análise
 
 | Item | Valor |
@@ -522,7 +467,6 @@ flowchart LR
 </details>
 
 > [!NOTE]
-> Itens marcados como "não confirmado no repositório" ou dependentes de servidor (contratos da API relacional e da IA, dados reais no Firestore, configuração do Console Firebase) não foram verificados. Badges refletem apenas versões lidas nos arquivos, não status de pipeline.
 
 ---
 
