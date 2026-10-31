@@ -29,3 +29,10 @@ jobs:
           ./gradlew assembleDebug --no-daemon \
             -PapiBaseUrl=http://10.0.2.2:18080/ \
             -PiaBaseUrl=http://10.0.2.2:18000/
+      - name: Upload QA APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: mottainai-mobile-operacional-qa-debug
+          path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 3
