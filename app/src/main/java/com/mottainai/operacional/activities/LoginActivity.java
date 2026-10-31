@@ -13,17 +13,18 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GetTokenResult;
+import com.google.firebase.auth.FirebaseUser;
 import com.mottainai.operacional.MainActivity;
 import com.mottainai.operacional.R;
 import com.mottainai.operacional.databinding.ActivityLoginBinding;
 import com.mottainai.operacional.utils.AuthErrorTranslator;
+import com.mottainai.operacional.utils.RoleHelper;
 import com.mottainai.operacional.utils.SessionManager;
 import com.mottainai.operacional.utils.ThemeSettings;
 import com.mottainai.operacional.utils.ValidationUtils;
 import com.mottainai.operacional.models.User;
 import com.mottainai.operacional.repository.AuthRepository;
 import com.mottainai.operacional.repository.NotificationRepository;
-import com.mottainai.operacional.repository.UserRepository;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -35,7 +36,6 @@ public class LoginActivity extends AppCompatActivity {
     private EditText etPassword;
     private Button btnLogin;
     private AuthRepository authRepository;
-    private UserRepository userRepository;
     private SessionManager session;
 
     @Override
@@ -53,7 +53,6 @@ public class LoginActivity extends AppCompatActivity {
 
         session = new SessionManager(this);
         authRepository = new AuthRepository();
-        userRepository = new UserRepository();
 
         if (session.isLoggedIn()
                 && session.getStoreId() != null && !session.getStoreId().isEmpty()
@@ -88,7 +87,7 @@ public class LoginActivity extends AppCompatActivity {
         authRepository.login(email, password, new AuthRepository.AuthCallback() {
             @Override
             public void onSuccess(String uid) {
-                loadUserProfile(uid);
+                loadSessionFromToken(uid);
             }
 
             @Override
@@ -107,54 +106,34 @@ public class LoginActivity extends AppCompatActivity {
         binding.loginStatus.setVisibility(android.view.View.VISIBLE);
     }
 
-    private void loadUserProfile(String uid) {
-        userRepository.getUserProfile(uid, new UserRepository.UserCallback() {
-            @Override
-            public void onSuccess(User user) {
-                if (user.getStoreId() == null || user.getStoreId().isEmpty()
-                        || user.getRole() == null || user.getRole().isEmpty()) {
-                    btnLogin.setEnabled(true);
-                    btnLogin.setText("Entrar");
-                    Toast.makeText(LoginActivity.this,
-                            "Usuário sem loja ou perfil configurado. Contate o administrador.",
-                            Toast.LENGTH_LONG).show();
-                    return;
-                }
-                refreshTokenAndProceed(user);
-            }
+    private void loadSessionFromToken(String uid) {
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (firebaseUser == null) {
+            resetLoginButton("Sessão Firebase indisponível. Tente entrar novamente.");
+            return;
+        }
 
-            @Override
-            public void onError(Exception e) {
-                btnLogin.setEnabled(true);
-                btnLogin.setText("Entrar");
-                Toast.makeText(LoginActivity.this, AuthErrorTranslator.toUserMessage(e), Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onNotFound() {
-                btnLogin.setEnabled(true);
-                btnLogin.setText("Entrar");
-                Toast.makeText(LoginActivity.this, "Perfil não encontrado no Firestore", Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
-    private void refreshTokenAndProceed(User user) {
-        FirebaseAuth.getInstance().getCurrentUser()
-                .getIdToken(true)
+        // The just-authenticated Firebase ID token already carries the server-assigned
+        // operational claims. Using it avoids blocking login on a Firestore read.
+        firebaseUser.getIdToken(false)
                 .addOnSuccessListener(new OnSuccessListener<GetTokenResult>() {
                     @Override
                     public void onSuccess(@NonNull GetTokenResult result) {
                         Object storeID = result.getClaims().get("storeID");
                         Object role = result.getClaims().get("role");
-                        if (storeID == null || role == null) {
-                            btnLogin.setEnabled(true);
-                            btnLogin.setText("Entrar");
-                            Toast.makeText(LoginActivity.this,
-                                    "Token sem storeID/role. Logout e login novamente.",
-                                    Toast.LENGTH_LONG).show();
+                        if (storeID == null || role == null
+                                || storeID.toString().trim().isEmpty()
+                                || role.toString().trim().isEmpty()) {
+                            resetLoginButton("Usuário sem loja ou perfil operacional. Contate o administrador.");
                             return;
                         }
+
+                        String name = firebaseUser.getDisplayName();
+                        if (name == null || name.trim().isEmpty()) {
+                            String email = firebaseUser.getEmail();
+                            name = email == null ? "Usuário" : email.split("@", 2)[0];
+                        }
+                        User user = new User(uid, name, RoleHelper.normalize(role.toString()), storeID.toString());
                         session.saveSession(user);
                         session.saveToken(result.getToken());
                         new NotificationRepository(getApplicationContext()).captureCurrentDeviceToken();
@@ -164,12 +143,15 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        btnLogin.setEnabled(true);
-                        btnLogin.setText("Entrar");
-                        Toast.makeText(LoginActivity.this,
-                                "Erro ao renovar sessão: " + AuthErrorTranslator.toUserMessage(e), Toast.LENGTH_LONG).show();
+                        resetLoginButton("Erro ao validar sessão: " + AuthErrorTranslator.toUserMessage(e));
                     }
                 });
+    }
+
+    private void resetLoginButton(String message) {
+        btnLogin.setEnabled(true);
+        btnLogin.setText(R.string.op_login_button);
+        showLoginStatus(message);
     }
 
     private void goToMain() {
