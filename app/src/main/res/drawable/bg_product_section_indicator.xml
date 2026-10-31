@@ -6,7 +6,7 @@
     android:insetBottom="4dp">
 
     <shape>
-        <solid android:color="@color/primary_green" />
+        <solid android:color="@color/op_brand" />
         <corners android:radius="18dp" />
     </shape>
 </inset>

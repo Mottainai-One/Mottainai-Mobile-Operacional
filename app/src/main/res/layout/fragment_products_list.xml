@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_beige">
+    android:background="@color/op_background">
 
     <LinearLayout
         android:id="@+id/products_header"
@@ -11,39 +11,43 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingHorizontal="@dimen/screen_padding"
-        android:paddingVertical="@dimen/screen_padding_vertical"
+        android:paddingTop="0dp"
+        android:paddingBottom="0dp"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
+            android:id="@+id/products_section_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Produtos"
-            android:textColor="@color/black"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+            android:text="@string/op_catalog_title"
+            android:textColor="@color/op_text"
+            android:textSize="18sp" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Lista, inventário e parceiros da operação"
-            android:textColor="@color/text_grey"
-            android:textSize="14sp" />
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/sv_product_search"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/op_input"
+            android:iconifiedByDefault="false"
+            android:queryHint="@string/op_search_products"
+            app:searchHintIcon="@null" />
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_products"
             android:layout_width="match_parent"
-            android:layout_height="52dp"
+            android:layout_height="48dp"
             android:layout_marginTop="16dp"
-            android:background="@drawable/bg_toggle_group"
+            android:background="@color/op_background"
             app:tabGravity="fill"
-            app:tabIndicator="@drawable/bg_product_section_indicator"
-            app:tabIndicatorColor="@color/primary_green"
+            app:tabIndicator="@drawable/op_nav_active"
+            app:tabIndicatorColor="@color/op_soft"
             app:tabIndicatorFullWidth="true"
             app:tabIndicatorGravity="stretch"
             app:tabMode="fixed"
             app:tabRippleColor="@android:color/transparent"
-            app:tabSelectedTextColor="@color/white"
-            app:tabTextColor="@color/text_grey" />
+            app:tabSelectedTextColor="@color/op_link"
+            app:tabTextColor="@color/op_muted" />
     </LinearLayout>
 
     <androidx.viewpager2.widget.ViewPager2

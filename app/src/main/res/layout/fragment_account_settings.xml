@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/op_background">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="24dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="104dp"
+            android:background="@drawable/op_soft_card"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="20dp">
+            <TextView
+                android:id="@+id/tv_account_initials"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="@drawable/op_avatar_circle"
+                android:gravity="center"
+                android:textColor="@color/op_link"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/tv_account_name"
+                    style="@style/TextAppearance.Op.CardHeading"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp" />
+                <TextView
+                    android:id="@+id/tv_account_email"
+                    style="@style/TextAppearance.Op.Body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+        </LinearLayout>
+        <TextView
+            style="@style/TextAppearance.Op.Title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/op_my_account" />
+        <TextView
+            style="@style/TextAppearance.Op.Body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/op_account_subtitle" />
+        <TextView
+            style="@style/TextAppearance.Op.Section"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:text="@string/op_account_access"
+            android:textSize="16sp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="176dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/op_soft_card"
+            android:orientation="vertical">
+            <LinearLayout
+                android:id="@+id/row_email"
+                android:layout_width="match_parent"
+                android:layout_height="88dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="24dp">
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/op_email"
+                        android:textColor="@color/op_text"
+                        android:textSize="15sp" />
+                    <TextView
+                        android:id="@+id/tv_current_email"
+                        style="@style/TextAppearance.Op.Body"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp" />
+                </LinearLayout>
+                <TextView
+                    android:layout_width="16dp"
+                    android:layout_height="wrap_content"
+                    android:text="›"
+                    android:textColor="@color/op_muted"
+                    android:textSize="24sp" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/row_password"
+                android:layout_width="match_parent"
+                android:layout_height="88dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="24dp">
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/op_password"
+                        android:textColor="@color/op_text"
+                        android:textSize="15sp" />
+                    <TextView
+                        style="@style/TextAppearance.Op.Body"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="@string/op_password_hint" />
+                </LinearLayout>
+                <TextView
+                    android:layout_width="16dp"
+                    android:layout_height="wrap_content"
+                    android:text="›"
+                    android:textColor="@color/op_muted"
+                    android:textSize="24sp" />
+            </LinearLayout>
+        </LinearLayout>
+        <TextView
+            android:id="@+id/btn_store_settings"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="16dp"
+            android:gravity="center_vertical"
+            android:text="@string/op_store_settings"
+            android:textColor="@color/op_link"
+            android:textSize="15sp"
+            android:visibility="gone" />
+    </LinearLayout>
+</ScrollView>

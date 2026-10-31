@@ -22,6 +22,7 @@ import com.mottainai.operacional.notifications.NotificationPermissionManager;
 import com.mottainai.operacional.notifications.NotificationRouter;
 import com.mottainai.operacional.repository.NotificationRepository;
 import com.mottainai.operacional.utils.SessionManager;
+import com.mottainai.operacional.utils.ThemeSettings;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemeSettings.applySavedTheme(this);
         EdgeToEdge.enable(this);
         super.onCreate(savedInstanceState);
 
@@ -63,9 +65,51 @@ public class MainActivity extends AppCompatActivity {
         }
 
         navController = navHostFragment.getNavController();
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            boolean home = destination.getId() == R.id.homeFragment;
+            boolean profile = destination.getId() == R.id.profileFragment;
+            boolean accountFlow = destination.getId() == R.id.accountSettingsFragment
+                    || destination.getId() == R.id.changeEmailFragment
+                    || destination.getId() == R.id.changePasswordFragment;
+            boolean supplierFlow = destination.getId() == R.id.supplierDetailFragment
+                    || destination.getId() == R.id.newSupplierFragment
+                    || destination.getId() == R.id.editSupplierFragment
+                    || destination.getId() == R.id.supplierSavedFragment;
+            boolean reportsFlow = destination.getId() == R.id.reportsFragment
+                    || destination.getId() == R.id.teamFragment
+                    || destination.getId() == R.id.managerConferencesFragment
+                    || destination.getId() == R.id.stockTasksFragment
+                    || destination.getId() == R.id.replenishmentFragment
+                    || destination.getId() == R.id.receivingWorkflowFragment
+                    || destination.getId() == R.id.ownerCountReviewFragment
+                    || destination.getId() == R.id.managerReceivingReviewFragment
+                    || destination.getId() == R.id.managerDamageReviewFragment;
+            binding.opLogo.setVisibility(home ? View.VISIBLE : View.GONE);
+            binding.opHeaderTitle.setVisibility(home ? View.GONE : View.VISIBLE);
+            binding.btnTheme.setVisibility(home || profile ? View.VISIBLE : View.GONE);
+            binding.btnBack.setVisibility(accountFlow || supplierFlow || reportsFlow ? View.VISIBLE : View.GONE);
+            binding.btnAssistant.setVisibility(accountFlow || supplierFlow || reportsFlow ? View.GONE : View.VISIBLE);
+            if (destination.getId() == R.id.productsListFragment) {
+                binding.opHeaderTitle.setText(R.string.op_nav_products);
+            } else if (profile) {
+                binding.opHeaderTitle.setText(R.string.op_my_profile);
+            } else {
+                binding.opHeaderTitle.setText(destination.getLabel());
+            }
+        });
 
         BottomNavigationView bottomNav = binding.bottomNav;
         NavigationUI.setupWithNavController(bottomNav, navController);
+        binding.btnTheme.setOnClickListener(v -> ThemeSettings.toggle(this));
+        binding.btnBack.setOnClickListener(v -> {
+            if (navController.getCurrentDestination() != null
+                    && navController.getCurrentDestination().getId() == R.id.supplierSavedFragment) {
+                navController.popBackStack(R.id.productsListFragment, false);
+            } else {
+                navController.navigateUp();
+            }
+        });
+        binding.btnAssistant.setOnClickListener(v -> navigateToIntelligenceTab("chat"));
         View fabScan = binding.fabScan;
         fabScan.setOnClickListener(v -> {
             if (navController.getCurrentDestination() == null
@@ -92,9 +136,7 @@ public class MainActivity extends AppCompatActivity {
         View navHost = binding.navHostFragment;
         ViewCompat.setOnApplyWindowInsetsListener(root, (v, windowInsets) -> {
             Insets bars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(bars.left, bars.top, bars.right, 0);
-            bottomNav.setPadding(bottomNav.getPaddingLeft(), bottomNav.getPaddingTop(),
-                    bottomNav.getPaddingRight(), bars.bottom);
+            v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
             // O conteúdo recebe o inset do teclado; as barras já foram tratadas acima.
             ViewCompat.dispatchApplyWindowInsets(navHost, windowInsets);
             return WindowInsetsCompat.CONSUMED;

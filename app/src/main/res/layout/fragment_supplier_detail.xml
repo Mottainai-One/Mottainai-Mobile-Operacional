@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/op_background"
+    android:fillViewport="true">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/screen_padding"
+        android:paddingTop="16dp"
+        android:paddingBottom="24dp">
+        <TextView
+            android:id="@+id/tv_supplier_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/op_text"
+            android:textSize="26sp"
+            android:textStyle="bold" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/op_supplier_lookup"
+            android:textColor="@color/op_muted"
+            android:textSize="15sp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/op_soft_card"
+            android:orientation="vertical"
+            android:padding="16dp">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/op_supplier_contact"
+                android:textColor="@color/op_text"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/tv_supplier_contact"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/op_muted"
+                android:textSize="15sp" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/op_soft_card"
+            android:orientation="vertical"
+            android:padding="16dp">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/op_supplier_address"
+                android:textColor="@color/op_text"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/op_supplier_address_unavailable"
+                android:textColor="@color/op_muted"
+                android:textSize="15sp" />
+        </LinearLayout>
+        <TextView
+            android:id="@+id/tv_supplier_cnpj"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:textColor="@color/op_muted"
+            android:textSize="14sp" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_back_to_suppliers"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="@color/op_surface"
+            android:text="@string/op_supplier_back"
+            android:textAllCaps="false"
+            android:textColor="@color/op_link"
+            app:strokeColor="@color/op_outline"
+            app:strokeWidth="1dp"
+            xmlns:app="http://schemas.android.com/apk/res-auto" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_edit_supplier"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="12dp"
+            android:backgroundTint="@color/op_brand"
+            android:text="@string/op_supplier_edit"
+            android:textAllCaps="false"
+            android:textColor="@color/op_on_brand" />
+    </LinearLayout>
+</ScrollView>

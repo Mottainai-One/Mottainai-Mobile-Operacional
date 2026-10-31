@@ -3,27 +3,27 @@
 
     <item
         android:id="@+id/homeFragment"
-        android:icon="@drawable/ic_home"
-        android:title="Home" />
+        android:icon="@drawable/op_nav_home"
+        android:title="@string/op_nav_home" />
 
     <item
         android:id="@+id/productsListFragment"
-        android:icon="@drawable/ic_products"
-        android:title="Produtos" />
+        android:icon="@drawable/op_nav_products"
+        android:title="@string/op_nav_products" />
 
     <item
         android:id="@+id/scannerFragment"
         android:icon="@android:color/transparent"
-        android:title=""
+        android:title="@string/op_nav_scanner"
         android:enabled="false" />
 
     <item
         android:id="@+id/iaAlertsFragment"
-        android:icon="@drawable/ic_ia"
-        android:title="IA" />
+        android:icon="@drawable/op_nav_intelligence"
+        android:title="@string/op_nav_intelligence" />
 
     <item
         android:id="@+id/profileFragment"
-        android:icon="@drawable/ic_profile"
-        android:title="Perfil" />
+        android:icon="@drawable/op_nav_profile"
+        android:title="@string/op_nav_profile" />
 </menu>

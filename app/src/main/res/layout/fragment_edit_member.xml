@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_beige">
+    android:background="@color/op_background">
 
     <ImageButton
         android:id="@+id/btn_back"
@@ -18,14 +18,14 @@
         android:src="@drawable/ic_chevron_right"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/text_primary" />
+        app:tint="@color/op_text" />
 
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Editar membro"
-        android:textColor="@color/text_primary"
+        android:textColor="@color/op_text"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@id/btn_back"
@@ -46,7 +46,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Nome"
-            android:textColor="@color/text_primary"
+            android:textColor="@color/op_text"
             android:textSize="12sp"
             android:textStyle="bold" />
 
@@ -59,7 +59,7 @@
             android:gravity="center_vertical"
             android:minHeight="56dp"
             android:paddingHorizontal="16dp"
-            android:textColor="@color/text_primary"
+            android:textColor="@color/op_text"
             tools:text="Ana Souza" />
 
         <TextView
@@ -67,7 +67,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="Papel na loja"
-            android:textColor="@color/text_primary"
+            android:textColor="@color/op_text"
             android:textSize="12sp"
             android:textStyle="bold" />
 
@@ -84,11 +84,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            android:backgroundTint="@color/colorPrimary"
+            android:backgroundTint="@color/op_brand"
             android:minHeight="56dp"
             android:text="Salvar alterações"
             android:textAllCaps="false"
-            android:textColor="@color/colorOnPrimary"
+            android:textColor="@color/op_on_brand"
             app:cornerRadius="8dp" />
 
         <com.google.android.material.button.MaterialButton
@@ -96,11 +96,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:backgroundTint="@color/colorError"
+            android:backgroundTint="@color/op_critical"
             android:minHeight="56dp"
             android:text="Remover da equipe"
             android:textAllCaps="false"
-            android:textColor="@color/colorOnError"
+            android:textColor="@color/op_on_brand"
             app:cornerRadius="8dp" />
     </LinearLayout>
 

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_beige">
+    android:background="@color/op_background">
 
     <ImageButton
         android:id="@+id/btn_back"
@@ -17,14 +17,14 @@
         android:src="@drawable/ic_chevron_right"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/text_primary" />
+        app:tint="@color/op_text" />
 
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Novo fornecedor"
-        android:textColor="@color/text_primary"
+        android:textColor="@color/op_text"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@id/btn_back"
@@ -36,7 +36,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Dados do parceiro e categorias atendidas"
-        android:textColor="@color/text_secondary"
+        android:textColor="@color/op_muted"
         android:textSize="12sp"
         app:layout_constraintStart_toStartOf="@id/tv_title"
         app:layout_constraintTop_toBottomOf="@id/tv_title" />
@@ -60,7 +60,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Nome da empresa"
-                android:textColor="@color/text_primary"
+                android:textColor="@color/op_text"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
@@ -80,7 +80,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="CNPJ"
-                android:textColor="@color/text_primary"
+                android:textColor="@color/op_text"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
@@ -101,7 +101,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="Contato"
-                android:textColor="@color/text_primary"
+                android:textColor="@color/op_text"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
@@ -122,11 +122,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
-                android:backgroundTint="@color/colorPrimary"
+                android:backgroundTint="@color/op_brand"
                 android:minHeight="56dp"
                 android:text="Salvar fornecedor"
                 android:textAllCaps="false"
-                android:textColor="@color/colorOnPrimary"
+                android:textColor="@color/op_on_brand"
                 app:cornerRadius="8dp" />
 
         </LinearLayout>

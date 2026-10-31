@@ -1,311 +1,385 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_beige">
+    android:background="@color/op_background"
+    android:fillViewport="true">
 
-    <ScrollView
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:fillViewport="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:paddingBottom="24dp">
 
-        <LinearLayout
-            android:id="@+id/header_container"
+        <TextView
+            android:id="@+id/tv_welcome"
+            style="@style/TextAppearance.Op.Title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            tools:text="Operação em dia" />
+
+        <TextView
+            android:id="@+id/tv_store_info"
+            style="@style/TextAppearance.Op.Body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            tools:text="Gerente — Mercado da Praça" />
+
+        <ProgressBar
+            android:id="@+id/progress_home"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="28dp"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/container_error"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/op_soft_card"
             android:orientation="vertical"
-            android:paddingHorizontal="@dimen/screen_padding"
-            android:paddingTop="@dimen/screen_padding_vertical"
-            android:paddingBottom="24dp">
-
+            android:padding="16dp"
+            android:visibility="gone">
             <TextView
-                android:id="@+id/tv_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:textColor="@color/text_grey"
-                tools:text="QUARTA-FEIRA, 21 AGO" />
+                android:id="@+id/tv_error"
+                style="@style/TextAppearance.Op.Body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_retry"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="12dp"
+                android:text="@string/retry"
+                android:textAllCaps="false"
+                android:textColor="@color/op_on_brand" />
+        </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/tv_welcome"
-                android:text="Olá"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:textColor="@color/black"
-                android:layout_marginTop="8dp"/>
+        <LinearLayout
+            android:id="@+id/content_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Resumo operacional da sua loja"
-                android:textSize="14sp"
-                android:textColor="@color/text_grey"/>
-
-            <TextView
-                android:id="@+id/tv_store_info"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Loja — Papel"
-                android:textSize="12sp"
-                android:textColor="@color/text_grey"/>
-
-            <ProgressBar
-                android:id="@+id/progress_home"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="32dp"
-                android:visibility="gone" />
-
+            <!-- Estoquista: tarefa, fila e progresso do turno. -->
             <LinearLayout
-                android:id="@+id/container_error"
+                android:id="@+id/home_stock"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
+                android:layout_marginTop="24dp"
                 android:orientation="vertical"
-                android:padding="24dp"
                 android:visibility="gone">
-
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="176dp"
+                    android:background="@drawable/op_hero">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/op_next_task"
+                            android:textColor="@color/op_on_brand"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+                        <TextView
+                            android:id="@+id/stock_hero_title"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:text="@string/op_task_unavailable"
+                            android:textColor="@color/op_on_brand"
+                            android:textSize="21sp"
+                            android:textStyle="bold"
+                            tools:text="Abastecimento da gôndola" />
+                        <TextView
+                            android:id="@+id/stock_hero_detail"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="@string/op_tasks_not_connected"
+                            android:textColor="@color/op_on_brand"
+                            android:textSize="13sp"
+                            tools:text="Separar 6 unidades — corredor 03" />
+                    </LinearLayout>
+                    <ImageView
+                        android:layout_width="146dp"
+                        android:layout_height="85dp"
+                        android:layout_gravity="bottom|end"
+                        android:contentDescription="@null"
+                        android:scaleType="fitEnd"
+                        android:src="@drawable/op_brand_stock_art" />
+                    <Button
+                        android:id="@+id/btn_stock_inventory"
+                        android:layout_width="208dp"
+                        android:layout_height="56dp"
+                        android:layout_gravity="bottom|start"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginBottom="12dp"
+                        android:background="@drawable/op_button_accent"
+                        android:text="@string/op_view_inventory"
+                        android:textAllCaps="false"
+                        android:textColor="@color/op_on_accent"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+                </FrameLayout>
+                <Button
+                    android:id="@+id/btn_stock_tasks"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/op_card"
+                    android:text="@string/op_view_tasks"
+                    android:textAllCaps="false"
+                    android:textColor="@color/op_link"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
                 <TextView
-                    android:id="@+id/tv_error"
-                    android:layout_width="wrap_content"
+                    style="@style/TextAppearance.Op.Section"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="Erro ao carregar dados"
-                    android:textColor="@color/text_primary"
-                    android:textSize="16sp" />
+                    android:layout_marginTop="24dp"
+                    android:text="@string/op_queue" />
+                <TextView
+                    android:id="@+id/stock_alerts_empty"
+                    style="@style/TextAppearance.Op.Body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/op_no_stock_alerts" />
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_stock_alerts"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:nestedScrollingEnabled="false" />
+                <TextView
+                    android:id="@+id/stock_progress_label"
+                    style="@style/TextAppearance.Op.CardHeading"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="24dp"
+                    android:background="@drawable/op_soft_card"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="12dp"
+                    android:text="@string/op_progress_unavailable" />
+            </LinearLayout>
 
+            <!-- Gerente: indicadores da operação e atenção no estoque. -->
+            <LinearLayout
+                android:id="@+id/home_manager"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="82dp"
+                    android:orientation="horizontal">
+                    <include layout="@layout/include_home_metric" android:id="@+id/manager_adjustments" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" />
+                    <include layout="@layout/include_home_metric" android:id="@+id/manager_tasks" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" />
+                    <include layout="@layout/include_home_metric" android:id="@+id/manager_team" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" />
+                </LinearLayout>
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="152dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/op_hero">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/op_check_now"
+                            android:textColor="@color/op_on_brand"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+                        <TextView
+                            android:id="@+id/manager_hero_title"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:ellipsize="end"
+                            android:maxLines="2"
+                            android:text="@string/op_no_suggestions"
+                            android:textColor="@color/op_on_brand"
+                            android:textSize="21sp"
+                            android:textStyle="bold"
+                            tools:text="Um lote exige sua atenção" />
+                        <TextView
+                            android:id="@+id/btn_manager_suggestion"
+                            android:layout_width="wrap_content"
+                            android:layout_height="48dp"
+                            android:gravity="center_vertical"
+                            android:text="@string/op_review_suggestion"
+                            android:textColor="@color/op_on_brand"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                    <ImageView
+                        android:layout_width="146dp"
+                        android:layout_height="85dp"
+                        android:layout_gravity="bottom|end"
+                        android:contentDescription="@null"
+                        android:scaleType="fitEnd"
+                        android:src="@drawable/op_brand_manager_art" />
+                </FrameLayout>
+                <Button
+                    android:id="@+id/btn_manager_conferences"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/op_button_outline"
+                    android:text="@string/op_conferences"
+                    android:textAllCaps="false"
+                    android:textColor="@color/op_link"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+                <TextView
+                    style="@style/TextAppearance.Op.Section"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/op_stock_attention" />
+                <TextView
+                    android:id="@+id/manager_alerts_empty"
+                    style="@style/TextAppearance.Op.Body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/op_no_stock_alerts" />
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_manager_alerts"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:nestedScrollingEnabled="false" />
+            </LinearLayout>
+
+            <!-- Dono: dados financeiros aguardam integração própria. -->
+            <LinearLayout
+                android:id="@+id/home_owner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="168dp"
+                    android:background="@drawable/op_hero"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/op_month_sales"
+                        android:textColor="@color/op_on_brand"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+                    <TextView
+                        android:id="@+id/owner_sales"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="@string/op_data_unavailable"
+                        android:textColor="@color/op_on_brand"
+                        android:textSize="30sp"
+                        android:textStyle="bold" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="@string/op_sales_not_connected"
+                        android:textColor="@color/op_on_brand"
+                        android:textSize="13sp" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="108dp"
+                    android:layout_marginTop="16dp"
+                    android:orientation="horizontal">
+                    <include layout="@layout/include_home_metric" android:id="@+id/owner_losses" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" />
+                    <include layout="@layout/include_home_metric" android:id="@+id/owner_low_stock" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" />
+                </LinearLayout>
+                <TextView
+                    style="@style/TextAppearance.Op.Section"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/op_store_products" />
+                <LinearLayout
+                    android:id="@+id/btn_owner_inventory"
+                    android:layout_width="match_parent"
+                    android:layout_height="88dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/op_card"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+                    <ImageView
+                        android:layout_width="68dp"
+                        android:layout_height="68dp"
+                        android:contentDescription="@null"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/op_milk" />
+                    <TextView
+                        style="@style/TextAppearance.Op.CardHeading"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:text="@string/op_open_inventory" />
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/btn_owner_report"
+                    android:layout_width="match_parent"
+                    android:layout_height="68dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/op_soft_card"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="20dp">
+                    <ImageView
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/op_leaf" />
+                    <TextView
+                        style="@style/TextAppearance.Op.Body"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_weight="1"
+                        android:text="@string/op_risk_summary"
+                        android:textColor="@color/op_text" />
+                </LinearLayout>
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_retry"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/btn_owner_count_reviews"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:backgroundTint="@color/primary_green"
-                    android:textColor="@color/colorOnPrimary"
-                    app:cornerRadius="12dp"
-                    android:text="Tentar novamente"
-                    android:textAllCaps="false" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/container_empty"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="24dp"
-                android:visibility="gone">
-
-                <TextView
-                    android:id="@+id/tv_empty"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="Nenhum dado para exibir"
-                    android:textColor="@color/text_grey"
-                    android:textSize="16sp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/content_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="24dp"
-                    android:weightSum="3">
-
-                    <LinearLayout
-                        android:id="@+id/card_criticos"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="@drawable/bg_summary_card"
-                        android:padding="16dp"
-                        android:orientation="vertical"
-                        android:layout_marginEnd="8dp">
-                        <TextView
-                            android:id="@+id/tv_count_critico"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="0"
-                            android:textSize="20sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/severity_critico"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Críticos"
-                            android:textSize="10sp"/>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/card_atencao"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="@drawable/bg_summary_card"
-                        android:padding="16dp"
-                        android:orientation="vertical"
-                        android:layout_marginEnd="8dp">
-                        <TextView
-                            android:id="@+id/tv_count_atencao"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="0"
-                            android:textSize="20sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/severity_atencao"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Atenção"
-                            android:textSize="10sp"/>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/card_monitor"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="@drawable/bg_summary_card"
-                        android:padding="16dp"
-                        android:orientation="vertical">
-                        <TextView
-                            android:id="@+id/tv_count_monitor"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="0"
-                            android:textSize="20sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/severity_monitor"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Monitorar"
-                            android:textSize="10sp"/>
-                    </LinearLayout>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/layout_cards_gerente"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginTop="16dp"
-                    android:visibility="gone">
-                    <TextView
-                        android:id="@+id/tv_pending_approvals"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="13sp"
-                        android:textColor="@color/text_primary"
-                        tools:text="Aprovações pendentes: 0"/>
-                    <TextView
-                        android:id="@+id/tv_financial_risk"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:textSize="13sp"
-                        android:textColor="@color/text_grey"
-                        tools:text="Risco financeiro: —"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/layout_cards_dono"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginTop="16dp"
-                    android:visibility="gone">
-                    <TextView
-                        android:id="@+id/tv_loss_risk"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="13sp"
-                        android:textColor="@color/text_grey"
-                        tools:text="Risco de perda: —"/>
-                    <TextView
-                        android:id="@+id/tv_value_saved"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:textSize="13sp"
-                        android:textColor="@color/text_grey"
-                        tools:text="Valor salvo: —"/>
-                    <TextView
-                        android:id="@+id/tv_active_stores"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:textSize="13sp"
-                        android:textColor="@color/text_primary"
-                        tools:text="Lojas ativas: 1"/>
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/tv_alerts_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Alertas"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:layout_marginTop="28dp"/>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_alerts"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:nestedScrollingEnabled="false" />
-
-                <TextView
-                    android:id="@+id/tv_suggestions_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Sugestões"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:layout_marginTop="20dp"
-                    android:visibility="gone"/>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_suggestions"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:nestedScrollingEnabled="false"
-                    android:visibility="gone" />
-
-                <Button
-                    android:id="@+id/btn_abrir_camera"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:minHeight="56dp"
-                    android:text="Abrir câmera para atualizar estoque →"
-                    android:textColor="@color/primary_green"
-                    android:background="@android:color/transparent"
+                    android:minHeight="52dp"
+                    android:text="@string/op_owner_count_reviews"
                     android:textAllCaps="false"
-                    android:layout_marginTop="24dp"
-                    android:gravity="start|center_vertical"
-                    android:padding="0dp"/>
-
+                    android:textColor="@color/op_link"
+                    app:strokeColor="@color/op_outline" />
             </LinearLayout>
         </LinearLayout>
-    </ScrollView>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+</ScrollView>

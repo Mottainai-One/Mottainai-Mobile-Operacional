@@ -164,9 +164,8 @@ public class InventoryFragment extends Fragment {
         }
 
         new MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Finalizar contagem de demonstração?")
-                .setMessage("A edição ficará bloqueada nesta sessão. Nenhuma quantidade será "
-                        + "enviada para a API até a integração de inventário estar disponível.")
+                .setTitle("Finalizar contagem local?")
+                .setMessage("A edição ficará bloqueada nesta sessão. As quantidades não serão enviadas ao estoque da loja.")
                 .setNegativeButton("Cancelar", null)
                 .setPositiveButton("Finalizar", (dialog, which) -> viewModel.finish())
                 .show();
@@ -190,12 +189,12 @@ public class InventoryFragment extends Fragment {
         boolean finalized = session.getStatus() == InventorySession.Status.FINALIZED;
         if (finalized) {
             tvState.setText("Contagem finalizada");
-            tvInfo.setText("Finalizado no modo demonstração. O estoque da API não foi alterado.");
+            tvInfo.setText("Contagem local finalizada. O estoque da loja não foi alterado.");
             btnStart.setVisibility(View.GONE);
             btnFinish.setVisibility(View.GONE);
         } else {
             tvState.setText("Contagem em andamento");
-            tvInfo.setText("Rascunho salvo somente enquanto o app estiver aberto.");
+            tvInfo.setText("Rascunho salvo neste aparelho. O estoque da loja não foi alterado.");
             btnStart.setVisibility(View.GONE);
             btnFinish.setVisibility(View.VISIBLE);
             ((TextView) btnFinish).setText("Finalizar inventário (" + counted + "/" + total + ")");
@@ -224,7 +223,7 @@ public class InventoryFragment extends Fragment {
                 : divergences + " divergências exigem revisão");
         tvDivergenceMessage.setText(summary
                 + ". Registre uma observação em cada item antes de finalizar. "
-                + "O aviso automático ao gerente depende da integração da API.");
+                + "O aviso ao gerente ainda não está disponível.");
         cardDivergences.setVisibility(View.VISIBLE);
     }
 
@@ -232,7 +231,7 @@ public class InventoryFragment extends Fragment {
         tvState.setText("Inventário não iniciado");
         tvMeta.setText("Inicie uma contagem para conferir o estoque físico.");
         tvProgress.setText("A contagem ainda não começou");
-        tvInfo.setText("Os itens serão carregados dos dados mockados atuais do aplicativo.");
+        tvInfo.setText("Esta contagem usa os produtos de demonstração do aplicativo.");
         cardDivergences.setVisibility(View.GONE);
         progressInventory.setVisibility(View.INVISIBLE);
         progressInventory.setProgress(0);

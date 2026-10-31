@@ -3,22 +3,26 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginVertical="4dp"
-    app:cardBackgroundColor="@color/surface_card"
-    app:cardCornerRadius="10dp">
+    android:layout_marginVertical="6dp"
+    app:cardBackgroundColor="@color/op_surface"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="0dp"
+    app:strokeColor="@color/op_outline"
+    app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="12dp">
+        android:padding="16dp">
 
         <TextView
             android:id="@+id/tv_alert_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Alerta"
-            android:textColor="@color/text_primary"
+            android:textColor="@color/op_text"
+            android:textSize="17sp"
             android:textStyle="bold" />
 
         <TextView
@@ -27,7 +31,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:text="Mensagem"
-            android:textColor="@color/text_secondary" />
+            android:textColor="@color/op_muted"
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/tv_alert_severity"
@@ -35,7 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
             android:text="CRITICO"
-            android:textColor="@color/severity_critico"
+            android:textColor="@color/op_link"
             android:textStyle="bold" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>

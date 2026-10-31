@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.text.TextUtils;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,7 +51,6 @@ public class ProductCatalogFragment extends Fragment {
 
         sessionManager = new SessionManager(requireContext());
         setupRecyclerView();
-        setupSearchView();
         setupFab();
         setupRetry();
         setupViewModel();
@@ -62,6 +62,11 @@ public class ProductCatalogFragment extends Fragment {
         adapter.setOnProductClickListener(product -> {
             if (SystemClock.elapsedRealtime() - lastClickTime < 600) return;
             lastClickTime = SystemClock.elapsedRealtime();
+            if (viewModel != null && Boolean.TRUE.equals(viewModel.getOfflineSnapshot().getValue())) {
+                Toast.makeText(requireContext(), R.string.op_offline_missing_product,
+                        Toast.LENGTH_LONG).show();
+                return;
+            }
             Intent intent = new Intent(requireContext(), ProductDetailActivity.class);
             intent.putExtra("product_id", product.getId());
             startActivity(intent);
@@ -137,6 +142,9 @@ public class ProductCatalogFragment extends Fragment {
 
     private void setupRetry() {
         binding.btnRetry.setOnClickListener(v -> loadProducts());
+        binding.btnRetryOffline.setOnClickListener(v -> loadProducts());
+        binding.btnOfflineMissing.setOnClickListener(v -> Toast.makeText(requireContext(),
+                R.string.op_offline_missing_product, Toast.LENGTH_LONG).show());
     }
 
     private void setupViewModel() {
@@ -155,13 +163,30 @@ public class ProductCatalogFragment extends Fragment {
         viewModel.getError().observe(getViewLifecycleOwner(), errorMsg -> {
             if (errorMsg != null) {
                 showError(errorMsg);
+            } else {
+                hideError();
             }
+        });
+
+        viewModel.getOfflineSnapshot().observe(getViewLifecycleOwner(), offline -> {
+            boolean hasOfflineCopy = Boolean.TRUE.equals(offline);
+            binding.offlinePanel.setVisibility(hasOfflineCopy ? View.VISIBLE : View.GONE);
+            binding.fabAddProduct.setVisibility(hasOfflineCopy ? View.GONE
+                    : RoleHelper.canRegisterProduct(sessionManager.getRole()) ? View.VISIBLE : View.GONE);
+        });
+        viewModel.getLastSyncAt().observe(getViewLifecycleOwner(), timestamp -> {
+            if (timestamp == null || timestamp <= 0L) return;
+            String formatted = DateFormat.format("dd/MM/yyyy 'às' HH:mm",
+                    new java.util.Date(timestamp)).toString();
+            binding.tvOfflineUpdated.setText(getString(R.string.op_offline_last_sync, formatted));
         });
 
         viewModel.getProducts().observe(getViewLifecycleOwner(), products -> {
             adapter.submitList(products);
-            checkEmptyState();
+            String query = viewModel.getSearchQuery().getValue();
+            filterProducts(query == null ? "" : query);
         });
+        viewModel.getSearchQuery().observe(getViewLifecycleOwner(), this::filterProducts);
     }
 
     private void loadProducts() {
@@ -182,14 +207,13 @@ public class ProductCatalogFragment extends Fragment {
 
     private void filterProducts(String query) {
         if (adapter.getCurrentList() == null) return;
-        adapter.getFilter().filter(TextUtils.isEmpty(query) ? "" : query);
-        binding.rvProducts.post(this::checkEmptyState);
+        adapter.getFilter().filter(TextUtils.isEmpty(query) ? "" : query,
+                count -> { if (binding != null) checkEmptyState(); });
     }
 
     private void checkEmptyState() {
         if (adapter.getItemCount() == 0) {
-            String query = binding.svProductSearch.getQuery() == null
-                    ? "" : binding.svProductSearch.getQuery().toString();
+            String query = viewModel.getSearchQuery().getValue();
             binding.tvEmpty.setText(TextUtils.isEmpty(query)
                     ? getString(R.string.empty_products)
                     : "Nenhum resultado para \"" + query + "\"");
@@ -203,12 +227,15 @@ public class ProductCatalogFragment extends Fragment {
         binding.progressProducts.setVisibility(View.GONE);
         binding.containerError.setVisibility(View.VISIBLE);
         binding.tvError.setText(message);
+        binding.btnOfflineMissing.setVisibility(getString(R.string.op_offline_not_received).equals(message)
+                ? View.VISIBLE : View.GONE);
         binding.containerEmpty.setVisibility(View.GONE);
         binding.rvProducts.setVisibility(View.GONE);
     }
 
     private void hideError() {
         binding.containerError.setVisibility(View.GONE);
+        binding.btnOfflineMissing.setVisibility(View.GONE);
     }
 
     private void showEmpty() {

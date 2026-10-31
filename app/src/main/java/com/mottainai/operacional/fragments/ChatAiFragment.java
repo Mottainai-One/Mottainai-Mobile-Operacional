@@ -26,7 +26,6 @@ import com.google.firebase.auth.GetTokenResult;
 import com.mottainai.operacional.R;
 import com.mottainai.operacional.databinding.FragmentChatAiBinding;
 import com.mottainai.operacional.adapters.ChatMessageAdapter;
-import com.mottainai.operacional.models.AiAccessTokenResponse;
 import com.mottainai.operacional.models.AiChatHistoryMessage;
 import com.mottainai.operacional.models.AiChatHistoryResponse;
 import com.mottainai.operacional.models.AiChatRequest;
@@ -34,7 +33,6 @@ import com.mottainai.operacional.models.AiChatResponse;
 import com.mottainai.operacional.models.ChatMessage;
 import com.mottainai.operacional.network.AiApiService;
 import com.mottainai.operacional.network.AiRetrofitClient;
-import com.mottainai.operacional.network.ApiService;
 import com.mottainai.operacional.network.RetrofitClient;
 import com.mottainai.operacional.utils.SessionManager;
 
@@ -49,8 +47,8 @@ import retrofit2.Response;
 /**
  * Conversa operacional com a Mottainai-IA.
  *
- * O app usa o token Firebase somente para pedir um token curto à API
- * relacional. A chamada à IA recebe exclusivamente esse token de escopo curto.
+ * O app envia o ID token Firebase diretamente à IA. A IA verifica a assinatura
+ * e resolve usuário, empresa e perfil no banco operacional oficial.
  */
 public class ChatAiFragment extends Fragment {
 
@@ -249,28 +247,7 @@ public class ChatAiFragment extends Fragment {
             sessionManager.saveToken(tokenResult.getToken());
             RetrofitClient.clear();
 
-            ApiService apiService = RetrofitClient.getClient(requireContext()).create(ApiService.class);
-            apiService.issueAiAccessToken().enqueue(new Callback<AiAccessTokenResponse>() {
-                @Override
-                public void onResponse(@NonNull Call<AiAccessTokenResponse> call,
-                                       @NonNull Response<AiAccessTokenResponse> response) {
-                    if (!isAdded()) return;
-                    AiAccessTokenResponse body = response.body();
-                    if (!response.isSuccessful() || body == null
-                            || body.getAccessToken() == null || body.getAccessToken().trim().isEmpty()) {
-                        showRequestError(httpMessage("A API não autorizou o acesso à IA.", response),
-                                errorAction);
-                        return;
-                    }
-                    callback.onToken(body.getAccessToken());
-                }
-
-                @Override
-                public void onFailure(@NonNull Call<AiAccessTokenResponse> call, @NonNull Throwable throwable) {
-                    if (!isAdded()) return;
-                    showRequestError("Não foi possível conectar à API para autorizar a IA.", errorAction);
-                }
-            });
+            callback.onToken(tokenResult.getToken());
         });
     }
 

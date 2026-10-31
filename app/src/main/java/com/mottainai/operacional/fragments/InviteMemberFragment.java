@@ -51,7 +51,7 @@ public class InviteMemberFragment extends Fragment {
                 etEmail.setError("Informe um e-mail válido");
                 return;
             }
-            Toast.makeText(requireContext(), "Convite — pendente (aguarda endpoint)", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), R.string.op_invite_unavailable, Toast.LENGTH_LONG).show();
         });
     }
 

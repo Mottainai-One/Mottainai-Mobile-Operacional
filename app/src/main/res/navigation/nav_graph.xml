@@ -29,6 +29,46 @@
     </fragment>
 
     <fragment
+        android:id="@+id/countInventoryFragment"
+        android:name="com.mottainai.operacional.fragments.InventoryFragment"
+        android:label="Contagem" />
+
+    <fragment
+        android:id="@+id/stockTasksFragment"
+        android:name="com.mottainai.operacional.fragments.StockTasksFragment"
+        android:label="Minhas tarefas" />
+
+    <fragment
+        android:id="@+id/replenishmentFragment"
+        android:name="com.mottainai.operacional.fragments.OperationalWorkflowFragment"
+        android:label="Abastecimento">
+        <argument android:name="workflow_type" app:argType="string" android:defaultValue="replenishment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/receivingWorkflowFragment"
+        android:name="com.mottainai.operacional.fragments.OperationalWorkflowFragment"
+        android:label="Recebimento">
+        <argument android:name="workflow_type" app:argType="string" android:defaultValue="receiving" />
+    </fragment>
+
+    <fragment android:id="@+id/ownerCountReviewFragment"
+        android:name="com.mottainai.operacional.fragments.LocalReviewFragment"
+        android:label="Conferir ajuste">
+        <argument android:name="review_type" app:argType="string" android:defaultValue="count" />
+    </fragment>
+    <fragment android:id="@+id/managerReceivingReviewFragment"
+        android:name="com.mottainai.operacional.fragments.LocalReviewFragment"
+        android:label="Conferir recebimento">
+        <argument android:name="review_type" app:argType="string" android:defaultValue="receiving" />
+    </fragment>
+    <fragment android:id="@+id/managerDamageReviewFragment"
+        android:name="com.mottainai.operacional.fragments.LocalReviewFragment"
+        android:label="Conferir avaria">
+        <argument android:name="review_type" app:argType="string" android:defaultValue="damage" />
+    </fragment>
+
+    <fragment
         android:id="@+id/iaAlertsFragment"
         android:name="com.mottainai.operacional.fragments.IaAlertsFragment"
         android:label="IA">
@@ -49,6 +89,21 @@
             android:id="@+id/action_profileFragment_to_configFragment"
             app:destination="@id/configFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/accountSettingsFragment"
+        android:name="com.mottainai.operacional.fragments.AccountSettingsFragment"
+        android:label="Minha conta" />
+
+    <fragment
+        android:id="@+id/changeEmailFragment"
+        android:name="com.mottainai.operacional.fragments.ChangeEmailFragment"
+        android:label="Alterar e-mail" />
+
+    <fragment
+        android:id="@+id/changePasswordFragment"
+        android:name="com.mottainai.operacional.fragments.ChangePasswordFragment"
+        android:label="Alterar senha" />
 
     <fragment
         android:id="@+id/configFragment"
@@ -87,6 +142,35 @@
             android:name="supplier_id"
             app:argType="string" />
     </fragment>
+
+    <fragment
+        android:id="@+id/supplierDetailFragment"
+        android:name="com.mottainai.operacional.fragments.SupplierDetailFragment"
+        android:label="Fornecedor">
+        <argument
+            android:name="supplier_id"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/supplierSavedFragment"
+        android:name="com.mottainai.operacional.fragments.SupplierSavedFragment"
+        android:label="Fornecedor salvo" />
+
+    <fragment
+        android:id="@+id/reportsFragment"
+        android:name="com.mottainai.operacional.fragments.ReportsFragment"
+        android:label="Relatórios" />
+
+    <fragment
+        android:id="@+id/teamFragment"
+        android:name="com.mottainai.operacional.fragments.TeamFragment"
+        android:label="Equipe" />
+
+    <fragment
+        android:id="@+id/managerConferencesFragment"
+        android:name="com.mottainai.operacional.fragments.ManagerConferencesFragment"
+        android:label="Conferências" />
 
     <fragment
         android:id="@+id/registerDamageFragment"

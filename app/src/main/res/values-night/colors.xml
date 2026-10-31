@@ -1,43 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- The Figma specification has one light palette; retain it in night mode. -->
-    <color name="colorPrimary">#102A43</color>
-    <color name="colorPrimaryContainer">#F6F0EA</color>
-    <color name="colorSecondary">#2F664E</color>
-    <color name="colorSecondaryContainer">#F1F8F4</color>
-    <color name="colorTertiary">#DD7B2D</color>
-    <color name="colorTertiaryContainer">#FFF4EB</color>
-    <color name="colorSurface">#FFFFFF</color>
-    <color name="colorSurfaceVariant">#F6F0EA</color>
-    <color name="colorBackground">#FFF7F0</color>
-    <color name="colorError">#D96052</color>
-    <color name="colorErrorContainer">#FFF4F2</color>
-    <color name="colorOnPrimary">#FFFFFF</color>
-    <color name="colorOnPrimaryContainer">#132736</color>
-    <color name="colorOnSecondary">#FFFFFF</color>
-    <color name="colorOnSecondaryContainer">#2F664E</color>
-    <color name="colorOnTertiary">#FFFFFF</color>
-    <color name="colorOnTertiaryContainer">#DD7B2D</color>
-    <color name="colorOnSurface">#132736</color>
-    <color name="colorOnSurfaceVariant">#6C7D8B</color>
-    <color name="colorOnBackground">#132736</color>
+    <!-- App Operacional: variante escura dos mesmos tokens. -->
+    <color name="op_background">#09142A</color>
+    <color name="op_surface">#132440</color>
+    <color name="op_text">#F9F1E7</color>
+    <color name="op_muted">#B5C5DA</color>
+    <color name="op_brand">#0B5EA8</color>
+    <color name="op_on_brand">#FFFFFF</color>
+    <color name="op_soft">#1A3559</color>
+    <color name="op_accent">#FF984F</color>
+    <color name="op_on_accent">#09142A</color>
+    <color name="op_link">#FF984F</color>
+    <color name="op_outline">#2B4162</color>
+    <color name="op_hero">#0B5EA8</color>
+    <color name="op_progress_track">#132440</color>
+    <color name="op_warning_soft">#3A2C15</color>
+    <color name="op_warning_text">#FFC45C</color>
+    <color name="op_scanner_background">#FF984F</color>
+    <color name="op_scanner_foreground">#09142A</color>
+    <color name="op_login_button">#FF984F</color>
+    <color name="op_login_button_text">#09142A</color>
+    <color name="op_success">#62E0BA</color>
+    <color name="op_critical">#FFB4AB</color>
+    <color name="op_critical_soft">#3B1D27</color>
+    <color name="op_logout">#FFB4AB</color>
+    <color name="op_theme_selection">#FF984F</color>
+    <color name="op_theme_selection_text">#09142A</color>
+    <!-- Material3 required colors (Dark theme) -->
+    <color name="colorPrimary">#A5D6A7</color>
+    <color name="colorPrimaryContainer">#1B5E20</color>
+    <color name="colorSecondary">#C8E6C9</color>
+    <color name="colorSecondaryContainer">#1B5E20</color>
+    <color name="colorTertiary">#FFE0B2</color>
+    <color name="colorTertiaryContainer">#2E1500</color>
+    <color name="colorSurface">#1E1E1E</color>
+    <color name="colorSurfaceVariant">#2C2C2C</color>
+    <color name="colorBackground">#121212</color>
+    <color name="colorError">#F44336</color>
+    <color name="colorErrorContainer">#4D0000</color>
+    <color name="colorOnPrimary">#002E04</color>
+    <color name="colorOnPrimaryContainer">#A5D6A7</color>
+    <color name="colorOnSecondary">#001F00</color>
+    <color name="colorOnSecondaryContainer">#C8E6C9</color>
+    <color name="colorOnTertiary">#2E1500</color>
+    <color name="colorOnTertiaryContainer">#FFE0B2</color>
+    <color name="colorOnSurface">#FFFFFF</color>
+    <color name="colorOnSurfaceVariant">#CAC4D0</color>
+    <color name="colorOnBackground">#FFFFFF</color>
     <color name="colorOnError">#FFFFFF</color>
-    <color name="colorOnErrorContainer">#D96052</color>
-    <color name="colorOutline">#E4D8CE</color>
-    <color name="colorOutlineVariant">#E4D8CE</color>
-    <color name="colorInverseSurface">#132736</color>
-    <color name="colorInversePrimary">#FFFFFF</color>
+    <color name="colorOnErrorContainer">#FCEEEE</color>
+    <color name="colorOutline">#909090</color>
+    <color name="colorOutlineVariant">#4A4A4A</color>
+    <color name="colorInverseSurface">#FFFFFF</color>
+    <color name="colorInversePrimary">#A5D6A7</color>
     <color name="colorShadow">#000000</color>
     <color name="colorScrim">#000000</color>
 
     <!-- Severidades -->
-    <color name="severity_critico">#D96052</color>
-    <color name="severity_atencao">#DD7B2D</color>
-    <color name="severity_monitor">#56802B</color>
+    <color name="severity_critico">#EF5350</color>
+    <color name="severity_atencao">#FF9800</color>
+    <color name="severity_monitor">#64B5F6</color>
 
     <!-- UI geral -->
-    <color name="surface_card">#F6F0EA</color>
-    <color name="text_primary">#132736</color>
-    <color name="text_secondary">#6C7D8B</color>
-    <color name="accent">#2F664E</color>
+    <color name="surface_card">#2C2C2C</color>
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#B0B0B0</color>
+    <color name="accent">#81C784</color>
 </resources>

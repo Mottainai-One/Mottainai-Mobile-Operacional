@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_beige">
+    android:background="@color/op_background">
 
     <LinearLayout
         android:id="@+id/header_ia"
@@ -18,8 +18,9 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Inteligência"
-            android:textColor="@color/text_primary"
+            android:id="@+id/tv_intelligence_heading"
+            android:text="@string/op_intelligence_title"
+            android:textColor="@color/op_text"
             android:textSize="24sp"
             android:textStyle="bold" />
 
@@ -27,25 +28,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:text="Alertas, sugestões e respostas para agir antes do problema"
-            android:textColor="@color/text_secondary"
+            android:id="@+id/tv_intelligence_subtitle"
+            android:text="@string/op_alerts_subtitle"
+            android:textColor="@color/op_muted"
             android:textSize="14sp" />
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_ia"
             android:layout_width="match_parent"
-            android:layout_height="52dp"
+            android:layout_height="48dp"
             android:layout_marginTop="16dp"
-            android:background="@drawable/bg_toggle_group"
+            android:background="@color/op_background"
             app:tabGravity="fill"
-            app:tabIndicator="@drawable/bg_product_section_indicator"
-            app:tabIndicatorColor="@color/primary_green"
+            app:tabIndicator="@drawable/op_nav_active"
+            app:tabIndicatorColor="@color/op_soft"
             app:tabIndicatorFullWidth="true"
             app:tabIndicatorGravity="stretch"
             app:tabMode="fixed"
             app:tabRippleColor="@android:color/transparent"
-            app:tabSelectedTextColor="@color/white"
-            app:tabTextColor="@color/text_grey">
+            app:tabSelectedTextColor="@color/op_link"
+            app:tabTextColor="@color/op_muted">
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
@@ -79,7 +81,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="24dp"
         android:text="Nenhum alerta no momento"
-        android:textColor="@color/text_secondary"
+        android:textColor="@color/op_muted"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

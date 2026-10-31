@@ -18,6 +18,7 @@ import com.mottainai.operacional.R;
 import com.mottainai.operacional.databinding.ActivityLoginBinding;
 import com.mottainai.operacional.utils.AuthErrorTranslator;
 import com.mottainai.operacional.utils.SessionManager;
+import com.mottainai.operacional.utils.ThemeSettings;
 import com.mottainai.operacional.utils.ValidationUtils;
 import com.mottainai.operacional.models.User;
 import com.mottainai.operacional.repository.AuthRepository;
@@ -25,6 +26,8 @@ import com.mottainai.operacional.repository.NotificationRepository;
 import com.mottainai.operacional.repository.UserRepository;
 
 public class LoginActivity extends AppCompatActivity {
+
+    public static final String EXTRA_SIGNED_OUT = "signed_out";
 
     private ActivityLoginBinding binding;
 
@@ -37,6 +40,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemeSettings.applySavedTheme(this);
         super.onCreate(savedInstanceState);
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -44,6 +48,8 @@ public class LoginActivity extends AppCompatActivity {
         etEmail = binding.etEmail;
         etPassword = binding.etPassword;
         btnLogin = binding.btnLogin;
+        binding.loginStatus.setVisibility(getIntent().getBooleanExtra(EXTRA_SIGNED_OUT, false)
+                ? android.view.View.VISIBLE : android.view.View.GONE);
 
         session = new SessionManager(this);
         authRepository = new AuthRepository();
@@ -62,19 +68,22 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void login() {
+        binding.loginStatus.setVisibility(android.view.View.GONE);
         String email = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
 
         if (email.isEmpty() || password.isEmpty()) {
+            showLoginStatus("Preencha e-mail e senha.");
             Toast.makeText(this, "Preencha email e senha", Toast.LENGTH_SHORT).show();
             return;
         }
         if (!ValidationUtils.isValidEmail(email)) {
+            showLoginStatus("Informe um e-mail válido.");
             Toast.makeText(this, "Informe um e-mail válido", Toast.LENGTH_SHORT).show();
             return;
         }
         btnLogin.setEnabled(false);
-        btnLogin.setText("Entrando...");
+        btnLogin.setText(R.string.op_logging_in);
 
         authRepository.login(email, password, new AuthRepository.AuthCallback() {
             @Override
@@ -85,11 +94,17 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onError(Exception e) {
                 btnLogin.setEnabled(true);
-                btnLogin.setText("Entrar");
+                btnLogin.setText(R.string.op_login_button);
+                showLoginStatus(AuthErrorTranslator.toUserMessage(e));
                 Toast.makeText(LoginActivity.this,
                         AuthErrorTranslator.toUserMessage(e), Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    private void showLoginStatus(String message) {
+        binding.loginStatus.setText(message);
+        binding.loginStatus.setVisibility(android.view.View.VISIBLE);
     }
 
     private void loadUserProfile(String uid) {

@@ -42,7 +42,8 @@ public class DamageSuccessFragment extends Fragment {
 
         ((TextView) binding.tvProductName).setText(productName != null ? productName : "Produto");
         ((TextView) binding.tvDamageSummary)
-                .setText((quantity != null ? quantity : "1") + " unidade(s) - registrado agora");
+                .setText(getString(R.string.op_damage_local_summary,
+                        quantity != null ? quantity : "1"));
 
         NavController navController = Navigation.findNavController(view);
 

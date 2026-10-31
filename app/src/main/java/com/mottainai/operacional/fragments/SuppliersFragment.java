@@ -20,6 +20,12 @@ import com.mottainai.operacional.adapters.SupplierAdapter;
 import com.mottainai.operacional.utils.RoleHelper;
 import com.mottainai.operacional.utils.SessionManager;
 import com.mottainai.operacional.viewmodels.SupplierViewModel;
+import com.mottainai.operacional.viewmodels.ProductListViewModel;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import com.mottainai.operacional.models.Supplier;
 
 /**
  * Conteúdo da aba Fornecedores em modo local por loja.
@@ -27,6 +33,9 @@ import com.mottainai.operacional.viewmodels.SupplierViewModel;
 public class SuppliersFragment extends Fragment {
 
     private FragmentSuppliersBinding binding;
+    private List<Supplier> allSuppliers = new ArrayList<>();
+    private SupplierAdapter adapter;
+    private String query = "";
 
     @Nullable
     @Override
@@ -43,19 +52,24 @@ public class SuppliersFragment extends Fragment {
         SessionManager session = new SessionManager(requireContext());
         String storeId = session.getStoreId();
         boolean canManage = RoleHelper.canRegisterProduct(session.getRole());
-        SupplierAdapter adapter = new SupplierAdapter(supplier -> {
-            if (!canManage) return;
+        adapter = new SupplierAdapter(supplier -> {
             Bundle args = new Bundle();
             args.putString("supplier_id", supplier.getId());
-            NavHostFragment.findNavController(this).navigate(R.id.editSupplierFragment, args);
+            NavHostFragment.findNavController(this).navigate(R.id.supplierDetailFragment, args);
         });
         RecyclerView list = binding.rvSuppliers;
         list.setLayoutManager(new LinearLayoutManager(requireContext()));
         list.setAdapter(adapter);
         SupplierViewModel viewModel = new ViewModelProvider(requireActivity()).get(SupplierViewModel.class);
         viewModel.getSuppliers().observe(getViewLifecycleOwner(), suppliers -> {
-            adapter.submit(suppliers);
-            binding.tvSuppliersEmpty.setVisibility(suppliers == null || suppliers.isEmpty() ? View.VISIBLE : View.GONE);
+            allSuppliers = suppliers == null ? new ArrayList<>() : suppliers;
+            applySearch();
+        });
+        ProductListViewModel searchModel = new ViewModelProvider(requireParentFragment())
+                .get(ProductListViewModel.class);
+        searchModel.getSearchQuery().observe(getViewLifecycleOwner(), value -> {
+            query = value == null ? "" : value.trim().toLowerCase(Locale.ROOT);
+            applySearch();
         });
         viewModel.getError().observe(getViewLifecycleOwner(), message -> {
             if (message != null) Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
@@ -64,6 +78,22 @@ public class SuppliersFragment extends Fragment {
         add.setVisibility(canManage ? View.VISIBLE : View.GONE);
         add.setOnClickListener(v -> NavHostFragment.findNavController(this).navigate(R.id.newSupplierFragment));
         viewModel.load(storeId);
+    }
+
+    private void applySearch() {
+        if (binding == null || adapter == null) return;
+        List<Supplier> filtered = new ArrayList<>();
+        for (Supplier supplier : allSuppliers) {
+            if (supplier.getTradeName().toLowerCase(Locale.ROOT).contains(query)
+                    || supplier.getCnpj().contains(query)
+                    || supplier.getContact().toLowerCase(Locale.ROOT).contains(query)) {
+                filtered.add(supplier);
+            }
+        }
+        adapter.submit(filtered);
+        binding.tvSuppliersEmpty.setVisibility(filtered.isEmpty() ? View.VISIBLE : View.GONE);
+        binding.tvSuppliersEmpty.setText(allSuppliers.isEmpty()
+                ? R.string.op_supplier_empty : R.string.op_supplier_search_empty);
     }
 
     @Override

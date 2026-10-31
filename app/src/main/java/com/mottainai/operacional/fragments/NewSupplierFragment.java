@@ -14,7 +14,7 @@ import androidx.navigation.Navigation;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.mottainai.operacional.R;
-import com.mottainai.operacional.databinding.FragmentNewSupplierBinding;
+import com.mottainai.operacional.databinding.FragmentSupplierFormBinding;
 import com.mottainai.operacional.utils.SessionManager;
 import com.mottainai.operacional.utils.ValidationUtils;
 import com.mottainai.operacional.viewmodels.SupplierViewModel;
@@ -24,13 +24,13 @@ import com.mottainai.operacional.viewmodels.SupplierViewModel;
  */
 public class NewSupplierFragment extends Fragment {
 
-    private FragmentNewSupplierBinding binding;
+    private FragmentSupplierFormBinding binding;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                               @Nullable Bundle savedInstanceState) {
-        binding = FragmentNewSupplierBinding.inflate(inflater, container, false);
+        binding = FragmentSupplierFormBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 
@@ -38,7 +38,7 @@ public class NewSupplierFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        binding.btnBack.setOnClickListener(v ->
+        binding.btnCancel.setOnClickListener(v ->
                 Navigation.findNavController(view).popBackStack());
 
         EditText etName = binding.etSupplierName;
@@ -48,7 +48,10 @@ public class NewSupplierFragment extends Fragment {
         SessionManager session = new SessionManager(requireContext());
         viewModel.clearCompletion();
         viewModel.getCompleted().observe(getViewLifecycleOwner(), completed -> {
-            if (Boolean.TRUE.equals(completed)) Navigation.findNavController(view).popBackStack();
+            if (Boolean.TRUE.equals(completed)) {
+                viewModel.clearCompletion();
+                Navigation.findNavController(view).navigate(R.id.supplierSavedFragment);
+            }
         });
         viewModel.getError().observe(getViewLifecycleOwner(), message -> {
             if (message != null) Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
@@ -65,8 +68,8 @@ public class NewSupplierFragment extends Fragment {
                 etCnpj.setError("CNPJ inválido");
                 return;
             }
-            if (!contact.isEmpty() && !ValidationUtils.isValidEmail(contact)) {
-                etContact.setError("Informe um e-mail válido");
+            if (!ValidationUtils.isValidSupplierContact(contact)) {
+                etContact.setError(getString(R.string.op_supplier_invalid_contact));
                 return;
             }
             viewModel.create(session.getStoreId(), name, cnpj, contact);

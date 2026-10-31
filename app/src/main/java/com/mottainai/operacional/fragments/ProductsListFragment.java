@@ -8,10 +8,13 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.mottainai.operacional.databinding.FragmentProductsListBinding;
+import com.mottainai.operacional.viewmodels.ProductListViewModel;
+import com.mottainai.operacional.R;
 
 /**
  * Seção Produtos. As três páginas compartilham o mesmo cabeçalho e as mesmas
@@ -30,6 +33,7 @@ public class ProductsListFragment extends Fragment {
     private TabLayoutMediator tabMediator;
     private int selectedTab;
     private androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback pageChangeCallback;
+    private ProductListViewModel productListViewModel;
 
     @Nullable
     @Override
@@ -44,9 +48,24 @@ public class ProductsListFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         selectedTab = savedInstanceState == null
-                ? requireArguments().getInt(ARG_INITIAL_TAB, 0)
+                ? (getArguments() == null ? 0 : getArguments().getInt(ARG_INITIAL_TAB, 0))
                 : savedInstanceState.getInt(STATE_SELECTED_TAB, 0);
         selectedTab = Math.max(0, Math.min(selectedTab, SECTION_TITLES.length - 1));
+
+        productListViewModel = new ViewModelProvider(this).get(ProductListViewModel.class);
+        binding.svProductSearch.setIconified(false);
+        binding.svProductSearch.setOnQueryTextListener(new androidx.appcompat.widget.SearchView.OnQueryTextListener() {
+            @Override public boolean onQueryTextSubmit(String query) { return false; }
+            @Override public boolean onQueryTextChange(String query) {
+                productListViewModel.setSearchQuery(query);
+                return true;
+            }
+        });
+        android.widget.EditText searchInput = binding.svProductSearch
+                .findViewById(androidx.appcompat.R.id.search_src_text);
+        searchInput.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_search, 0, 0, 0);
+        searchInput.setCompoundDrawablePadding(getResources().getDimensionPixelSize(R.dimen.search_icon_padding));
+        searchInput.setHintTextColor(requireContext().getColor(R.color.op_muted));
 
         binding.productsPager.setAdapter(new ProductsSectionAdapter(this));
         binding.productsPager.setOffscreenPageLimit(2);
@@ -57,10 +76,24 @@ public class ProductsListFragment extends Fragment {
         pageChangeCallback = new androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
+                if (selectedTab != position) {
+                    binding.svProductSearch.setQuery("", false);
+                    productListViewModel.setSearchQuery("");
+                }
                 selectedTab = position;
+                binding.svProductSearch.setQueryHint(getString(position == 1
+                        ? R.string.op_search_inventory : position == 2
+                        ? R.string.op_search_supplier : R.string.op_search_products));
+                binding.productsSectionTitle.setText(position == 0 ? R.string.op_catalog_title
+                        : position == 1 ? R.string.op_inventory_title : R.string.op_suppliers_title);
             }
         };
         binding.productsPager.registerOnPageChangeCallback(pageChangeCallback);
+        binding.svProductSearch.setQueryHint(getString(selectedTab == 1
+                ? R.string.op_search_inventory : selectedTab == 2
+                ? R.string.op_search_supplier : R.string.op_search_products));
+        binding.productsSectionTitle.setText(selectedTab == 0 ? R.string.op_catalog_title
+                : selectedTab == 1 ? R.string.op_inventory_title : R.string.op_suppliers_title);
     }
 
     @Override
@@ -97,7 +130,7 @@ public class ProductsListFragment extends Fragment {
                 case 0:
                     return new ProductCatalogFragment();
                 case 1:
-                    return new InventoryFragment();
+                    return new InventoryCatalogFragment();
                 case 2:
                     return new SuppliersFragment();
                 default:

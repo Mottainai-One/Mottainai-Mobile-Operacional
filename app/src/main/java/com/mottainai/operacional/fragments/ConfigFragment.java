@@ -30,10 +30,8 @@ import com.mottainai.operacional.utils.SessionManager;
  * simuladas — os 3 switches de push realmente controlam o que
  * NotificationRouter exibe. As regras de promoção/aprovação automáticas
  * dependem de lógica de IA que ainda roda só no backend, então ficam
- * salvas localmente mas sem efeito local até existir o endpoint. A aba
- * Equipe mostra um convite e um membro de exemplo, já que também não existe
- * endpoint de listagem de equipe (UserRepository só busca o próprio perfil
- * por uid).
+ * salvas localmente mas sem efeito local até existir o endpoint. A equipe
+ * é consultada na tela própria, com usuários filtrados pela loja.
  */
 public class ConfigFragment extends Fragment {
 
@@ -110,17 +108,8 @@ public class ConfigFragment extends Fragment {
             Toast.makeText(requireContext(), "Notificações salvas neste dispositivo", Toast.LENGTH_SHORT).show();
         });
 
-        binding.btnInviteMember.setOnClickListener(v ->
-                navController.navigate(R.id.action_configFragment_to_inviteMemberFragment));
-
-        binding.cardMemberExample.setOnClickListener(v -> {
-            String name = ((TextView) binding.tvMemberName).getText().toString();
-            String role = ((TextView) binding.tvMemberRole).getText().toString();
-            Bundle args = new Bundle();
-            args.putString("member_name", name);
-            args.putString("member_role", role);
-            navController.navigate(R.id.action_configFragment_to_editMemberFragment, args);
-        });
+        binding.btnInviteMember.setText(R.string.op_team_open);
+        binding.btnInviteMember.setOnClickListener(v -> navController.navigate(R.id.teamFragment));
     }
 
     private void showTab(int position) {

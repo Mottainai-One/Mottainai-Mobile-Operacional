@@ -1,8 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <style name="TextAppearance.Op.Title" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:fontFamily">@font/dm_sans</item>
+        <item name="android:textColor">@color/op_text</item>
+        <item name="android:textSize">26sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="TextAppearance.Op.Section" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:fontFamily">@font/dm_sans</item>
+        <item name="android:textColor">@color/op_text</item>
+        <item name="android:textSize">19sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="TextAppearance.Op.Body" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:fontFamily">@font/dm_sans</item>
+        <item name="android:textColor">@color/op_muted</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+    <style name="TextAppearance.Op.CardHeading" parent="TextAppearance.Material3.TitleSmall">
+        <item name="android:fontFamily">@font/dm_sans</item>
+        <item name="android:textColor">@color/op_text</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
     <style name="Widget.App.BottomNav" parent="Widget.Material3.BottomNavigationView">
         <item name="android:minHeight">@dimen/bottom_nav_height</item>
-        <item name="android:background">@drawable/bg_bottom_nav</item>
+        <item name="android:background">@drawable/op_nav_background</item>
         <item name="itemIconTint">@color/bottom_nav_item</item>
         <item name="itemTextColor">@color/bottom_nav_item</item>
         <item name="itemRippleColor">@color/bottom_nav_item</item>
@@ -16,13 +39,13 @@
 
     <style name="Widget.App.BottomNav.ActiveIndicator"
         parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
-        <item name="android:color">@color/card_light_green</item>
+        <item name="android:color">@color/op_soft</item>
     </style>
 
     <style name="Widget.App.Fab" parent="Widget.Material3.FloatingActionButton.Primary">
-        <item name="backgroundTint">@color/primary_green</item>
-        <item name="tint">@color/white</item>
-        <item name="elevation">6dp</item>
+        <item name="backgroundTint">@color/op_scanner_background</item>
+        <item name="tint">@color/op_scanner_foreground</item>
+        <item name="elevation">0dp</item>
         <item name="borderWidth">0dp</item>
     </style>
 
@@ -34,8 +57,8 @@
         <item name="boxCornerRadiusTopEnd">@dimen/card_corner_radius</item>
         <item name="boxCornerRadiusBottomStart">@dimen/card_corner_radius</item>
         <item name="boxCornerRadiusBottomEnd">@dimen/card_corner_radius</item>
-        <item name="hintTextColor">@color/primary_green</item>
-        <item name="android:textColorHint">@color/primary_green</item>
+        <item name="hintTextColor">@color/op_link</item>
+        <item name="android:textColorHint">@color/op_muted</item>
     </style>
 
     <!-- Campos de seleção (dropdown) precisam do estilo ExposedDropdownMenu:
@@ -49,8 +72,8 @@
         <item name="boxCornerRadiusTopEnd">@dimen/card_corner_radius</item>
         <item name="boxCornerRadiusBottomStart">@dimen/card_corner_radius</item>
         <item name="boxCornerRadiusBottomEnd">@dimen/card_corner_radius</item>
-        <item name="hintTextColor">@color/primary_green</item>
-        <item name="android:textColorHint">@color/primary_green</item>
-        <item name="endIconTint">@color/primary_green</item>
+        <item name="hintTextColor">@color/op_link</item>
+        <item name="android:textColorHint">@color/op_muted</item>
+        <item name="endIconTint">@color/op_link</item>
     </style>
 </resources>

@@ -59,18 +59,22 @@ public class ApproveSuggestionFragment extends Fragment {
         tvDescription.setText(description != null ? description
                 : getString(R.string.suggestion_description_unavailable));
         tvStatus.setText(R.string.suggestion_pending);
-        // Cenário mock até a API fornecer preço atual e desconto da IA.
-        double currentPrice = args != null ? args.getDouble("suggestion_current_price", 12.90) : 12.90;
-        double suggestedDiscount = args != null ? args.getDouble("suggestion_discount", 20) : 20;
-        if (suggestedDiscount >= 0) inputDiscount.setText(String.valueOf(suggestedDiscount));
-        tvAiDiscount.setText(getString(R.string.suggestion_ai_discount, suggestedDiscount));
+        Double currentPrice = args != null && args.containsKey("suggestion_current_price")
+                ? args.getDouble("suggestion_current_price") : null;
+        Double suggestedDiscount = args != null && args.containsKey("suggestion_discount")
+                ? args.getDouble("suggestion_discount") : null;
+        if (suggestedDiscount != null && suggestedDiscount >= 0) {
+            inputDiscount.setText(String.valueOf(suggestedDiscount));
+            tvAiDiscount.setText(getString(R.string.suggestion_ai_discount, suggestedDiscount));
+        } else {
+            tvAiDiscount.setText(R.string.op_suggestion_discount_unavailable);
+        }
         updateFinalPrice(tvFinalPrice, currentPrice, suggestedDiscount);
-        final double priceForCalculation = currentPrice;
         inputDiscount.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
-                try { updateFinalPrice(tvFinalPrice, priceForCalculation, Double.parseDouble(s.toString().replace(',', '.'))); }
-                catch (NumberFormatException ignored) { updateFinalPrice(tvFinalPrice, priceForCalculation, -1); }
+                try { updateFinalPrice(tvFinalPrice, currentPrice, Double.parseDouble(s.toString().replace(',', '.'))); }
+                catch (NumberFormatException ignored) { updateFinalPrice(tvFinalPrice, currentPrice, null); }
             }
             @Override public void afterTextChanged(Editable s) { }
         });
@@ -85,8 +89,8 @@ public class ApproveSuggestionFragment extends Fragment {
                 Toast.makeText(requireContext(), R.string.suggestion_decision_pending, Toast.LENGTH_SHORT).show());
     }
 
-    private void updateFinalPrice(TextView view, double currentPrice, double discount) {
-        if (currentPrice < 0 || discount < 0 || discount > 100) {
+    private void updateFinalPrice(TextView view, Double currentPrice, Double discount) {
+        if (currentPrice == null || discount == null || currentPrice < 0 || discount < 0 || discount > 100) {
             view.setText(R.string.suggestion_final_price_unavailable);
             return;
         }

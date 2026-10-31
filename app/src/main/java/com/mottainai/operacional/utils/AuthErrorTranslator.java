@@ -5,6 +5,9 @@ import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 
 /**
  * Traduz exceções do Firebase Auth para mensagens em português — sem isto o
@@ -22,6 +25,15 @@ public final class AuthErrorTranslator {
         }
         if (e instanceof FirebaseTooManyRequestsException) {
             return "Muitas tentativas. Aguarde um momento e tente novamente.";
+        }
+        if (e instanceof FirebaseAuthRecentLoginRequiredException) {
+            return "Por segurança, entre novamente na conta antes de fazer esta alteração.";
+        }
+        if (e instanceof FirebaseAuthUserCollisionException) {
+            return "Este e-mail já está em uso por outra conta.";
+        }
+        if (e instanceof FirebaseAuthWeakPasswordException) {
+            return "Escolha uma senha mais forte.";
         }
         if (e instanceof FirebaseAuthException) {
             String code = ((FirebaseAuthException) e).getErrorCode();

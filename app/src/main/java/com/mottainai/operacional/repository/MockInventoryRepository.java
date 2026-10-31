@@ -1,18 +1,20 @@
 package com.mottainai.operacional.repository;
 
 import android.app.Application;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
 
 import com.mottainai.operacional.models.InventoryItem;
 import com.mottainai.operacional.models.InventorySession;
 import com.mottainai.operacional.models.Product;
-import com.mottainai.operacional.utils.AppLocales;
+import com.google.gson.Gson;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -32,14 +34,19 @@ public class MockInventoryRepository {
             new ConcurrentHashMap<>();
 
     private final MockProductRepository productRepository;
+    private final Application application;
+    private final Gson gson = new Gson();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     public MockInventoryRepository(Application application) {
+        this.application = application;
         productRepository = new MockProductRepository(application);
     }
 
     public void load(String storeId, Callback callback) {
-        mainHandler.post(() -> callback.onSuccess(copyOf(sessionsByStore.get(storeKey(storeId)))));
+        String key = storeKey(storeId);
+        InventorySession session = loadOrRestore(key);
+        mainHandler.post(() -> callback.onSuccess(copyOf(session)));
     }
 
     public void start(String storeId, String startedBy, Callback callback) {
@@ -75,12 +82,14 @@ public class MockInventoryRepository {
                         key,
                         isBlank(startedBy) ? "Usuário autenticado" : startedBy,
                         DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT,
-                                AppLocales.PT_BR).format(new Date()),
+                                new Locale("pt", "BR")).format(new Date()),
                         InventorySession.Status.IN_PROGRESS,
                         items
                 );
                 InventorySession storedSession = sessionsByStore.putIfAbsent(key, session);
-                callback.onSuccess(copyOf(storedSession != null ? storedSession : session));
+                InventorySession result = storedSession != null ? storedSession : session;
+                persist(result);
+                callback.onSuccess(copyOf(result));
             }
 
             @Override
@@ -130,6 +139,7 @@ public class MockInventoryRepository {
 
         InventorySession updated = session.withItems(updatedItems);
         sessionsByStore.put(updated.getStoreId(), updated);
+        persist(updated);
         callback.onSuccess(copyOf(updated));
     }
 
@@ -150,7 +160,37 @@ public class MockInventoryRepository {
 
         InventorySession finished = session.withStatus(InventorySession.Status.FINALIZED);
         sessionsByStore.put(finished.getStoreId(), finished);
+        persist(finished);
         callback.onSuccess(copyOf(finished));
+    }
+
+    private InventorySession loadOrRestore(String storeId) {
+        InventorySession session = sessionsByStore.get(storeId);
+        if (session != null) return session;
+        String json = preferences().getString(sessionKey(storeId), null);
+        if (json == null || json.trim().isEmpty()) return null;
+        try {
+            InventorySession restored = gson.fromJson(json, InventorySession.class);
+            if (restored == null || restored.getItems() == null) return null;
+            InventorySession existing = sessionsByStore.putIfAbsent(storeId, restored);
+            return existing != null ? existing : restored;
+        } catch (RuntimeException ignored) {
+            preferences().edit().remove(sessionKey(storeId)).apply();
+            return null;
+        }
+    }
+
+    private void persist(InventorySession session) {
+        if (session == null) return;
+        preferences().edit().putString(sessionKey(session.getStoreId()), gson.toJson(session)).apply();
+    }
+
+    private SharedPreferences preferences() {
+        return application.getSharedPreferences("operational_inventory_drafts", 0);
+    }
+
+    private String sessionKey(String storeId) {
+        return "inventory_" + storeId;
     }
 
     private InventorySession findById(String sessionId) {

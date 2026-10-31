@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_beige">
+    android:background="@color/op_background">
 
     <LinearLayout
         android:id="@+id/chat_header"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/colorSurface"
+        android:background="@color/op_background"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingStart="@dimen/screen_padding"
@@ -23,11 +23,10 @@
         <ImageView
             android:layout_width="44dp"
             android:layout_height="44dp"
-            android:background="@drawable/bg_chat_avatar"
+            android:background="@drawable/op_soft_card"
             android:contentDescription="@null"
             android:padding="10dp"
-            android:src="@drawable/ic_ia"
-            app:tint="@color/white" />
+            android:src="@drawable/op_assistant" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -40,7 +39,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/chat_assistant_name"
-                android:textColor="@color/text_primary"
+                android:textColor="@color/op_text"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -61,7 +60,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/chat_status_available"
-                    android:textColor="@color/text_secondary"
+                    android:textColor="@color/op_muted"
                     android:textSize="12sp" />
             </LinearLayout>
         </LinearLayout>
@@ -100,11 +99,10 @@
             <ImageView
                 android:layout_width="56dp"
                 android:layout_height="56dp"
-                android:background="@drawable/bg_chat_avatar"
+                android:background="@drawable/op_soft_card"
                 android:contentDescription="@null"
                 android:padding="14dp"
-                android:src="@drawable/ic_ia"
-                app:tint="@color/white" />
+                android:src="@drawable/op_assistant" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -112,7 +110,7 @@
                 android:layout_marginTop="14dp"
                 android:gravity="center"
                 android:text="@string/chat_empty_title"
-                android:textColor="@color/text_primary"
+                android:textColor="@color/op_text"
                 android:textSize="17sp"
                 android:textStyle="bold" />
 
@@ -122,7 +120,7 @@
                 android:layout_marginTop="6dp"
                 android:gravity="center"
                 android:text="@string/chat_empty_message"
-                android:textColor="@color/text_secondary"
+                android:textColor="@color/op_muted"
                 android:textSize="13sp" />
         </LinearLayout>
     </FrameLayout>
@@ -153,7 +151,7 @@
             android:layout_weight="1"
             android:paddingTop="6dp"
             android:paddingBottom="6dp"
-            android:textColor="@color/text_secondary"
+            android:textColor="@color/op_muted"
             android:textSize="12sp"
             android:visibility="gone" />
 
@@ -164,7 +162,7 @@
             android:layout_weight="1"
             android:paddingTop="6dp"
             android:paddingBottom="6dp"
-            android:textColor="@color/colorError"
+            android:textColor="@color/op_critical"
             android:textSize="12sp"
             android:visibility="gone" />
 
@@ -175,7 +173,7 @@
             android:layout_height="wrap_content"
             android:minWidth="0dp"
             android:text="@string/chat_retry"
-            android:textColor="@color/primary_green"
+            android:textColor="@color/op_link"
             android:visibility="gone" />
     </LinearLayout>
 
@@ -186,10 +184,10 @@
         android:layout_marginStart="@dimen/screen_padding"
         android:layout_marginEnd="@dimen/screen_padding"
         android:layout_marginBottom="@dimen/chat_composer_scanner_clearance"
-        app:cardBackgroundColor="@color/colorSurface"
-        app:cardCornerRadius="20dp"
-        app:cardElevation="2dp"
-        app:strokeColor="@color/divider_grey"
+        app:cardBackgroundColor="@color/op_surface"
+        app:cardCornerRadius="14dp"
+        app:cardElevation="0dp"
+        app:strokeColor="@color/op_outline"
         app:strokeWidth="1dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -226,8 +224,8 @@
                     android:minLines="1"
                     android:paddingTop="10dp"
                     android:paddingBottom="10dp"
-                    android:textColor="@color/text_primary"
-                    android:textColorHint="@color/text_secondary" />
+                    android:textColor="@color/op_text"
+                    android:textColorHint="@color/op_muted" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.button.MaterialButton
@@ -237,9 +235,9 @@
                 android:minWidth="0dp"
                 android:contentDescription="@string/chat_send_description"
                 android:text="@string/chat_send"
-                android:textColor="@color/white"
-                app:backgroundTint="@color/primary_green"
-                app:cornerRadius="16dp" />
+                android:textColor="@color/op_on_brand"
+                app:backgroundTint="@color/op_brand"
+                app:cornerRadius="14dp" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 

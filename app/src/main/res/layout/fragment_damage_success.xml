@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_beige">
+    android:background="@color/op_background">
 
     <ScrollView
         android:layout_width="0dp"
@@ -26,8 +26,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Avaria registrada"
-                android:textColor="@color/text_primary"
+                android:text="@string/op_damage_local_title"
+                android:textColor="@color/op_text"
                 android:textSize="24sp"
                 android:textStyle="bold" />
 
@@ -41,7 +41,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/colorSecondaryContainer"
+                    android:background="@color/op_soft"
                     android:gravity="center"
                     android:orientation="vertical"
                     android:padding="32dp">
@@ -50,14 +50,14 @@
                         android:layout_width="64dp"
                         android:layout_height="64dp"
                         android:src="@drawable/ic_check_circle"
-                        app:tint="@color/primary_green" />
+                        app:tint="@color/op_brand" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:text="Tudo certo por aqui"
-                        android:textColor="@color/text_primary"
+                        android:textColor="@color/op_text"
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
@@ -65,8 +65,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="O estoque foi atualizado e o registro foi enviado para revisão."
-                        android:textColor="@color/text_secondary"
+                        android:text="@string/op_damage_local_message"
+                        android:textColor="@color/op_muted"
                         android:textSize="12sp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -81,7 +81,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/colorSurface"
+                    android:background="@color/op_surface"
                     android:orientation="vertical"
                     android:padding="16dp">
 
@@ -89,7 +89,7 @@
                         android:id="@+id/tv_product_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/text_primary"
+                        android:textColor="@color/op_text"
                         android:textStyle="bold"
                         tools:text="Arroz integral 1kg" />
 
@@ -97,7 +97,7 @@
                         android:id="@+id/tv_damage_summary"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/text_secondary"
+                        android:textColor="@color/op_muted"
                         android:textSize="12sp"
                         tools:text="1 unidade - registrado agora" />
                 </LinearLayout>
@@ -120,11 +120,11 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_weight="1"
-            android:backgroundTint="@color/primary_green"
+            android:backgroundTint="@color/op_brand"
             android:minHeight="56dp"
             android:text="Voltar para câmera"
             android:textAllCaps="false"
-            android:textColor="@color/colorOnPrimary"
+            android:textColor="@color/op_on_brand"
             android:textSize="12sp"
             app:cornerRadius="8dp" />
 
@@ -133,14 +133,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:backgroundTint="@color/colorSurface"
+            android:backgroundTint="@color/op_surface"
             android:minHeight="56dp"
             android:text="Ir para produtos"
             android:textAllCaps="false"
-            android:textColor="@color/text_primary"
+            android:textColor="@color/op_text"
             android:textSize="12sp"
             app:cornerRadius="8dp"
-            app:strokeColor="@color/colorOutlineVariant"
+            app:strokeColor="@color/op_outline"
             app:strokeWidth="1dp" />
     </LinearLayout>
 
