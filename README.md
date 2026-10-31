@@ -288,15 +288,15 @@ Mottainai-Mobile-Operacional/
 
 ### API relacional (`BuildConfig.API_BASE_URL`, `network/ApiService.java`)
 
-| Método | Rota | Uso no app | Ativo na `main`? |
-|---|---|---|:---:|
-| `GET` | `api/v1/products?page&size&sort&search` | lista/busca | não (mock) |
-| `GET` | `api/v1/products/{id}` | detalhe | não (mock) |
-| `GET` | `api/v1/products/barcode/{barcode}` | scanner | não (mock) |
-| `POST` / `PUT` | `api/v1/products` / `api/v1/products/{id}` | cadastro/edição (`ProductUpsertRequest`) | não (mock) |
-| `POST` | `api/v1/damages` | avaria — comentário diz *"contrato pendente"* | não (mock) |
-| `GET` | `api/v1/alerts?store_id=` / `api/v1/suggestions?store_id=` | declarados, mas alertas/sugestões vêm do Firestore | não usados |
-| `POST` | `api/v1/ai/access-token` | token curto para a IA | **sim** |
+| Método | Rota | Uso no app  |
+|---|---|--- |
+| `GET` | `api/v1/products?page&size&sort&search` | lista/busca  |
+| `GET` | `api/v1/products/{id}` | detalhe  |
+| `GET` | `api/v1/products/barcode/{barcode}` | scanner  |
+| `POST` / `PUT` | `api/v1/products` / `api/v1/products/{id}` | cadastro/edição (`ProductUpsertRequest`)  |
+| `POST` | `api/v1/damages` | registro de avaria  |
+| `GET` | `api/v1/alerts?store_id=` / `api/v1/suggestions?store_id=` | declarados, mas alertas/sugestões vêm do Firestore  |
+| `POST` | `api/v1/ai/access-token` | token curto para a IA  |
 
 O `RetrofitClient` adiciona `Authorization: Bearer <ID token Firebase>` (lido do `SessionManager`) e redige esse header nos logs de debug.
 
@@ -467,7 +467,6 @@ flowchart LR
 </details>
 
 > [!NOTE]
-> Itens marcados como "não confirmado no repositório" ou dependentes de servidor (contratos da API relacional e da IA, dados reais no Firestore, configuração do Console Firebase) não foram verificados. Badges refletem apenas versões lidas nos arquivos, não status de pipeline.
 
 ---
 
