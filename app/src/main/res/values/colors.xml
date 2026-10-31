@@ -1,5 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- App Operacional: tokens da seção final do Figma. -->
+    <color name="op_background">#FFFFFF</color>
+    <color name="op_surface">#FFFFFF</color>
+    <color name="op_text">#132B50</color>
+    <color name="op_muted">#596A80</color>
+    <color name="op_brand">#102654</color>
+    <color name="op_on_brand">#FFFFFF</color>
+    <color name="op_soft">#EAF2FC</color>
+    <color name="op_accent">#FF7418</color>
+    <color name="op_on_accent">#102654</color>
+    <color name="op_link">#0B5EA8</color>
+    <color name="op_outline">#E8E0D8</color>
+    <color name="op_hero">#102654</color>
+    <color name="op_progress_track">#FFFFFF</color>
+    <color name="op_warning_soft">#FFF0D1</color>
+    <color name="op_warning_text">#8A4B00</color>
+    <color name="op_scanner_background">#102654</color>
+    <color name="op_scanner_foreground">#FFFFFF</color>
+    <color name="op_login_button">#102654</color>
+    <color name="op_login_button_text">#FFFFFF</color>
+    <color name="op_success">#08714D</color>
+    <color name="op_critical">#B3261E</color>
+    <color name="op_critical_soft">#FCEEEE</color>
+    <color name="op_logout">#B3261E</color>
+    <color name="op_theme_selection">#102654</color>
+    <color name="op_theme_selection_text">#FFFFFF</color>
     <!-- Material3 required colors -->
     <color name="colorPrimary">#102A43</color>
     <color name="colorPrimaryContainer">#F6F0EA</color>

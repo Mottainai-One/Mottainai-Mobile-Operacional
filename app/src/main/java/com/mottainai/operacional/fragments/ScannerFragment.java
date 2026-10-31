@@ -41,6 +41,7 @@ import com.mottainai.operacional.R;
 import com.mottainai.operacional.databinding.FragmentScannerBinding;
 import com.mottainai.operacional.activities.ProductDetailActivity;
 import com.mottainai.operacional.activities.ProductFormActivity;
+import com.mottainai.operacional.activities.RegisterDamageActivity;
 import com.mottainai.operacional.models.Product;
 import com.mottainai.operacional.models.ScannerUiState;
 import com.mottainai.operacional.scanner.BarcodeAnalyzer;
@@ -518,8 +519,8 @@ public class ScannerFragment extends Fragment {
         tvProductName.setText(product.getName());
         tvProductSku.setText(getString(R.string.scanner_product_code,
                 product.getSku() != null ? product.getSku() : getString(R.string.scanner_value_unavailable)));
-        tvProductQuantity.setText(getString(R.string.scanner_product_quantity, product.getQuantity()));
-        tvProductMinQuantity.setText(getString(R.string.scanner_product_min_quantity, product.getMinQuantity()));
+        tvProductQuantity.setText(R.string.op_stock_unavailable);
+        tvProductMinQuantity.setVisibility(View.GONE);
         tvProductExpiry.setText(getString(R.string.scanner_product_expiry,
                 product.getExpiryDate() != null ? product.getExpiryDate() : getString(R.string.scanner_expiry_pending)));
 
@@ -578,12 +579,9 @@ public class ScannerFragment extends Fragment {
             return;
         }
 
-        Bundle args = new Bundle();
-        args.putString("product_id", product.getId());
-        args.putString("product_name", product.getName());
-        args.putString("product_sku", product.getSku());
-        Navigation.findNavController(requireView())
-                .navigate(R.id.action_scannerFragment_to_registerDamageFragment, args);
+        Intent intent = new Intent(requireContext(), RegisterDamageActivity.class);
+        intent.putExtra("product_id", product.getId());
+        startActivity(intent);
     }
 
     private void openNewProductForm(String barcode) {

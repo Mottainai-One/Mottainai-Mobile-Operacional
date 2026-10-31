@@ -4,10 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,68 +12,29 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.mottainai.operacional.R;
-import com.mottainai.operacional.databinding.FragmentHomeBinding;
 import com.mottainai.operacional.adapters.AlertAdapter;
-import com.mottainai.operacional.adapters.SuggestionAdapter;
+import com.mottainai.operacional.databinding.FragmentHomeBinding;
 import com.mottainai.operacional.models.Alert;
 import com.mottainai.operacional.models.Suggestion;
-import com.mottainai.operacional.utils.AppLocales;
+import com.mottainai.operacional.models.User;
+import com.mottainai.operacional.repository.UserRepository;
 import com.mottainai.operacional.utils.Constants;
 import com.mottainai.operacional.utils.RoleHelper;
 import com.mottainai.operacional.utils.SessionManager;
 import com.mottainai.operacional.viewmodels.HomeViewModel;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
+/** Entrada por perfil da seção Mobile Operacional. Os dados visíveis vêm das fontes existentes. */
 public class HomeFragment extends Fragment {
-
     private FragmentHomeBinding binding;
-
     private HomeViewModel viewModel;
-    private SessionManager sessionManager;
+    private SessionManager session;
     private NavController navController;
-
-    // Views
-    private TextView tvDate;
-    private ProgressBar progressBar;
-    private View containerError;
-    private TextView tvError;
-    private Button btnRetry;
-    private View containerEmpty;
-    private TextView tvEmpty;
-    private TextView tvWelcome;
-    private TextView tvStoreInfo;
-    private View contentContainer;
-
-    // Resumo por severidade (todos os papéis)
-    private TextView tvCountCritico;
-    private TextView tvCountAtencao;
-    private TextView tvCountMonitor;
-
-    // Cards Gerente
-    private View layoutCardsGerente;
-    private TextView tvPendingApprovals;
-    private TextView tvFinancialRisk;
-
-    // Cards Dono
-    private View layoutCardsDono;
-    private TextView tvLossRisk;
-    private TextView tvValueSaved;
-    private TextView tvActiveStores;
-
-    // Listas
-    private RecyclerView rvAlerts;
-    private RecyclerView rvSuggestions;
-    private TextView tvAlertsTitle;
-    private TextView tvSuggestionsTitle;
-
-    private AlertAdapter alertAdapter;
-    private SuggestionAdapter suggestionAdapter;
+    private AlertAdapter stockAlerts;
+    private AlertAdapter managerAlerts;
 
     @Nullable
     @Override
@@ -90,310 +47,165 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         navController = Navigation.findNavController(view);
-        initViews(view);
-        setupRecyclerViews();
-        setupViewModel();
-        setupRetryButton();
-        setupCameraLink();
-        setupHeader();
-    }
-
-    private void initViews(View view) {
-        tvDate = binding.tvDate;
-        progressBar = binding.progressHome;
-        containerError = binding.containerError;
-        tvError = binding.tvError;
-        btnRetry = binding.btnRetry;
-        containerEmpty = binding.containerEmpty;
-        tvEmpty = binding.tvEmpty;
-        tvWelcome = binding.tvWelcome;
-        tvStoreInfo = binding.tvStoreInfo;
-        contentContainer = binding.contentContainer;
-
-        // Resumo por severidade
-        tvCountCritico = binding.tvCountCritico;
-        tvCountAtencao = binding.tvCountAtencao;
-        tvCountMonitor = binding.tvCountMonitor;
-
-        // Cards Gerente
-        layoutCardsGerente = binding.layoutCardsGerente;
-        tvPendingApprovals = binding.tvPendingApprovals;
-        tvFinancialRisk = binding.tvFinancialRisk;
-
-        // Cards Dono
-        layoutCardsDono = binding.layoutCardsDono;
-        tvLossRisk = binding.tvLossRisk;
-        tvValueSaved = binding.tvValueSaved;
-        tvActiveStores = binding.tvActiveStores;
-
-        // Listas
-        rvAlerts = binding.rvAlerts;
-        rvSuggestions = binding.rvSuggestions;
-        tvAlertsTitle = binding.tvAlertsTitle;
-        tvSuggestionsTitle = binding.tvSuggestionsTitle;
-    }
-
-    private void setupRecyclerViews() {
-        alertAdapter = new AlertAdapter();
-        rvAlerts.setLayoutManager(new LinearLayoutManager(requireContext()));
-        rvAlerts.setAdapter(alertAdapter);
-
-        suggestionAdapter = new SuggestionAdapter();
-        rvSuggestions.setLayoutManager(new LinearLayoutManager(requireContext()));
-        rvSuggestions.setAdapter(suggestionAdapter);
-    }
-
-    private void setupViewModel() {
+        session = new SessionManager(requireContext());
         viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
-        sessionManager = new SessionManager(requireContext());
-
-        // Verifica se a sessão está completa antes de carregar
-        if (!sessionManager.hasCompleteProfile()) {
-            showSessionError();
-            return;
-        }
-
-        // Observa loading
-        viewModel.getLoading().observe(getViewLifecycleOwner(), isLoading -> {
-            progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
-            contentContainer.setVisibility(isLoading ? View.GONE : View.VISIBLE);
-            if (isLoading) {
-                hideError();
-                hideEmpty();
-            }
-        });
-
-        // Observa erros de rede/dados
-        viewModel.getError().observe(getViewLifecycleOwner(), errorMsg -> {
-            if (errorMsg != null) {
-                showError(errorMsg);
-            }
-        });
-
-        // Observa erro de sessão
-        viewModel.getSessionError().observe(getViewLifecycleOwner(), sessionError -> {
-            if (sessionError != null) {
-                showSessionError();
-            }
-        });
-
-        // Observa alertas
-        viewModel.getAlerts().observe(getViewLifecycleOwner(), alerts -> {
-            alertAdapter.setAlerts(alerts);
-            updateEmptyState();
-            updateCounts(alerts, suggestionAdapter.getSuggestions());
-            String role = sessionManager.getRole();
-            if (role != null) {
-                applyRoleRules(role);
-            }
-        });
-
-        // Observa sugestões
-        viewModel.getSuggestions().observe(getViewLifecycleOwner(), suggestions -> {
-            suggestionAdapter.setSuggestions(suggestions);
-            updateEmptyState();
-            updateCounts(alertAdapter.getAlerts(), suggestions);
-        });
-
-        // Carrega dados
-        String storeId = sessionManager.getStoreId();
-        if (storeId != null) {
-            viewModel.loadData(storeId);
+        setupRole();
+        setupLists();
+        setupActions();
+        observeState();
+        if (!session.hasCompleteProfile()) {
+            showError(getString(R.string.op_session_incomplete));
         } else {
-            showSessionError();
+            viewModel.loadData(session.getStoreId());
         }
     }
 
-    private void setupHeader() {
-        String name = sessionManager.getName();
-        String storeId = sessionManager.getStoreId();
-        String role = sessionManager.getRole();
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, d MMM", AppLocales.PT_BR);
-        tvDate.setText(dateFormat.format(new Date()).toUpperCase(AppLocales.PT_BR));
-
-        if (name != null && !name.isEmpty()) {
-            tvWelcome.setText("Olá, " + name);
-        } else {
-            tvWelcome.setText("Olá");
-        }
-
+    private void setupRole() {
+        String role = RoleHelper.normalize(session.getRole());
         String roleLabel = RoleHelper.roleToLabel(role);
-        tvStoreInfo.setText("Loja " + storeId + " — " + roleLabel);
-    }
-
-    private void setupRetryButton() {
-        btnRetry.setOnClickListener(v -> {
-            String storeId = sessionManager.getStoreId();
-            if (storeId != null) {
-                viewModel.retry(storeId);
-            }
-        });
-    }
-
-    private void setupCameraLink() {
-        View cameraButton = binding.btnAbrirCamera;
-        if (cameraButton != null) {
-            cameraButton.setOnClickListener(v -> navigateTo(R.id.scannerFragment));
-        }
-    }
-
-    private void showComingSoon() {
-        Toast.makeText(requireContext(), "Funcionalidade em desenvolvimento", Toast.LENGTH_SHORT).show();
-    }
-
-    private void navigateTo(int destinationId) {
-        try {
-            navController.navigate(destinationId);
-        } catch (IllegalArgumentException e) {
-            showComingSoon();
-        }
-    }
-
-    private void applyRoleRules(String rawRole) {
-        // O token do Firebase traz o papel em maiúsculas (ex.: "GERENTE"), não
-        // no formato exato das constantes; sem normalizar aqui, esta tela
-        // inteira de regras por papel silenciosamente não ativava nada.
-        String role = RoleHelper.normalize(rawRole);
-        boolean isGerente = Constants.ROLE_GERENTE.equals(role);
-        boolean isDono = Constants.ROLE_DONO.equals(role);
-
-        // Esconde todos primeiro
-        layoutCardsGerente.setVisibility(View.GONE);
-        layoutCardsDono.setVisibility(View.GONE);
-        tvSuggestionsTitle.setVisibility(View.GONE);
-        rvSuggestions.setVisibility(View.GONE);
+        String storeId = session.getStoreId();
+        String storeLabel = storeId == null ? "" : getString(R.string.op_store_id, storeId);
+        binding.tvStoreInfo.setText(roleLabel + " — " + storeLabel);
+        binding.homeStock.setVisibility(Constants.ROLE_ESTOQUISTA.equals(role) ? View.VISIBLE : View.GONE);
+        binding.homeManager.setVisibility(Constants.ROLE_GERENTE.equals(role) ? View.VISIBLE : View.GONE);
+        binding.homeOwner.setVisibility(Constants.ROLE_DONO.equals(role) ? View.VISIBLE : View.GONE);
 
         if (Constants.ROLE_ESTOQUISTA.equals(role)) {
-            tvAlertsTitle.setText("Alertas de estoque");
-        } else if (isGerente) {
-            // Gerente: cards de gestão
-            layoutCardsGerente.setVisibility(View.VISIBLE);
-            tvAlertsTitle.setText("Alertas");
-            tvSuggestionsTitle.setVisibility(View.VISIBLE);
-            rvSuggestions.setVisibility(View.VISIBLE);
-        } else if (isDono) {
-            // Dono: cards financeiros
-            layoutCardsDono.setVisibility(View.VISIBLE);
-            tvAlertsTitle.setText("Visão geral");
-            tvSuggestionsTitle.setVisibility(View.VISIBLE);
-            rvSuggestions.setVisibility(View.VISIBLE);
+            String name = session.getName();
+            binding.tvWelcome.setText(getString(R.string.op_stock_greeting,
+                    name == null || name.trim().isEmpty() ? getString(R.string.op_team_member) : name));
+        } else if (Constants.ROLE_GERENTE.equals(role)) {
+            binding.tvWelcome.setText(R.string.op_manager_greeting);
+        } else {
+            binding.tvWelcome.setText(R.string.op_owner_greeting);
+        }
+
+        binding.managerAdjustments.label.setText(R.string.op_metric_adjustments);
+        binding.managerTasks.label.setText(R.string.op_metric_tasks);
+        binding.managerTeam.label.setText(R.string.op_metric_team);
+        binding.ownerLosses.label.setText(R.string.op_metric_losses);
+        binding.ownerLowStock.label.setText(R.string.op_metric_low_stock);
+        binding.ownerLosses.value.setText(R.string.op_data_unavailable);
+        binding.managerTasks.value.setText(R.string.op_data_unavailable);
+        binding.managerTeam.value.setText(R.string.op_data_unavailable);
+
+        if (Constants.ROLE_GERENTE.equals(role) && storeId != null && !storeId.trim().isEmpty()) {
+            new UserRepository().listTeam(storeId, new UserRepository.TeamCallback() {
+                @Override public void onSuccess(List<User> users) {
+                    if (binding == null) return;
+                    int count = users == null ? 0 : users.size();
+                    binding.managerTeam.value.setText(getResources().getQuantityString(
+                            R.plurals.op_team_member_count, count, count));
+                }
+
+                @Override public void onError(Exception error) {
+                    if (binding != null) binding.managerTeam.value.setText(R.string.op_data_unavailable);
+                }
+            });
         }
     }
 
-    /** Deriva os números do resumo a partir dos alertas/sugestões já carregados (nada é inventado). */
-    private void updateCounts(List<Alert> alerts, List<Suggestion> suggestions) {
-        int critico = 0, atencao = 0, monitor = 0;
+    private void setupLists() {
+        stockAlerts = new AlertAdapter();
+        managerAlerts = new AlertAdapter();
+        binding.rvStockAlerts.setLayoutManager(new LinearLayoutManager(requireContext()));
+        binding.rvStockAlerts.setAdapter(stockAlerts);
+        binding.rvManagerAlerts.setLayoutManager(new LinearLayoutManager(requireContext()));
+        binding.rvManagerAlerts.setAdapter(managerAlerts);
+    }
+
+    private void setupActions() {
+        binding.btnRetry.setOnClickListener(v -> {
+            if (session.hasCompleteProfile()) viewModel.retry(session.getStoreId());
+        });
+        binding.btnStockInventory.setOnClickListener(v -> openInventory());
+        binding.btnStockTasks.setOnClickListener(v ->
+                navController.navigate(R.id.stockTasksFragment));
+        binding.btnManagerSuggestion.setOnClickListener(v -> openIntelligence("suggestions"));
+        binding.btnManagerConferences.setOnClickListener(v ->
+                navController.navigate(R.id.managerConferencesFragment));
+        binding.btnOwnerInventory.setOnClickListener(v -> openInventory());
+        binding.btnOwnerCountReviews.setOnClickListener(v ->
+                navController.navigate(R.id.ownerCountReviewFragment));
+        binding.btnOwnerReport.setOnClickListener(v -> navController.navigate(R.id.reportsFragment));
+    }
+
+    private void observeState() {
+        viewModel.getLoading().observe(getViewLifecycleOwner(), loading -> {
+            binding.progressHome.setVisibility(Boolean.TRUE.equals(loading) ? View.VISIBLE : View.GONE);
+            if (Boolean.TRUE.equals(loading)) binding.containerError.setVisibility(View.GONE);
+        });
+        viewModel.getError().observe(getViewLifecycleOwner(), error -> {
+            if (error != null && !error.trim().isEmpty()) showError(error);
+        });
+        viewModel.getSessionError().observe(getViewLifecycleOwner(), error -> {
+            if (error != null) showError(getString(R.string.op_session_incomplete));
+        });
+        viewModel.getAlerts().observe(getViewLifecycleOwner(), this::showAlerts);
+        viewModel.getSuggestions().observe(getViewLifecycleOwner(), this::showSuggestions);
+    }
+
+    private void showAlerts(List<Alert> alerts) {
+        stockAlerts.setAlerts(alerts);
+        managerAlerts.setAlerts(alerts);
+        int size = alerts == null ? 0 : alerts.size();
+        binding.stockAlertsEmpty.setVisibility(size == 0 ? View.VISIBLE : View.GONE);
+        binding.rvStockAlerts.setVisibility(size == 0 ? View.GONE : View.VISIBLE);
+        binding.managerAlertsEmpty.setVisibility(size == 0 ? View.VISIBLE : View.GONE);
+        binding.rvManagerAlerts.setVisibility(size == 0 ? View.GONE : View.VISIBLE);
+        binding.managerAdjustments.value.setText(String.format(java.util.Locale.getDefault(), "%02d", size));
+
+        int lowStock = 0;
         if (alerts != null) {
             for (Alert alert : alerts) {
-                String severity = alert.getSeverity();
-                if ("CRITICO".equals(severity)) critico++;
-                else if ("ATENCAO".equals(severity)) atencao++;
-                else if ("MONITOR".equals(severity)) monitor++;
+                if ("ATENCAO".equalsIgnoreCase(alert.getSeverity())
+                        || "CRITICO".equalsIgnoreCase(alert.getSeverity())) lowStock++;
             }
         }
-        tvCountCritico.setText(String.valueOf(critico));
-        tvCountAtencao.setText(String.valueOf(atencao));
-        tvCountMonitor.setText(String.valueOf(monitor));
+        binding.ownerLowStock.value.setText(getResources().getQuantityString(
+                R.plurals.op_product_count, lowStock, lowStock));
+    }
 
-        int pending = 0;
+    private void showSuggestions(List<Suggestion> suggestions) {
+        Suggestion pending = null;
         if (suggestions != null) {
             for (Suggestion suggestion : suggestions) {
                 String status = suggestion.getStatus();
-                if (status == null || status.trim().isEmpty() || "pending".equalsIgnoreCase(status.trim())) {
-                    pending++;
+                if (status == null || status.trim().isEmpty()
+                        || "pending".equalsIgnoreCase(status.trim())) {
+                    pending = suggestion;
+                    break;
                 }
             }
         }
-        tvPendingApprovals.setText("Aprovações pendentes: " + pending);
-        // Sem fonte de dados ainda para estas métricas: mantidas honestas com "—" em vez de valor inventado.
-        tvFinancialRisk.setText("Risco financeiro: —");
-        tvLossRisk.setText("Risco de perda: —");
-        tvValueSaved.setText("Valor salvo: —");
-        tvActiveStores.setText("Lojas ativas: 1");
-    }
-
-    private void updateEmptyState() {
-        boolean hasAlerts = alertAdapter.getItemCount() > 0;
-        boolean hasSuggestions = suggestionAdapter.getItemCount() > 0;
-        String role = RoleHelper.normalize(sessionManager.getRole());
-
-        if (!hasAlerts && !hasSuggestions) {
-            String emptyMsg;
-            if (Constants.ROLE_ESTOQUISTA.equals(role)) {
-                emptyMsg = "Nenhum alerta de estoque no momento";
-            } else if (Constants.ROLE_GERENTE.equals(role)) {
-                emptyMsg = "Nenhum alerta ou sugestão pendente";
-            } else {
-                emptyMsg = "Nenhum dado para exibir";
-            }
-            tvEmpty.setText(emptyMsg);
-            showEmpty();
-        } else {
-            hideEmpty();
-            rvAlerts.setVisibility(View.VISIBLE);
-        }
+        String title = pending == null ? null : pending.getTitle();
+        binding.managerHeroTitle.setText(title == null || title.trim().isEmpty()
+                ? getString(R.string.op_no_suggestions) : title);
+        binding.btnManagerSuggestion.setVisibility(pending == null ? View.GONE : View.VISIBLE);
     }
 
     private void showError(String message) {
-        progressBar.setVisibility(View.GONE);
-        contentContainer.setVisibility(View.GONE);
-        containerError.setVisibility(View.VISIBLE);
-        tvError.setText(message);
-        containerEmpty.setVisibility(View.GONE);
+        binding.progressHome.setVisibility(View.GONE);
+        binding.containerError.setVisibility(View.VISIBLE);
+        binding.tvError.setText(message);
     }
 
-    private void hideError() {
-        containerError.setVisibility(View.GONE);
+    private void openInventory() {
+        Bundle args = new Bundle();
+        args.putInt("initial_tab", 1);
+        navController.navigate(R.id.productsListFragment, args);
     }
 
-    private void showEmpty() {
-        progressBar.setVisibility(View.GONE);
-        containerEmpty.setVisibility(View.VISIBLE);
-        rvAlerts.setVisibility(View.GONE);
-    }
-
-    private void hideEmpty() {
-        containerEmpty.setVisibility(View.GONE);
-    }
-
-    private void showSessionError() {
-        progressBar.setVisibility(View.GONE);
-        contentContainer.setVisibility(View.GONE);
-        containerError.setVisibility(View.VISIBLE);
-        tvError.setText("Sessão incompleta. Faça login novamente.");
-        containerEmpty.setVisibility(View.GONE);
+    private void openIntelligence(String tab) {
+        Bundle args = new Bundle();
+        args.putString("initial_ia_tab", tab);
+        navController.navigate(R.id.iaAlertsFragment, args);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
-        tvDate = null;
-        progressBar = null;
-        containerError = null;
-        tvError = null;
-        btnRetry = null;
-        containerEmpty = null;
-        tvEmpty = null;
-        tvWelcome = null;
-        tvStoreInfo = null;
-        contentContainer = null;
-        tvCountCritico = null;
-        tvCountAtencao = null;
-        tvCountMonitor = null;
-        layoutCardsGerente = null;
-        tvPendingApprovals = null;
-        tvFinancialRisk = null;
-        layoutCardsDono = null;
-        tvLossRisk = null;
-        tvValueSaved = null;
-        tvActiveStores = null;
-        rvAlerts = null;
-        rvSuggestions = null;
-        tvAlertsTitle = null;
-        tvSuggestionsTitle = null;
     }
 }

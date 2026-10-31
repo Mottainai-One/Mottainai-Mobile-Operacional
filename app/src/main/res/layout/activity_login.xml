@@ -3,75 +3,120 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:background="@color/background_beige">
+    android:background="@color/op_background"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:gravity="center"
-        android:paddingHorizontal="@dimen/login_padding_horizontal"
-        android:paddingVertical="@dimen/login_padding_vertical">
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:paddingTop="32dp"
+        android:paddingBottom="24dp">
+
+        <ImageView
+            android:layout_width="216dp"
+            android:layout_height="48dp"
+            android:contentDescription="@string/app_name"
+            android:scaleType="fitCenter"
+            android:src="@drawable/op_logo" />
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Mottainai"
-            android:textColor="@color/primary_green"
-            android:textSize="32sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="40dp"
-            android:text="Gestão operacional da sua loja"
-            android:textColor="@color/text_secondary"
-            android:textSize="14sp" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="E-mail"
-            app:boxStrokeColor="@color/primary_green"
-            app:hintTextColor="@color/primary_green">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_email"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textEmailAddress" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:hint="Senha"
-            app:boxStrokeColor="@color/primary_green"
-            app:endIconMode="password_toggle"
-            app:hintTextColor="@color/primary_green">
+            android:fontFamily="@font/dm_sans"
+            android:text="@string/op_login_title"
+            android:textColor="@color/op_text"
+            android:textSize="28sp"
+            android:textStyle="bold" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPassword" />
-        </com.google.android.material.textfield.TextInputLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/dm_sans"
+            android:text="@string/op_login_subtitle"
+            android:textColor="@color/op_muted"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/login_status"
+            android:layout_width="match_parent"
+            android:layout_height="51dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/op_soft_card"
+            android:fontFamily="@font/dm_sans"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="16dp"
+            android:text="@string/op_login_signed_out"
+            android:textColor="@color/op_text"
+            android:textSize="13sp"
+            android:visibility="gone" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/dm_sans"
+            android:labelFor="@id/et_email"
+            android:text="@string/op_email"
+            android:textColor="@color/op_text"
+            android:textSize="13sp" />
+
+        <EditText
+            android:id="@+id/et_email"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/op_input"
+            android:fontFamily="@font/dm_sans"
+            android:hint="@string/op_email_hint"
+            android:inputType="textEmailAddress"
+            android:paddingHorizontal="17dp"
+            android:singleLine="true"
+            android:textColor="@color/op_text"
+            android:textColorHint="@color/op_muted"
+            android:textSize="15sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/dm_sans"
+            android:labelFor="@id/et_password"
+            android:text="@string/op_password"
+            android:textColor="@color/op_text"
+            android:textSize="13sp" />
+
+        <EditText
+            android:id="@+id/et_password"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/op_input"
+            android:fontFamily="@font/dm_sans"
+            android:hint="@string/op_password_hint"
+            android:inputType="textPassword"
+            android:paddingHorizontal="17dp"
+            android:singleLine="true"
+            android:textColor="@color/op_text"
+            android:textColorHint="@color/op_muted"
+            android:textSize="15sp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_login"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:minHeight="56dp"
-            android:backgroundTint="@color/primary_green"
-            android:textColor="@color/colorOnPrimary"
+            android:layout_height="56dp"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/op_login_button"
+            android:fontFamily="@font/dm_sans"
+            android:text="@string/op_login_button"
             android:textAllCaps="false"
-            app:cornerRadius="12dp"
-            android:text="Entrar" />
-
+            android:textColor="@color/op_login_button_text"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:cornerRadius="16dp" />
     </LinearLayout>
 </ScrollView>

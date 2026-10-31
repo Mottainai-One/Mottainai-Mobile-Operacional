@@ -17,6 +17,7 @@ import com.mottainai.operacional.models.ProductForm;
 import com.mottainai.operacional.repository.OpenFoodFactsRepository;
 import com.mottainai.operacional.utils.RoleHelper;
 import com.mottainai.operacional.utils.SessionManager;
+import com.mottainai.operacional.utils.ThemeSettings;
 import com.mottainai.operacional.viewmodels.ProductFormViewModel;
 
 public class ProductFormActivity extends AppCompatActivity {
@@ -36,6 +37,7 @@ public class ProductFormActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemeSettings.applySavedTheme(this);
         super.onCreate(savedInstanceState);
         sessionManager = new SessionManager(this);
         // Bloqueio real: ESTOQUISTA não pode criar/editar
@@ -56,9 +58,11 @@ public class ProductFormActivity extends AppCompatActivity {
         String productId = getIntent().getStringExtra("product_id");
         if (productId != null && !productId.isEmpty()) {
             tvTitle.setText("Editar produto");
+            binding.tvFormHeading.setText(R.string.op_product_edit_heading);
             viewModel.initEdit(productId);
         } else {
             tvTitle.setText("Novo produto");
+            binding.tvFormHeading.setText(R.string.op_product_identify);
             viewModel.initNew();
             // Se veio barcode do scanner
             String barcode = getIntent().getStringExtra("barcode");

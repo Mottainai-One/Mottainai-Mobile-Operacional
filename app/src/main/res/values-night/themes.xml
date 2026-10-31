@@ -1,8 +1,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.MottainaiOperacional" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorOnPrimary">@color/colorOnPrimary</item>
+        <item name="colorPrimary">@color/op_brand</item>
+        <item name="colorOnPrimary">@color/op_on_brand</item>
         <item name="colorPrimaryContainer">@color/colorPrimaryContainer</item>
         <item name="colorOnPrimaryContainer">@color/colorOnPrimaryContainer</item>
         <item name="colorSecondary">@color/colorSecondary</item>
@@ -13,17 +13,22 @@
         <item name="colorOnTertiary">@color/colorOnTertiary</item>
         <item name="colorTertiaryContainer">@color/colorTertiaryContainer</item>
         <item name="colorOnTertiaryContainer">@color/colorOnTertiaryContainer</item>
-        <item name="colorSurface">@color/colorSurface</item>
-        <item name="colorOnSurface">@color/colorOnSurface</item>
-        <item name="colorSurfaceVariant">@color/colorSurfaceVariant</item>
-        <item name="colorOnSurfaceVariant">@color/colorOnSurfaceVariant</item>
-        <item name="android:colorBackground">@color/colorBackground</item>
-        <item name="colorOnBackground">@color/colorOnBackground</item>
+        <item name="colorSurface">@color/op_surface</item>
+        <item name="colorOnSurface">@color/op_text</item>
+        <item name="colorSurfaceVariant">@color/op_soft</item>
+        <item name="colorOnSurfaceVariant">@color/op_muted</item>
+        <item name="android:colorBackground">@color/op_background</item>
+        <item name="colorOnBackground">@color/op_text</item>
         <item name="colorError">@color/colorError</item>
         <item name="colorOnError">@color/colorOnError</item>
         <item name="colorErrorContainer">@color/colorErrorContainer</item>
         <item name="colorOnErrorContainer">@color/colorOnErrorContainer</item>
-        <item name="colorOutline">@color/colorOutline</item>
-        <item name="colorOutlineVariant">@color/colorOutlineVariant</item>
+        <item name="colorOutline">@color/op_outline</item>
+        <item name="colorOutlineVariant">@color/op_outline</item>
+        <item name="android:fontFamily">@font/dm_sans</item>
+        <item name="fontFamily">@font/dm_sans</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:statusBarColor">@color/op_background</item>
+        <item name="android:navigationBarColor">@color/op_background</item>
     </style>
 </resources>

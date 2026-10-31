@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/op_background"
+    android:orientation="vertical"
+    android:paddingHorizontal="@dimen/screen_padding"
+    android:paddingTop="16dp"
+    android:paddingBottom="16dp">
+    <TextView
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:text="@string/op_team_title" android:textColor="@color/op_text"
+        android:textSize="26sp" android:textStyle="bold" />
+    <TextView
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="8dp" android:text="@string/op_team_subtitle"
+        android:textColor="@color/op_muted" android:textSize="15sp" />
+    <FrameLayout android:layout_width="match_parent" android:layout_height="0dp"
+        android:layout_weight="1" android:layout_marginTop="20dp">
+        <androidx.recyclerview.widget.RecyclerView android:id="@+id/rv_team"
+            android:layout_width="match_parent" android:layout_height="match_parent"
+            android:clipToPadding="false" android:paddingBottom="8dp" />
+        <ProgressBar android:id="@+id/progress_team" android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:layout_gravity="center" />
+        <TextView android:id="@+id/tv_team_state" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:layout_gravity="center"
+            android:gravity="center" android:textColor="@color/op_muted"
+            android:textSize="15sp" android:visibility="gone" />
+    </FrameLayout>
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_team_primary" android:layout_width="match_parent"
+        android:layout_height="56dp" android:backgroundTint="@color/op_brand"
+        android:textAllCaps="false" android:textColor="@color/op_on_brand" />
+</LinearLayout>

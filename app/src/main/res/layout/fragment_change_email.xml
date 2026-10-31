@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/op_background">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="24dp">
+        <TextView
+            style="@style/TextAppearance.Op.Title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/op_change_email" />
+        <TextView
+            android:id="@+id/tv_current_email"
+            style="@style/TextAppearance.Op.Body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:labelFor="@id/et_new_email"
+            android:text="@string/op_new_email"
+            android:textColor="@color/op_text"
+            android:textSize="13sp" />
+        <EditText
+            android:id="@+id/et_new_email"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/op_input"
+            android:hint="@string/op_email_hint"
+            android:inputType="textEmailAddress"
+            android:paddingHorizontal="17dp"
+            android:singleLine="true"
+            android:textColor="@color/op_text"
+            android:textColorHint="@color/op_muted"
+            android:textSize="15sp" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_save_email"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/op_login_button"
+            android:text="@string/op_save_change"
+            android:textAllCaps="false"
+            android:textColor="@color/op_login_button_text"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:cornerRadius="16dp" />
+        <TextView
+            android:id="@+id/tv_change_status"
+            style="@style/TextAppearance.Op.Body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/op_soft_card"
+            android:padding="16dp"
+            android:visibility="gone" />
+    </LinearLayout>
+</ScrollView>

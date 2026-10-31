@@ -70,13 +70,13 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.Su
         Context context = holder.itemView.getContext();
         String status = suggestion.getStatus();
         holder.tvSuggestionStatus.setText(statusLabel(context, status));
+        holder.tvSuggestionStatus.setBackgroundResource(R.drawable.op_filter_selected);
         if (Constants.SUGESTAO_APROVADA.equalsIgnoreCase(status)) {
-            holder.tvSuggestionStatus.setBackgroundResource(R.drawable.bg_suggestion_badge_approved);
-            holder.tvSuggestionStatus.setTextColor(ContextCompat.getColor(context, R.color.primary_green));
+            holder.tvSuggestionStatus.setTextColor(ContextCompat.getColor(context, R.color.op_success));
         } else {
-            // Pendente e recusada usam o mesmo selo de atenção/erro já existente.
-            holder.tvSuggestionStatus.setBackgroundResource(R.drawable.bg_suggestion_badge);
-            holder.tvSuggestionStatus.setTextColor(ContextCompat.getColor(context, R.color.accent_red));
+            holder.tvSuggestionStatus.setTextColor(ContextCompat.getColor(context,
+                    Constants.SUGESTAO_RECUSADA.equalsIgnoreCase(status)
+                            ? R.color.op_logout : R.color.op_link));
         }
         holder.itemView.setOnClickListener(clickListener == null ? null
                 : v -> clickListener.onSuggestionClick(suggestion));

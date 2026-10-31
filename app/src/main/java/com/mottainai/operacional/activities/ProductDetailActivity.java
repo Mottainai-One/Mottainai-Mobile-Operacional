@@ -16,6 +16,7 @@ import com.mottainai.operacional.databinding.ActivityProductDetailBinding;
 import com.mottainai.operacional.models.Product;
 import com.mottainai.operacional.utils.RoleHelper;
 import com.mottainai.operacional.utils.SessionManager;
+import com.mottainai.operacional.utils.ThemeSettings;
 import com.mottainai.operacional.viewmodels.ProductDetailViewModel;
 
 public class ProductDetailActivity extends AppCompatActivity {
@@ -49,6 +50,7 @@ public class ProductDetailActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemeSettings.applySavedTheme(this);
         super.onCreate(savedInstanceState);
         binding = ActivityProductDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -156,22 +158,22 @@ public class ProductDetailActivity extends AppCompatActivity {
         tvProductName.setText(product.getName());
         // SKU na UI corresponde a barcode da API
         tvProductSku.setText("Código: " + (product.getSku() != null ? product.getSku() : "—"));
-        // Campos de inventário pendentes — exibir placeholder até /api/v1/inventory existir
-        tvProductQuantity.setText("Quantidade: " + product.getQuantity() + " (contrato pendente)");
-        tvProductMinQuantity.setText("Mínimo: " + product.getMinQuantity() + " (contrato pendente)");
-        tvProductBatch.setText("Lote: " + (product.getBatch() != null ? product.getBatch() : "— (pendente)"));
-        tvProductExpiry.setText("Validade: " + (product.getExpiryDate() != null ? product.getExpiryDate() : "— (pendente)"));
+        // Quantidades e lotes exigem o contrato operacional de inventário.
+        tvProductQuantity.setText(R.string.op_stock_unavailable);
+        tvProductMinQuantity.setVisibility(View.GONE);
+        tvProductBatch.setText("Lote: " + (product.getBatch() != null ? product.getBatch() : "—"));
+        tvProductExpiry.setText("Validade: " + (product.getExpiryDate() != null ? product.getExpiryDate() : "—"));
         tvProductSupplier.setText("Fornecedor: " + (product.getSupplier() != null ? product.getSupplier() : "—"));
-        tvProductStore.setText("Loja: " + (product.getStoreId() != null ? product.getStoreId() : sessionManager.getStoreId() + " (token)"));
+        tvProductStore.setVisibility(View.GONE);
 
         if (product.getImageUrl() != null && !product.getImageUrl().isEmpty()) {
             Glide.with(this)
                     .load(product.getImageUrl())
-                    .placeholder(R.drawable.ic_product_placeholder)
-                    .error(R.drawable.ic_product_placeholder)
+                    .placeholder(R.drawable.op_box)
+                    .error(R.drawable.op_box)
                     .into(ivProductImage);
         } else {
-            ivProductImage.setImageResource(R.drawable.ic_product_placeholder);
+            ivProductImage.setImageResource(R.drawable.op_box);
         }
     }
 

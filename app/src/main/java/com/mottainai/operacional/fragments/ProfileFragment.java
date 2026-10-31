@@ -7,10 +7,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
@@ -23,6 +25,8 @@ import com.mottainai.operacional.activities.LoginActivity;
 import com.mottainai.operacional.repository.NotificationRepository;
 import com.mottainai.operacional.utils.RoleHelper;
 import com.mottainai.operacional.utils.SessionManager;
+import com.mottainai.operacional.utils.ThemeSettings;
+import com.mottainai.operacional.utils.Constants;
 import com.mottainai.operacional.viewmodels.ProfileUiState;
 import com.mottainai.operacional.viewmodels.ProfileViewModel;
 
@@ -60,10 +64,31 @@ public class ProfileFragment extends Fragment {
         viewModel.getUiState().observe(getViewLifecycleOwner(), this::render);
 
         View btnOpenConfig = binding.btnOpenConfig;
-        if (RoleHelper.isOwner(new SessionManager(requireContext()).getRole())) {
-            btnOpenConfig.setVisibility(View.VISIBLE);
-            btnOpenConfig.setOnClickListener(v -> Navigation.findNavController(view)
-                    .navigate(R.id.action_profileFragment_to_configFragment));
+        btnOpenConfig.setVisibility(View.VISIBLE);
+        btnOpenConfig.setOnClickListener(v -> Navigation.findNavController(view)
+                .navigate(R.id.accountSettingsFragment));
+
+        binding.btnLightTheme.setOnClickListener(v -> ThemeSettings.setDark(requireContext(), false));
+        binding.btnDarkTheme.setOnClickListener(v -> ThemeSettings.setDark(requireContext(), true));
+        renderThemeSelection();
+
+        String role = RoleHelper.normalize(new SessionManager(requireContext()).getRole());
+        if (Constants.ROLE_ESTOQUISTA.equals(role) || Constants.ROLE_DONO.equals(role)
+                || Constants.ROLE_GERENTE.equals(role)) {
+            binding.btnRoleShortcut.setVisibility(View.VISIBLE);
+            binding.btnRoleShortcut.setText(Constants.ROLE_DONO.equals(role)
+                    ? R.string.op_reports : Constants.ROLE_GERENTE.equals(role)
+                    ? R.string.op_team_title : R.string.op_view_tasks);
+            binding.btnRoleShortcut.setOnClickListener(v -> {
+                if (Constants.ROLE_DONO.equals(role)) {
+                    Navigation.findNavController(view).navigate(R.id.reportsFragment);
+                } else if (Constants.ROLE_GERENTE.equals(role)) {
+                    Navigation.findNavController(view).navigate(R.id.teamFragment);
+                } else {
+                    Toast.makeText(requireContext(), R.string.op_more_information_unavailable,
+                            Toast.LENGTH_LONG).show();
+                }
+            });
         }
 
         btnLogout.setOnClickListener(v -> showLogoutConfirmation(viewModel));
@@ -80,6 +105,18 @@ public class ProfileFragment extends Fragment {
         tvStore = binding.tvProfileStore;
         tvStatus = binding.tvProfileStatus;
         btnLogout = binding.btnLogout;
+    }
+
+    private void renderThemeSelection() {
+        boolean dark = ThemeSettings.isDark(requireContext());
+        binding.btnLightTheme.setBackgroundResource(dark
+                ? R.drawable.op_soft_card : R.drawable.op_theme_selected);
+        binding.btnDarkTheme.setBackgroundResource(dark
+                ? R.drawable.op_theme_selected : R.drawable.op_soft_card);
+        binding.btnLightTheme.setTextColor(ContextCompat.getColor(requireContext(), dark
+                ? R.color.op_text : R.color.op_theme_selection_text));
+        binding.btnDarkTheme.setTextColor(ContextCompat.getColor(requireContext(), dark
+                ? R.color.op_theme_selection_text : R.color.op_text));
     }
 
     private void render(ProfileUiState state) {
@@ -101,8 +138,8 @@ public class ProfileFragment extends Fragment {
             tvAvatarInitials.setText(state.getInitials());
             tvName.setText(state.getName());
             tvEmail.setText(state.getEmail());
-            tvRole.setText(getString(R.string.profile_role_value, state.getRole()));
-            tvStore.setText(getString(R.string.profile_store_value, state.getStoreId()));
+            tvRole.setText(state.getRole() + " — " + getString(R.string.op_store_id, state.getStoreId()));
+            tvStore.setVisibility(View.GONE);
             btnLogout.setEnabled(true);
             return;
         }
@@ -135,6 +172,7 @@ public class ProfileFragment extends Fragment {
         if (redirectingToLogin || !isAdded()) return;
         redirectingToLogin = true;
         Intent intent = new Intent(requireContext(), LoginActivity.class);
+        intent.putExtra(LoginActivity.EXTRA_SIGNED_OUT, true);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         requireActivity().finish();

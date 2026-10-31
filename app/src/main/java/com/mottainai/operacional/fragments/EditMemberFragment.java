@@ -62,10 +62,10 @@ public class EditMemberFragment extends Fragment {
                 Navigation.findNavController(view).popBackStack());
 
         binding.btnSaveMember.setOnClickListener(v ->
-                Toast.makeText(requireContext(), "Salvar membro — pendente (aguarda endpoint)", Toast.LENGTH_SHORT).show());
+                Toast.makeText(requireContext(), R.string.op_team_edit_unavailable, Toast.LENGTH_LONG).show());
 
         binding.btnRemoveMember.setOnClickListener(v ->
-                Toast.makeText(requireContext(), "Remover membro — pendente (aguarda endpoint)", Toast.LENGTH_SHORT).show());
+                Toast.makeText(requireContext(), R.string.op_team_edit_unavailable, Toast.LENGTH_LONG).show());
     }
 
     @Override

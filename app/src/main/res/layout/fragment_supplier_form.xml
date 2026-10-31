@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/op_background"
+    android:fillViewport="true">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/screen_padding"
+        android:paddingTop="16dp"
+        android:paddingBottom="24dp">
+        <TextView
+            android:id="@+id/tv_form_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/op_supplier_form_title"
+            android:textColor="@color/op_text"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/op_supplier_form_subtitle"
+            android:textColor="@color/op_muted"
+            android:textSize="15sp" />
+        <TextView
+            style="@style/TextAppearance.Op.Body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/op_supplier_company"
+            android:textColor="@color/op_text"
+            android:textSize="13sp" />
+        <EditText
+            android:id="@+id/et_supplier_name"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/op_input"
+            android:hint="@string/op_supplier_name_hint"
+            android:inputType="textCapWords"
+            android:paddingHorizontal="16dp"
+            android:textColor="@color/op_text"
+            android:textColorHint="@color/op_muted"
+            android:textSize="17sp" />
+        <TextView
+            style="@style/TextAppearance.Op.Body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="CNPJ"
+            android:textColor="@color/op_text"
+            android:textSize="13sp" />
+        <EditText
+            android:id="@+id/et_supplier_cnpj"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/op_input"
+            android:hint="@string/op_supplier_cnpj_hint"
+            android:inputType="number"
+            android:maxLength="18"
+            android:paddingHorizontal="16dp"
+            android:textColor="@color/op_text"
+            android:textColorHint="@color/op_muted"
+            android:textSize="17sp" />
+        <TextView
+            style="@style/TextAppearance.Op.Body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/op_supplier_contact"
+            android:textColor="@color/op_text"
+            android:textSize="13sp" />
+        <EditText
+            android:id="@+id/et_supplier_contact"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/op_input"
+            android:hint="@string/op_supplier_contact_hint"
+            android:inputType="text"
+            android:paddingHorizontal="16dp"
+            android:textColor="@color/op_text"
+            android:textColorHint="@color/op_muted"
+            android:textSize="17sp" />
+        <TextView
+            style="@style/TextAppearance.Op.Body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/op_supplier_categories"
+            android:textColor="@color/op_text"
+            android:textSize="13sp" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/op_input"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="16dp"
+            android:text="@string/op_supplier_categories_pending"
+            android:textColor="@color/op_muted"
+            android:textSize="15sp" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_save_supplier"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="24dp"
+            android:backgroundTint="@color/op_brand"
+            android:text="@string/op_supplier_save"
+            android:textAllCaps="false"
+            android:textColor="@color/op_on_brand" />
+        <TextView
+            android:id="@+id/btn_cancel"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:gravity="center"
+            android:text="@string/op_cancel"
+            android:textColor="@color/op_link"
+            android:textSize="15sp" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_remove_supplier"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="12dp"
+            android:backgroundTint="@color/op_surface"
+            android:text="@string/op_supplier_remove"
+            android:textAllCaps="false"
+            android:textColor="@color/op_logout"
+            android:visibility="gone" />
+    </LinearLayout>
+</ScrollView>

@@ -1,48 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_beige">
+    android:background="@color/op_background"
+    android:orientation="vertical"
+    android:paddingHorizontal="@dimen/screen_padding">
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:orientation="vertical"
-        android:paddingHorizontal="@dimen/screen_padding"
-        android:paddingBottom="24dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_weight="1">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:text="Cadastro disponível para Gerente e Dono"
-                android:textColor="@color/text_secondary"
-                android:textSize="12sp" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_suppliers"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp" />
 
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1">
+        <TextView
+            android:id="@+id/tv_suppliers_empty"
+            style="@style/TextAppearance.Op.Body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="@string/op_supplier_empty"
+            android:visibility="gone" />
+    </FrameLayout>
 
-                <androidx.recyclerview.widget.RecyclerView android:id="@+id/rv_suppliers" android:layout_width="match_parent" android:layout_height="match_parent" android:clipToPadding="false" />
-                <TextView android:id="@+id/tv_suppliers_empty" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:text="Nenhum fornecedor cadastrado" android:textColor="@color/text_secondary" android:visibility="gone" />
-            </FrameLayout>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_new_supplier"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:backgroundTint="@color/primary_green"
-                android:text="+ Novo fornecedor"
-                android:textAllCaps="false"
-                android:textColor="@color/colorOnPrimary"
-                app:cornerRadius="8dp" />
-
-    </LinearLayout>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_new_supplier"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/op_brand"
+        android:text="@string/op_supplier_new"
+        android:textAllCaps="false"
+        android:textColor="@color/op_on_brand"
+        android:textSize="15sp" />
+</LinearLayout>

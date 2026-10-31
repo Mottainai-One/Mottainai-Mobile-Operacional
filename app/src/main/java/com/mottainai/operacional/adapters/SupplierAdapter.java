@@ -1,9 +1,7 @@
 package com.mottainai.operacional.adapters;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.mottainai.operacional.R;
@@ -35,7 +33,10 @@ public class SupplierAdapter extends RecyclerView.Adapter<SupplierAdapter.ViewHo
         }
         void bind(Supplier supplier, Listener listener) {
             binding.tvSupplierName.setText(supplier.getTradeName());
-            binding.tvSupplierDetails.setText("CNPJ " + supplier.getCnpj() + " • " + supplier.getContact());
+            String detail = supplier.getContact().isEmpty()
+                    ? itemView.getContext().getString(R.string.op_supplier_cnpj, supplier.getCnpj())
+                    : supplier.getContact();
+            binding.tvSupplierDetails.setText(detail);
             itemView.setOnClickListener(v -> listener.onSupplierClick(supplier));
         }
     }

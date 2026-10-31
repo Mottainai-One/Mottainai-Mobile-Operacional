@@ -128,31 +128,24 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
         public void bind(Product product) {
             tvProductName.setText(product.getName());
-            tvProductSku.setText("SKU: " + product.getSku());
-            tvProductQuantity.setText("Qtd: " + product.getQuantity());
-
-            if (product.isLowStock()) {
-                tvProductStatus.setText("Baixo");
-                tvProductStatus.setTextColor(itemView.getContext().getColor(R.color.severity_critico));
-                vStockIndicator.setBackgroundResource(R.drawable.bg_stock_low);
-            } else if (product.isAttentionStock()) {
-                tvProductStatus.setText("Atenção");
-                tvProductStatus.setTextColor(itemView.getContext().getColor(R.color.severity_atencao));
-                vStockIndicator.setBackgroundResource(R.drawable.bg_stock_attention);
-            } else {
-                tvProductStatus.setText("Normal");
-                tvProductStatus.setTextColor(itemView.getContext().getColor(R.color.severity_monitor));
-                vStockIndicator.setBackgroundResource(R.drawable.bg_stock_normal);
-            }
+            String sku = product.getSku();
+            tvProductSku.setText(sku == null || sku.trim().isEmpty()
+                    ? itemView.getContext().getString(R.string.op_code_unknown)
+                    : itemView.getContext().getString(R.string.op_code_value, sku));
+            tvProductStatus.setText(R.string.op_view_specifications);
 
             if (product.getImageUrl() != null && !product.getImageUrl().isEmpty()) {
+                ivProductImage.setPadding(0, 0, 0, 0);
                 Glide.with(itemView)
                         .load(product.getImageUrl())
-                        .placeholder(R.drawable.ic_product_placeholder)
-                        .error(R.drawable.ic_product_placeholder)
+                        .placeholder(R.drawable.op_box)
+                        .error(R.drawable.op_box)
                         .into(ivProductImage);
             } else {
-                ivProductImage.setImageResource(R.drawable.ic_product_placeholder);
+                Glide.with(itemView).clear(ivProductImage);
+                int padding = Math.round(20 * itemView.getResources().getDisplayMetrics().density);
+                ivProductImage.setPadding(padding, padding, padding, padding);
+                ivProductImage.setImageResource(R.drawable.op_box);
             }
 }
 }

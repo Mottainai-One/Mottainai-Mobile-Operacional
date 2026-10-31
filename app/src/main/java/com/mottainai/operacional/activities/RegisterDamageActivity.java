@@ -16,10 +16,13 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.mottainai.operacional.R;
 import com.mottainai.operacional.databinding.ActivityRegisterDamageBinding;
 import com.mottainai.operacional.models.DamageUiState;
 import com.mottainai.operacional.viewmodels.DamageViewModel;
+import com.mottainai.operacional.utils.ThemeSettings;
+import com.mottainai.operacional.utils.Constants;
 
 import java.io.File;
 
@@ -61,6 +64,7 @@ public class RegisterDamageActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemeSettings.applySavedTheme(this);
         super.onCreate(savedInstanceState);
         binding = ActivityRegisterDamageBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -112,7 +116,9 @@ public class RegisterDamageActivity extends AppCompatActivity {
                 progress.setVisibility(View.VISIBLE);
                 btnSubmit.setEnabled(false);
             } else if (state instanceof DamageUiState.Success) {
-                Toast.makeText(this, "Avaria registrada", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, Constants.USE_MOCK_DAMAGE
+                        ? R.string.op_damage_demo_saved : R.string.op_damage_registered,
+                        Toast.LENGTH_LONG).show();
                 setResult(RESULT_OK);
                 finish();
             } else {
@@ -166,7 +172,15 @@ public class RegisterDamageActivity extends AppCompatActivity {
             String reason = actvReason.getText() != null ? actvReason.getText().toString() : "";
             String qty = etQuantity.getText() != null ? etQuantity.getText().toString() : "";
             String note = etNote.getText() != null ? etNote.getText().toString() : "";
-            viewModel.submit(reason, qty, note);
+            if (!viewModel.validate(reason, qty, note)) return;
+            new MaterialAlertDialogBuilder(this)
+                    .setTitle(R.string.op_damage_review_title)
+                    .setMessage(getString(R.string.op_damage_review_message,
+                            tvProductName.getText(), qty, reason))
+                    .setNegativeButton(R.string.op_cancel, null)
+                    .setPositiveButton(R.string.op_damage_confirm, (dialog, which) ->
+                            viewModel.submit(reason, qty, note))
+                    .show();
         });
     }
 

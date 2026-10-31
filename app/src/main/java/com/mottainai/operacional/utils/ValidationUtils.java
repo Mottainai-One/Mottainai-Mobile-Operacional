@@ -12,6 +12,15 @@ public final class ValidationUtils {
                 && Patterns.EMAIL_ADDRESS.matcher(value.trim()).matches();
     }
 
+    /** Contato opcional do fornecedor: e-mail ou telefone com DDD. */
+    public static boolean isValidSupplierContact(String value) {
+        if (value == null || value.trim().isEmpty()) return true;
+        if (isValidEmail(value)) return true;
+        String digits = value.replaceAll("\\D", "");
+        return digits.length() >= 10 && digits.length() <= 13
+                && value.trim().matches("\\+?[0-9 ()-]+");
+    }
+
     /** Valida os 14 dígitos de um CNPJ, incluindo os dois dígitos verificadores (módulo 11). */
     public static boolean isValidCnpj(String digitsOnly) {
         if (digitsOnly == null || digitsOnly.length() != 14 || !digitsOnly.matches("\\d{14}")) {

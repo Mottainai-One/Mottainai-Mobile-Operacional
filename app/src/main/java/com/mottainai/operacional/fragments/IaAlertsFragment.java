@@ -124,6 +124,9 @@ public class IaAlertsFragment extends Fragment {
         if (TAB_SUGGESTIONS.equalsIgnoreCase(requestedTab) && canViewSuggestions) {
             return IntelligenceTab.SUGGESTIONS;
         }
+        if ("chat".equalsIgnoreCase(requestedTab)) {
+            return IntelligenceTab.CHAT;
+        }
         return IntelligenceTab.ALERTS;
     }
 
@@ -158,6 +161,14 @@ public class IaAlertsFragment extends Fragment {
 
     private void showTab(IntelligenceTab tab) {
         selectedTab = tab;
+        boolean stockClerk = !RoleHelper.canViewSuggestions(sessionManager.getRole());
+        binding.tvIntelligenceHeading.setText(tab == IntelligenceTab.CHAT
+                ? R.string.op_chat_title : stockClerk
+                ? R.string.op_stock_alerts_title : R.string.op_intelligence_title);
+        binding.tvIntelligenceSubtitle.setText(tab == IntelligenceTab.CHAT
+                ? R.string.op_chat_subtitle : tab == IntelligenceTab.SUGGESTIONS
+                ? R.string.op_suggestions_subtitle : stockClerk
+                ? R.string.op_stock_alerts_subtitle : R.string.op_alerts_subtitle);
         if (tab == IntelligenceTab.CHAT) {
             detachListeners();
             recyclerView.setVisibility(View.GONE);
@@ -195,13 +206,13 @@ public class IaAlertsFragment extends Fragment {
             public void onSuccess(java.util.List<com.mottainai.operacional.models.Alert> alerts) {
                 if (!isAdded() || selectedTab != IntelligenceTab.ALERTS) return;
                 alertAdapter.setAlerts(alerts);
-                showContent(alerts.isEmpty(), "Nenhum alerta no momento");
+                showContent(alerts.isEmpty(), getString(R.string.op_no_alerts));
             }
 
             @Override
             public void onError(Exception e) {
                 if (!isAdded() || selectedTab != IntelligenceTab.ALERTS) return;
-                showContent(true, "Não foi possível carregar os alertas");
+                showContent(true, getString(R.string.op_alerts_error));
             }
         });
     }
@@ -214,13 +225,13 @@ public class IaAlertsFragment extends Fragment {
             public void onSuccess(java.util.List<com.mottainai.operacional.models.Suggestion> suggestions) {
                 if (!isAdded() || selectedTab != IntelligenceTab.SUGGESTIONS) return;
                 suggestionAdapter.setSuggestions(suggestions);
-                showContent(suggestions.isEmpty(), "Nenhuma sugestão pendente");
+                showContent(suggestions.isEmpty(), getString(R.string.op_no_suggestions));
             }
 
             @Override
             public void onError(Exception e) {
                 if (!isAdded() || selectedTab != IntelligenceTab.SUGGESTIONS) return;
-                showContent(true, "Não foi possível carregar as sugestões");
+                showContent(true, getString(R.string.op_suggestions_error));
             }
         });
     }

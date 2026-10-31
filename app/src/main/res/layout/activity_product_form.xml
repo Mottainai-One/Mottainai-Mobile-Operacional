@@ -4,8 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:background="@color/background_beige"
-    android:paddingHorizontal="@dimen/window_content_gutter"
+    android:background="@color/op_background"
     android:orientation="vertical">
 
     <LinearLayout
@@ -26,13 +25,13 @@
             android:contentDescription="@string/back"
             android:rotation="180"
             android:src="@drawable/ic_chevron_right"
-            app:tint="@color/text_primary" />
+            app:tint="@color/op_text" />
 
         <TextView
             android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/text_primary"
+            android:textColor="@color/op_text"
             android:textSize="24sp"
             android:textStyle="bold" />
     </LinearLayout>
@@ -47,8 +46,8 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardBackgroundColor="@color/colorSurface"
-            app:cardCornerRadius="@dimen/card_corner_radius"
+            app:cardBackgroundColor="@color/op_surface"
+            app:cardCornerRadius="20dp"
             app:cardElevation="0dp">
 
         <LinearLayout
@@ -68,7 +67,7 @@
                 android:id="@+id/tv_form_error"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/severity_critico"
+                android:textColor="@color/op_critical"
                 android:visibility="gone"
                 android:padding="8dp" />
 
@@ -76,9 +75,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Preenchido via API"
+                android:id="@+id/tv_form_heading"
+                android:text="@string/op_product_identify"
                 android:textStyle="bold"
-                android:textColor="@color/text_primary"
+                android:textColor="@color/op_text"
                 android:layout_marginTop="8dp" />
 
             <LinearLayout
@@ -106,18 +106,18 @@
                     android:id="@+id/btn_search_off"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="@color/primary_green"
+                    android:backgroundTint="@color/op_brand"
                     android:text="Buscar"
                     android:textAllCaps="false"
-                    android:textColor="@color/colorOnPrimary"
+                    android:textColor="@color/op_on_brand"
                     app:cornerRadius="12dp"
                     app:icon="@drawable/ic_search"
-                    app:iconTint="@color/colorOnPrimary"
+                    app:iconTint="@color/op_on_brand"
                     android:layout_marginStart="8dp" />
             </LinearLayout>
-            <TextView android:id="@+id/tv_error_barcode" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/severity_critico" android:textSize="12sp" android:visibility="gone" />
+            <TextView android:id="@+id/tv_error_barcode" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/op_critical" android:textSize="12sp" android:visibility="gone" />
 
-            <TextView android:id="@+id/tv_off_info" android:layout_width="match_parent" android:layout_height="wrap_content" android:visibility="gone" android:textColor="@color/text_secondary" android:textSize="12sp" android:paddingTop="4dp" />
+            <TextView android:id="@+id/tv_off_info" android:layout_width="match_parent" android:layout_height="wrap_content" android:visibility="gone" android:textColor="@color/op_muted" android:textSize="12sp" android:paddingTop="4dp" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
@@ -127,7 +127,7 @@
                 style="@style/Widget.App.TextInputLayout">
                 <com.google.android.material.textfield.TextInputEditText android:id="@+id/et_name" android:layout_width="match_parent" android:layout_height="wrap_content" />
             </com.google.android.material.textfield.TextInputLayout>
-            <TextView android:id="@+id/tv_error_name" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/severity_critico" android:textSize="12sp" android:visibility="gone" />
+            <TextView android:id="@+id/tv_error_name" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/op_critical" android:textSize="12sp" android:visibility="gone" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
@@ -146,7 +146,7 @@
                 style="@style/Widget.App.TextInputLayout">
                 <com.google.android.material.textfield.TextInputEditText android:id="@+id/et_category" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="number" />
             </com.google.android.material.textfield.TextInputLayout>
-            <TextView android:id="@+id/tv_error_category" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/severity_critico" android:textSize="12sp" android:visibility="gone" />
+            <TextView android:id="@+id/tv_error_category" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/op_critical" android:textSize="12sp" android:visibility="gone" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
@@ -156,7 +156,7 @@
                 style="@style/Widget.App.TextInputLayout">
                 <com.google.android.material.textfield.TextInputEditText android:id="@+id/et_brand" android:layout_width="match_parent" android:layout_height="wrap_content" />
             </com.google.android.material.textfield.TextInputLayout>
-            <TextView android:id="@+id/tv_error_brand" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/severity_critico" android:textSize="12sp" android:visibility="gone" />
+            <TextView android:id="@+id/tv_error_brand" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/op_critical" android:textSize="12sp" android:visibility="gone" />
 
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:orientation="horizontal">
                 <com.google.android.material.textfield.TextInputLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:hint="Unidade *" style="@style/Widget.App.TextInputLayout">
@@ -166,10 +166,10 @@
                     <com.google.android.material.textfield.TextInputEditText android:id="@+id/et_weight" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="numberDecimal" />
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
-            <TextView android:id="@+id/tv_error_unit" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/severity_critico" android:textSize="12sp" android:visibility="gone" />
-            <TextView android:id="@+id/tv_error_weight" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/severity_critico" android:textSize="12sp" android:visibility="gone" />
+            <TextView android:id="@+id/tv_error_unit" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/op_critical" android:textSize="12sp" android:visibility="gone" />
+            <TextView android:id="@+id/tv_error_weight" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/op_critical" android:textSize="12sp" android:visibility="gone" />
 
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Inventário (pendente backend /api/v1/inventory)" android:textStyle="bold" android:layout_marginTop="20dp" android:textColor="@color/text_primary" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/op_product_stock_section" android:textStyle="bold" android:layout_marginTop="20dp" android:textColor="@color/op_text" />
 
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:orientation="horizontal">
                 <com.google.android.material.textfield.TextInputLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:hint="Quantidade" style="@style/Widget.App.TextInputLayout">
@@ -179,8 +179,8 @@
                     <com.google.android.material.textfield.TextInputEditText android:id="@+id/et_min_quantity" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="number" />
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
-            <TextView android:id="@+id/tv_error_quantity" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/severity_critico" android:textSize="12sp" android:visibility="gone" />
-            <TextView android:id="@+id/tv_error_min_quantity" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/severity_critico" android:textSize="12sp" android:visibility="gone" />
+            <TextView android:id="@+id/tv_error_quantity" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/op_critical" android:textSize="12sp" android:visibility="gone" />
+            <TextView android:id="@+id/tv_error_min_quantity" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/op_critical" android:textSize="12sp" android:visibility="gone" />
 
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:orientation="horizontal">
                 <com.google.android.material.textfield.TextInputLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:hint="Lote" style="@style/Widget.App.TextInputLayout">
@@ -194,7 +194,7 @@
             <com.google.android.material.textfield.TextInputLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:hint="Validade (yyyy-MM-dd)" style="@style/Widget.App.TextInputLayout">
                 <com.google.android.material.textfield.TextInputEditText android:id="@+id/et_expiry" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="date" android:drawableEnd="@drawable/ic_calendar" />
             </com.google.android.material.textfield.TextInputLayout>
-            <TextView android:id="@+id/tv_error_expiry" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/severity_critico" android:textSize="12sp" android:visibility="gone" />
+            <TextView android:id="@+id/tv_error_expiry" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/op_critical" android:textSize="12sp" android:visibility="gone" />
 
             <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/sw_active"
@@ -209,8 +209,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="56dp"
-                android:backgroundTint="@color/primary_green"
-                android:textColor="@color/colorOnPrimary"
+                android:backgroundTint="@color/op_brand"
+                android:textColor="@color/op_on_brand"
                 android:textAllCaps="false"
                 app:cornerRadius="12dp"
                 android:text="Salvar"
@@ -221,7 +221,7 @@
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/primary_green"
+                android:textColor="@color/op_brand"
                 android:textAllCaps="false"
                 android:text="Cancelar" />
         </LinearLayout>

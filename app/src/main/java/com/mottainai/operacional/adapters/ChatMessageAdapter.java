@@ -53,14 +53,14 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
             holder.sender.setText(R.string.chat_sender_user);
             holder.assistantAvatar.setVisibility(View.GONE);
             holder.message.setBackgroundResource(R.drawable.bg_chat_message_user);
-            holder.message.setTextColor(holder.itemView.getContext().getColor(R.color.white));
+            holder.message.setTextColor(holder.itemView.getContext().getColor(R.color.op_on_brand));
         } else {
             holder.container.setGravity(Gravity.START);
             holder.sender.setGravity(Gravity.START);
             holder.sender.setText(R.string.chat_sender_assistant);
             holder.assistantAvatar.setVisibility(View.VISIBLE);
             holder.message.setBackgroundResource(R.drawable.bg_chat_message_assistant);
-            holder.message.setTextColor(holder.itemView.getContext().getColor(R.color.text_primary));
+            holder.message.setTextColor(holder.itemView.getContext().getColor(R.color.op_text));
         }
     }
 
