@@ -69,6 +69,11 @@
     </fragment>
 
     <fragment
+        android:id="@+id/posApprovalsFragment"
+        android:name="com.mottainai.operacional.fragments.PosApprovalsFragment"
+        android:label="Aprovações do PDV" />
+
+    <fragment
         android:id="@+id/iaAlertsFragment"
         android:name="com.mottainai.operacional.fragments.IaAlertsFragment"
         android:label="IA">

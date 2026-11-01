@@ -39,6 +39,14 @@ public class ProductRepository {
         Product p = new Product();
         if (dto.getId() != null) p.setId(String.valueOf(dto.getId()));
         p.setName(dto.getName());
+        p.setUnitMeasure(dto.getUnitMeasure());
+        p.setWeight(dto.getWeight());
+        p.setCategoryId(dto.getCategoryId());
+        p.setTaxProfileId(dto.getTaxProfileId());
+        p.setNcm(dto.getNcm());
+        p.setCest(dto.getCest());
+        p.setVersion(dto.getVersion());
+        p.setActive(Boolean.TRUE.equals(dto.getActive()));
         // SKU na UI = barcode da API (código escaneável). Campo barcode é a fonte pública.
         p.setSku(dto.getBarcode());
         // Campos de inventário não retornados por /api/v1/products.
@@ -48,8 +56,8 @@ public class ProductRepository {
         p.setSupplier(dto.getBrand());
         // storeId: deve ser derivado do Firebase ID token no backend, não enviado pelo cliente.
         // Não confiar em storeId livre; manter null até contrato confirmar filtro por loja.
-        // imageUrl, batch, expiryDate: sem contrato, permanecem null/vazio.
-        p.setImageUrl(null);
+        // Imagens vêm da imageUrl persistida pela API; lote e validade ainda não fazem parte deste contrato.
+        p.setImageUrl(dto.getImageUrl());
         p.setBatch(null);
         p.setExpiryDate(null);
         p.setStoreId(null);
@@ -145,14 +153,14 @@ public class ProductRepository {
     /**
      * O modelo legado {@link Product} não representa todos os campos do contrato
      * de produto. Em particular, SKU e fornecedor não podem ser enviados como
-     * barcode e marca. As gravações na API devem usar ProductUpsertRequest.
+     * barcode e marca. As gravações usam ProductCreateRequest/ProductUpdateRequest.
      */
     @Deprecated
     public void createProduct(Product product, ProductCallback callback) {
-        callback.onError("Use ProductUpsertRequest para cadastrar produtos na API.");
+        callback.onError("Use ProductCreateRequest para cadastrar produtos na API.");
     }
 
-    public void createProduct(com.mottainai.operacional.models.ProductUpsertRequest request, ProductCallback callback) {
+    public void createProduct(com.mottainai.operacional.models.ProductCreateRequest request, ProductCallback callback) {
         apiService.createProduct(request).enqueue(new Callback<ProductResponse>() {
             @Override
             public void onResponse(Call<ProductResponse> call, Response<ProductResponse> response) {
@@ -170,13 +178,19 @@ public class ProductRepository {
         });
     }
 
+    /** Legacy mock-fixture contract. Real form code uses ProductCreateRequest. */
+    @Deprecated
+    public void createProduct(com.mottainai.operacional.models.ProductUpsertRequest request, ProductCallback callback) {
+        callback.onError("Use ProductCreateRequest para cadastrar produtos na API.");
+    }
+
     /** @see #createProduct(Product, ProductCallback) */
     @Deprecated
     public void updateProduct(String productId, Product product, ProductCallback callback) {
-        callback.onError("Use ProductUpsertRequest para editar produtos na API.");
+        callback.onError("Use ProductUpdateRequest para editar produtos na API.");
     }
 
-    public void updateProduct(String productId, com.mottainai.operacional.models.ProductUpsertRequest request, ProductCallback callback) {
+    public void updateProduct(String productId, com.mottainai.operacional.models.ProductUpdateRequest request, ProductCallback callback) {
         apiService.updateProduct(productId, request).enqueue(new Callback<ProductResponse>() {
             @Override
             public void onResponse(Call<ProductResponse> call, Response<ProductResponse> response) {
@@ -192,6 +206,12 @@ public class ProductRepository {
                 callback.onError("Erro de rede: " + t.getMessage());
             }
         });
+    }
+
+    /** Legacy mock-fixture contract. Real form code uses ProductUpdateRequest. */
+    @Deprecated
+    public void updateProduct(String productId, com.mottainai.operacional.models.ProductUpsertRequest request, ProductCallback callback) {
+        callback.onError("Use ProductUpdateRequest para editar produtos na API.");
     }
 
     private String mapHttpError(int code) {

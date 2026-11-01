@@ -10,7 +10,6 @@ import androidx.lifecycle.MutableLiveData;
 import com.mottainai.operacional.models.Product;
 import com.mottainai.operacional.models.ProductForm;
 import com.mottainai.operacional.models.ProductResponse;
-import com.mottainai.operacional.models.ProductUpsertRequest;
 import com.mottainai.operacional.repository.ProductRepository;
 import com.mottainai.operacional.repository.MockProductRepository;
 import com.mottainai.operacional.utils.Constants;
@@ -53,8 +52,7 @@ public class ProductFormViewModel extends AndroidViewModel {
     public void initNew() {
         productId = null;
         ProductForm f = new ProductForm();
-        // Padrões razoáveis para um produto novo; o usuário pode alterar.
-        f.setCategoryId(1);
+        // IDs de categoria/perfil tributário precisam vir de cadastro real.
         f.setUnitMeasure("UN");
         form.setValue(f);
     }
@@ -73,11 +71,15 @@ public class ProductFormViewModel extends AndroidViewModel {
                 f.setBarcode(p.getSku());
                 f.setName(p.getName());
                 f.setBrand(p.getSupplier());
-                // Campos de contrato: categoryId=1 default se não houver, unitMeasure=UN
-                f.setCategoryId(1);
-                f.setUnitMeasure("UN");
-                f.setWeight("0");
-                f.setActive(true);
+                f.setCategoryId(p.getCategoryId());
+                f.setTaxProfileId(p.getTaxProfileId());
+                f.setNcm(p.getNcm());
+                f.setCest(p.getCest());
+                f.setImageUrl(p.getImageUrl());
+                f.setUnitMeasure(p.getUnitMeasure());
+                f.setWeight(p.getWeight() == null ? "" : p.getWeight().toPlainString());
+                f.setActive(p.isActive());
+                f.setVersion(p.getVersion());
                 // Versão não exposta no mock; tentar extrair de ProductResponse via campo extra se houver
                 form.postValue(f);
                 loading.postValue(false);
@@ -101,6 +103,9 @@ public class ProductFormViewModel extends AndroidViewModel {
         else if (f.getName().trim().length() > 150) err.put("name", "Máximo 150 caracteres");
         if (f.getBrand() != null && f.getBrand().length() > 100) err.put("brand", "Máximo 100 caracteres");
         if (f.getCategoryId() == null) err.put("categoryId", "Categoria obrigatória");
+        if (f.getTaxProfileId() == null) err.put("taxProfileId", "Perfil tributário obrigatório");
+        if (f.getNcm() == null || !f.getNcm().trim().matches("\\d{8}")) err.put("ncm", "NCM deve ter 8 dígitos");
+        if (f.getCest() != null && !f.getCest().trim().isEmpty() && !f.getCest().trim().matches("\\d{7}")) err.put("cest", "CEST deve ter 7 dígitos");
         if (f.getUnitMeasure() == null || f.getUnitMeasure().trim().isEmpty()) err.put("unitMeasure", "Unidade obrigatória");
         else if (f.getUnitMeasure().trim().length() > 20) err.put("unitMeasure", "Máximo 20 caracteres");
         if (f.getWeight() == null || f.getWeight().trim().isEmpty()) err.put("weight", "Peso obrigatório");
@@ -133,9 +138,8 @@ public class ProductFormViewModel extends AndroidViewModel {
         submitting = true;
         saving.setValue(true);
         submitError.setValue(null);
-        ProductUpsertRequest req = f.toUpsertRequest();
         if (isEditMode()) {
-            repository.updateProduct(productId, req, new ProductRepository.ProductCallback() {
+            repository.updateProduct(productId, f.toUpdateRequest(), new ProductRepository.ProductCallback() {
                 @Override public void onSuccess(Product product) {
                     submitting = false; saving.postValue(false); submitSuccess.postValue(product);
                 }
@@ -146,7 +150,7 @@ public class ProductFormViewModel extends AndroidViewModel {
                 }
             });
         } else {
-            repository.createProduct(req, new ProductRepository.ProductCallback() {
+            repository.createProduct(f.toCreateRequest(), new ProductRepository.ProductCallback() {
                 @Override public void onSuccess(Product product) {
                     submitting = false; saving.postValue(false); submitSuccess.postValue(product);
                 }

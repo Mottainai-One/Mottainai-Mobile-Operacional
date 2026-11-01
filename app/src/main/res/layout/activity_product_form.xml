@@ -81,6 +81,24 @@
                 android:textColor="@color/op_text"
                 android:layout_marginTop="8dp" />
 
+            <ImageView
+                android:id="@+id/iv_product_image_preview"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:layout_marginTop="12dp"
+                android:contentDescription="Foto do produto"
+                android:scaleType="centerCrop"
+                android:visibility="gone" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_choose_product_image"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Adicionar foto do produto"
+                android:textAllCaps="false"
+                app:cornerRadius="12dp" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -147,6 +165,21 @@
                 <com.google.android.material.textfield.TextInputEditText android:id="@+id/et_category" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="number" />
             </com.google.android.material.textfield.TextInputLayout>
             <TextView android:id="@+id/tv_error_category" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/op_critical" android:textSize="12sp" android:visibility="gone" />
+
+            <com.google.android.material.textfield.TextInputLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:hint="Perfil tributário ID *" style="@style/Widget.App.TextInputLayout">
+                <com.google.android.material.textfield.TextInputEditText android:id="@+id/et_tax_profile" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="number" />
+            </com.google.android.material.textfield.TextInputLayout>
+            <TextView android:id="@+id/tv_error_tax_profile" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/op_critical" android:textSize="12sp" android:visibility="gone" />
+
+            <com.google.android.material.textfield.TextInputLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:hint="NCM (8 dígitos) *" style="@style/Widget.App.TextInputLayout">
+                <com.google.android.material.textfield.TextInputEditText android:id="@+id/et_ncm" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="number" android:maxLength="8" />
+            </com.google.android.material.textfield.TextInputLayout>
+            <TextView android:id="@+id/tv_error_ncm" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/op_critical" android:textSize="12sp" android:visibility="gone" />
+
+            <com.google.android.material.textfield.TextInputLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:hint="CEST (opcional, 7 dígitos)" style="@style/Widget.App.TextInputLayout">
+                <com.google.android.material.textfield.TextInputEditText android:id="@+id/et_cest" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="number" android:maxLength="7" />
+            </com.google.android.material.textfield.TextInputLayout>
+            <TextView android:id="@+id/tv_error_cest" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/op_critical" android:textSize="12sp" android:visibility="gone" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"

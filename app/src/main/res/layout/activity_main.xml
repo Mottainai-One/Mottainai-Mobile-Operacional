@@ -53,6 +53,16 @@
             android:visibility="gone" />
 
         <ImageButton
+            android:id="@+id/btn_pos_approvals"
+            android:layout_width="44dp"
+            android:layout_height="48dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/op_open_pos_approvals"
+            android:padding="12dp"
+            android:src="@drawable/ic_notification"
+            android:visibility="gone" />
+
+        <ImageButton
             android:id="@+id/btn_assistant"
             android:layout_width="48dp"
             android:layout_height="48dp"

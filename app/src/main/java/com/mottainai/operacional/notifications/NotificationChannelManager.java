@@ -54,6 +54,8 @@ public final class NotificationChannelManager {
                 return CHANNEL_SUGGESTIONS;
             case INVENTORY:
                 return CHANNEL_INVENTORY;
+            case POS_APPROVAL:
+                return CHANNEL_ALERTS;
             default:
                 return CHANNEL_GENERAL;
         }

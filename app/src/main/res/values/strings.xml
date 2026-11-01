@@ -32,6 +32,7 @@
     <string name="op_dark">☾  Escuro</string>
     <string name="op_reports">Relatórios</string>
     <string name="op_open_assistant">Abrir assistente</string>
+    <string name="op_open_pos_approvals">Aprovações do PDV</string>
     <string name="op_toggle_theme">Alternar tema claro ou escuro</string>
     <string name="op_login_title">Entre na sua conta</string>
     <string name="op_login_subtitle">Acesse a operação do Mercado da Praça.</string>

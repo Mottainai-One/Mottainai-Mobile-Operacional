@@ -16,6 +16,12 @@ public class RoleHelper {
                 || Constants.ROLE_DONO.equals(normalizedRole);
     }
 
+    public static boolean canApprovePosRequests(String role) {
+        String normalizedRole = normalize(role);
+        return Constants.ROLE_GERENTE.equals(normalizedRole)
+                || Constants.ROLE_DONO.equals(normalizedRole);
+    }
+
     // Estoquista NÃO pode ver sugestões
     public static boolean canViewSuggestions(String role) {
         return role == null || !Constants.ROLE_ESTOQUISTA.equals(normalize(role));
@@ -44,11 +50,14 @@ public class RoleHelper {
 
         switch (role.trim().toUpperCase(Locale.ROOT)) {
             case "ADMIN":
+            case "ADMINISTRATOR":
             case "OWNER":
                 return Constants.ROLE_DONO;
             case "MANAGER":
                 return Constants.ROLE_GERENTE;
             case "STOCK":
+            case "OPERATOR":
+            case "SUPERVISOR":
                 return Constants.ROLE_ESTOQUISTA;
             default:
                 return role.trim().toLowerCase(Locale.ROOT);

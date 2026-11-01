@@ -50,6 +50,8 @@ android {
                 "IA_BASE_URL",
                 "\"${localOrGradleProperty("iaBaseUrl", "http://10.0.2.2:8000/")}\""
             )
+            buildConfigField("String", "CLOUDINARY_CLOUD_NAME", "\"${localOrGradleProperty("cloudinaryCloudName", "sffp5gbb").trimEnd('/')}\"")
+            buildConfigField("String", "CLOUDINARY_UPLOAD_PRESET", "\"${localOrGradleProperty("cloudinaryUploadPreset", "mottainai").trimEnd('/')}\"")
         }
         release {
             // Nunca herdar um endpoint HTTP local no artefato de produção.
@@ -63,6 +65,8 @@ android {
                 "IA_BASE_URL",
                 "\"${localOrGradleProperty("releaseIaBaseUrl", "https://ia.mottainai.com.br/")}\""
             )
+            buildConfigField("String", "CLOUDINARY_CLOUD_NAME", "\"${localOrGradleProperty("cloudinaryCloudName", "sffp5gbb").trimEnd('/')}\"")
+            buildConfigField("String", "CLOUDINARY_UPLOAD_PRESET", "\"${localOrGradleProperty("cloudinaryUploadPreset", "mottainai").trimEnd('/')}\"")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -94,7 +98,6 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
-    implementation("com.google.firebase:firebase-storage")
     implementation("com.google.firebase:firebase-messaging")
 
     //Retrofit

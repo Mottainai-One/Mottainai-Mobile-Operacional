@@ -23,6 +23,7 @@ import com.mottainai.operacional.notifications.NotificationRouter;
 import com.mottainai.operacional.repository.NotificationRepository;
 import com.mottainai.operacional.utils.SessionManager;
 import com.mottainai.operacional.utils.ThemeSettings;
+import com.mottainai.operacional.utils.RoleHelper;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -42,7 +43,8 @@ public class MainActivity extends AppCompatActivity {
         session = new SessionManager(this);
 
         boolean firebaseAuthed = FirebaseAuth.getInstance().getCurrentUser() != null;
-        boolean sessionComplete = session.hasCompleteProfile();
+        boolean sessionComplete = session.hasCompleteProfile()
+                && session.getApiAccessToken() != null && !session.getApiAccessToken().isEmpty();
 
         if (!firebaseAuthed || !sessionComplete) {
             if (!firebaseAuthed) {
@@ -83,10 +85,13 @@ public class MainActivity extends AppCompatActivity {
                     || destination.getId() == R.id.receivingWorkflowFragment
                     || destination.getId() == R.id.ownerCountReviewFragment
                     || destination.getId() == R.id.managerReceivingReviewFragment
-                    || destination.getId() == R.id.managerDamageReviewFragment;
+                    || destination.getId() == R.id.managerDamageReviewFragment
+                    || destination.getId() == R.id.posApprovalsFragment;
             binding.opLogo.setVisibility(home ? View.VISIBLE : View.GONE);
             binding.opHeaderTitle.setVisibility(home ? View.GONE : View.VISIBLE);
             binding.btnTheme.setVisibility(home || profile ? View.VISIBLE : View.GONE);
+            binding.btnPosApprovals.setVisibility(home && RoleHelper.canApprovePosRequests(session.getRole())
+                    ? View.VISIBLE : View.GONE);
             binding.btnBack.setVisibility(accountFlow || supplierFlow || reportsFlow ? View.VISIBLE : View.GONE);
             binding.btnAssistant.setVisibility(accountFlow || supplierFlow || reportsFlow ? View.GONE : View.VISIBLE);
             if (destination.getId() == R.id.productsListFragment) {
@@ -101,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView bottomNav = binding.bottomNav;
         NavigationUI.setupWithNavController(bottomNav, navController);
         binding.btnTheme.setOnClickListener(v -> ThemeSettings.toggle(this));
+        binding.btnPosApprovals.setOnClickListener(v -> navigateIfNeeded(R.id.posApprovalsFragment, null));
         binding.btnBack.setOnClickListener(v -> {
             if (navController.getCurrentDestination() != null
                     && navController.getCurrentDestination().getId() == R.id.supplierSavedFragment) {
@@ -178,6 +184,9 @@ public class MainActivity extends AppCompatActivity {
                 Bundle inventoryArgs = new Bundle();
                 inventoryArgs.putInt("initial_tab", 1);
                 navigateIfNeeded(R.id.productsListFragment, inventoryArgs);
+                break;
+            case POS_APPROVAL:
+                navigateIfNeeded(R.id.posApprovalsFragment, null);
                 break;
             case HOME:
             default:

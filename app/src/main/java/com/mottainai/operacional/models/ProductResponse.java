@@ -21,6 +21,15 @@ public class ProductResponse {
     @SerializedName("categoryName")
     private String categoryName;
 
+    @SerializedName("taxProfileId")
+    private Integer taxProfileId;
+
+    @SerializedName("ncm")
+    private String ncm;
+
+    @SerializedName("cest")
+    private String cest;
+
     @SerializedName("barcode")
     private String barcode;
 
@@ -45,9 +54,15 @@ public class ProductResponse {
     @SerializedName("version")
     private Integer version;
 
+    @SerializedName("imageUrl")
+    private String imageUrl;
+
     public Integer getId() { return id; }
     public Integer getCategoryId() { return categoryId; }
     public String getCategoryName() { return categoryName; }
+    public Integer getTaxProfileId() { return taxProfileId; }
+    public String getNcm() { return ncm; }
+    public String getCest() { return cest; }
     public String getBarcode() { return barcode; }
     public String getName() { return name; }
     public String getDescription() { return description; }
@@ -56,4 +71,5 @@ public class ProductResponse {
     public BigDecimal getWeight() { return weight; }
     public Boolean getActive() { return active; }
     public Integer getVersion() { return version; }
+    public String getImageUrl() { return imageUrl; }
 }

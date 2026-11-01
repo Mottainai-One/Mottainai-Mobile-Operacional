@@ -116,9 +116,7 @@ public class RegisterDamageActivity extends AppCompatActivity {
                 progress.setVisibility(View.VISIBLE);
                 btnSubmit.setEnabled(false);
             } else if (state instanceof DamageUiState.Success) {
-                Toast.makeText(this, Constants.USE_MOCK_DAMAGE
-                        ? R.string.op_damage_demo_saved : R.string.op_damage_registered,
-                        Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.op_damage_registered, Toast.LENGTH_LONG).show();
                 setResult(RESULT_OK);
                 finish();
             } else {

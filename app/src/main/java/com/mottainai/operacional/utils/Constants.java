@@ -22,14 +22,7 @@ public class Constants {
     public static final String SUGESTAO_APROVADA = "approved";
     public static final String SUGESTAO_RECUSADA = "rejected";
 
-    // true = usa MockProductRepository (desenvolvimento sem backend)
-    // false = usa ProductRepository (API real via Retrofit)
-    public static final boolean USE_MOCK_REPOSITORY = true;
+    public static final boolean USE_MOCK_REPOSITORY = false;
 
-    // Mock para avarias (MOBILE-06) até POST /api/v1/damages existir
-    public static final boolean USE_MOCK_DAMAGE = true;
-
-    // Mock para inventário (MOBILE-07) até o contrato de sessões estar disponível.
-    // As alterações ficam somente na memória do aplicativo.
-    public static final boolean USE_MOCK_INVENTORY = true;
+    public static final boolean USE_MOCK_INVENTORY = false;
 }
