@@ -13,7 +13,7 @@ import com.mottainai.operacional.utils.Constants;
 
 /**
  * ViewModel para detalhe de produto.
- * O modo mock é controlado por Constants.USE_MOCK_REPOSITORY.
+ * Loads product details from the operational API.
  */
 public class ProductDetailViewModel extends AndroidViewModel {
 

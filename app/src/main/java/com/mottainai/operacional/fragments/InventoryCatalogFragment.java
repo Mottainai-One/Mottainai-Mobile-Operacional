@@ -21,6 +21,7 @@ import com.mottainai.operacional.activities.ProductDetailActivity;
 import com.mottainai.operacional.adapters.StockProductAdapter;
 import com.mottainai.operacional.databinding.FragmentInventoryCatalogBinding;
 import com.mottainai.operacional.models.Product;
+import com.mottainai.operacional.repository.InventoryRepository;
 import com.mottainai.operacional.utils.SessionManager;
 import com.mottainai.operacional.viewmodels.ProductListViewModel;
 
@@ -33,6 +34,8 @@ public class InventoryCatalogFragment extends Fragment {
     private FragmentInventoryCatalogBinding binding;
     private ProductListViewModel viewModel;
     private StockProductAdapter adapter;
+    private InventoryRepository inventoryRepository;
+    private List<Product> catalog = new ArrayList<>();
     private int filter;
 
     @Nullable
@@ -72,22 +75,35 @@ public class InventoryCatalogFragment extends Fragment {
                 .setMessage(R.string.op_levels_explanation)
                 .setPositiveButton(android.R.string.ok, null)
                 .show());
-        viewModel.getProducts().observe(getViewLifecycleOwner(), products -> applyFilter());
+        inventoryRepository = new InventoryRepository(requireActivity().getApplication());
         viewModel.getSearchQuery().observe(getViewLifecycleOwner(), query -> applyFilter());
-        viewModel.getLoading().observe(getViewLifecycleOwner(), loading ->
-                binding.progressStock.setVisibility(Boolean.TRUE.equals(loading)
-                        ? View.VISIBLE : View.GONE));
-        viewModel.getError().observe(getViewLifecycleOwner(), error -> {
-            if (error != null) {
-                binding.tvStockEmpty.setText(error);
+        viewModel.getSearchQuery().observe(getViewLifecycleOwner(), query -> applyFilter());
+        loadCatalog();
+    }
+
+    private void loadCatalog() {
+        String storeId = new SessionManager(requireContext()).getStoreId();
+        if (storeId == null) {
+            binding.tvStockEmpty.setText("A sessão não informa a loja para consultar o estoque.");
+            binding.tvStockEmpty.setVisibility(View.VISIBLE);
+            return;
+        }
+        binding.progressStock.setVisibility(View.VISIBLE);
+        binding.tvStockEmpty.setVisibility(View.GONE);
+        inventoryRepository.loadCatalog(storeId, new InventoryRepository.CatalogCallback() {
+            @Override public void onSuccess(List<Product> products) {
+                if (!isAdded() || binding == null) return;
+                binding.progressStock.setVisibility(View.GONE);
+                catalog = products == null ? new ArrayList<>() : products;
+                applyFilter();
+            }
+            @Override public void onError(String message) {
+                if (!isAdded() || binding == null) return;
+                binding.progressStock.setVisibility(View.GONE);
+                binding.tvStockEmpty.setText(message);
                 binding.tvStockEmpty.setVisibility(View.VISIBLE);
             }
         });
-        if (viewModel.getProducts().getValue() == null
-                && !Boolean.TRUE.equals(viewModel.getLoading().getValue())) {
-            String storeId = new SessionManager(requireContext()).getStoreId();
-            if (storeId != null) viewModel.loadProducts(storeId);
-        }
     }
 
     private void renderFilters(TextView[] chips) {
@@ -101,7 +117,7 @@ public class InventoryCatalogFragment extends Fragment {
 
     private void applyFilter() {
         if (binding == null || adapter == null || viewModel == null) return;
-        List<Product> source = viewModel.getProducts().getValue();
+        List<Product> source = catalog;
         String query = viewModel.getSearchQuery().getValue();
         String normalized = query == null ? "" : query.trim().toLowerCase(Locale.ROOT);
         List<Product> shown = new ArrayList<>();

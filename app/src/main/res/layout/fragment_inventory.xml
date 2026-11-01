@@ -161,7 +161,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:gravity="center"
-            android:text="Contagem local: os dados não são enviados ao estoque da loja."
+                    android:text="Contagem sincronizada com a API operacional. Os ajustes entram no estoque ao finalizar."
             android:textColor="@color/op_muted"
             android:textSize="11sp" />
     </LinearLayout>

@@ -80,8 +80,8 @@ public class IaAlertsFragment extends Fragment {
 
         navController = Navigation.findNavController(view);
         sessionManager = new SessionManager(requireContext());
-        alertRepository = new AlertRepository();
-        suggestionRepository = new SuggestionRepository();
+        alertRepository = new AlertRepository(requireContext());
+        suggestionRepository = new SuggestionRepository(requireContext());
 
         String role = sessionManager.getRole();
         boolean canViewSuggestions = RoleHelper.canViewSuggestions(role);

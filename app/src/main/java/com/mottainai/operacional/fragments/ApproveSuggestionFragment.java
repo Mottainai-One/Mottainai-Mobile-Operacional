@@ -18,16 +18,20 @@ import androidx.navigation.Navigation;
 
 import com.mottainai.operacional.R;
 import com.mottainai.operacional.databinding.FragmentApproveSuggestionBinding;
-import com.mottainai.operacional.utils.AppLocales;
+import com.mottainai.operacional.network.ApiService;
+import com.mottainai.operacional.network.RetrofitClient;
+import com.mottainai.operacional.models.ApiSuggestionDecisionRequest;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import java.text.NumberFormat;
+import java.util.Locale;
 
 /**
  * Tela de decisão de uma sugestão da IA (aprovar/recusar).
  *
- * O SuggestionRepository só tem leitura (listenSuggestions); não existe ainda
- * endpoint para gravar a decisão. Os botões avisam "pendente", no mesmo padrão
- * que o resto do app já usa (ver ScannerFragment.openDamageRegistration).
+ * Decisions are persisted by the authenticated SQL API.
  */
 public class ApproveSuggestionFragment extends Fragment {
 
@@ -82,11 +86,39 @@ public class ApproveSuggestionFragment extends Fragment {
         binding.btnBack.setOnClickListener(v ->
                 Navigation.findNavController(view).popBackStack());
 
-        binding.btnApprove.setOnClickListener(v ->
-                Toast.makeText(requireContext(), R.string.suggestion_decision_pending, Toast.LENGTH_SHORT).show());
+        binding.btnApprove.setOnClickListener(v -> decide(view, args, "APPROVED"));
+        binding.btnReject.setOnClickListener(v -> decide(view, args, "REJECTED"));
+    }
 
-        binding.btnReject.setOnClickListener(v ->
-                Toast.makeText(requireContext(), R.string.suggestion_decision_pending, Toast.LENGTH_SHORT).show());
+    private void decide(View view, Bundle args, String decision) {
+        String id = args == null ? null : args.getString("suggestion_id");
+        if (id == null || id.trim().isEmpty()) {
+            Toast.makeText(requireContext(), "ID da sugestão ausente.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        binding.btnApprove.setEnabled(false);
+        binding.btnReject.setEnabled(false);
+        ApiService api = RetrofitClient.getClient(requireContext()).create(ApiService.class);
+        api.decideSuggestion(id, new ApiSuggestionDecisionRequest(decision)).enqueue(new Callback<com.mottainai.operacional.models.ApiSuggestionResponse>() {
+            @Override public void onResponse(Call<com.mottainai.operacional.models.ApiSuggestionResponse> call,
+                    Response<com.mottainai.operacional.models.ApiSuggestionResponse> response) {
+                if (!isAdded()) return;
+                if (response.isSuccessful() && response.body() != null) {
+                    Toast.makeText(requireContext(), decision.equals("APPROVED") ? "Sugestão aprovada." : "Sugestão recusada.", Toast.LENGTH_SHORT).show();
+                    androidx.navigation.Navigation.findNavController(view).popBackStack();
+                } else {
+                    binding.btnApprove.setEnabled(true);
+                    binding.btnReject.setEnabled(true);
+                    Toast.makeText(requireContext(), "API recusou a decisão (HTTP " + response.code() + ").", Toast.LENGTH_LONG).show();
+                }
+            }
+            @Override public void onFailure(Call<com.mottainai.operacional.models.ApiSuggestionResponse> call, Throwable error) {
+                if (!isAdded()) return;
+                binding.btnApprove.setEnabled(true);
+                binding.btnReject.setEnabled(true);
+                Toast.makeText(requireContext(), "Não foi possível salvar a decisão na API.", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private void updateFinalPrice(TextView view, Double currentPrice, Double discount) {
@@ -96,7 +128,7 @@ public class ApproveSuggestionFragment extends Fragment {
         }
         double finalPrice = currentPrice * (1 - discount / 100d);
         view.setText(getString(R.string.suggestion_final_price,
-                NumberFormat.getCurrencyInstance(AppLocales.PT_BR).format(finalPrice)));
+                NumberFormat.getCurrencyInstance(new Locale("pt", "BR")).format(finalPrice)));
     }
 
     @Override

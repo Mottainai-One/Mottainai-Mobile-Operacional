@@ -93,5 +93,45 @@ service cloud.firestore {
         && resource.data.storeID == request.auth.token.storeID
         && request.auth.token.role == 'DONO';
     }
+
+    // FCM registration belongs to the authenticated device owner. Store and
+    // role are bound to claims so a device cannot enroll for another store.
+    match /posNotificationDevices/{deviceId} {
+      allow read: if false;
+      allow create, update: if request.auth != null
+        && request.resource.data.ownerUid == request.auth.uid
+        && request.resource.data.storeID == request.auth.token.storeID
+        && request.resource.data.storeKey == string(request.auth.token.storeID)
+        && request.resource.data.role == request.auth.token.role
+        && request.resource.data.fcmToken is string
+        && request.resource.data.fcmToken.size() > 0
+        && request.resource.data.fcmToken.size() <= 4096;
+      allow delete: if request.auth != null
+        && resource.data.ownerUid == request.auth.uid;
+    }
+
+    // Only managers/owners can review requests in their own store. A decision
+    // is an immutable one-way transition from PENDING to APPROVED or REJECTED.
+    match /posApprovals/{requestId} {
+      function isStoreManager() {
+        return request.auth != null
+          && resource.data.storeKey == string(request.auth.token.storeID)
+          && request.auth.token.role in ['GERENTE', 'DONO', 'MANAGER', 'OWNER'];
+      }
+
+      allow read: if isStoreManager();
+      allow create, delete: if false;
+      allow update: if isStoreManager()
+        && resource.data.status == 'PENDING'
+        && request.resource.data.status in ['APPROVED', 'REJECTED']
+        && request.resource.data.storeID == resource.data.storeID
+        && request.resource.data.storeKey == resource.data.storeKey
+        && request.resource.data.requestId == resource.data.requestId
+        && request.resource.data.decisionUid == request.auth.uid
+        && request.resource.data.decisionAt == request.time
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'status', 'decisionUid', 'decisionObservation', 'decisionAt'
+        ]);
+    }
   }
 }

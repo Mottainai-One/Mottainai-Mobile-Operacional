@@ -1,43 +1,44 @@
 package com.mottainai.operacional.repository;
 
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
+import android.content.Context;
 import com.google.firebase.firestore.ListenerRegistration;
-import com.google.firebase.firestore.Query;
-
+import com.mottainai.operacional.models.ApiSuggestionResponse;
 import com.mottainai.operacional.models.Suggestion;
-
+import com.mottainai.operacional.network.ApiService;
+import com.mottainai.operacional.network.RetrofitClient;
 import java.util.ArrayList;
 import java.util.List;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class SuggestionRepository {
-
-    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-    public interface SuggestionCallback {
-        void onSuccess(List<Suggestion> suggestions);
-        void onError(Exception e);
-    }
+    private final ApiService api;
+    public interface SuggestionCallback { void onSuccess(List<Suggestion> suggestions); void onError(Exception e); }
+    public SuggestionRepository(Context context) { api = RetrofitClient.getClient(context).create(ApiService.class); }
 
     public ListenerRegistration listenSuggestions(String storeId, SuggestionCallback callback) {
-        return db.collection("suggestions")
-.whereEqualTo("storeID", storeId)
-                .whereEqualTo("status", "pending")
-                .addSnapshotListener((snapshots, error) -> {
-                    if (error != null) {
-                        callback.onError(error);
-                        return;
+        final int numericStoreId;
+        try { numericStoreId = Integer.parseInt(storeId); }
+        catch (Exception error) { callback.onError(new IllegalArgumentException("Loja operacional inválida.")); return () -> {}; }
+        Call<List<ApiSuggestionResponse>> call = api.getSuggestions(numericStoreId);
+        call.enqueue(new Callback<List<ApiSuggestionResponse>>() {
+            @Override public void onResponse(Call<List<ApiSuggestionResponse>> call, Response<List<ApiSuggestionResponse>> response) {
+                if (!response.isSuccessful() || response.body() == null) {
+                    callback.onError(new IllegalStateException("API de sugestões respondeu HTTP " + response.code())); return;
+                }
+                List<Suggestion> items = new ArrayList<>();
+                for (ApiSuggestionResponse dto : response.body()) {
+                    if (dto != null && (dto.status == null || "PENDING".equalsIgnoreCase(dto.status))) {
+                        items.add(Suggestion.fromApi(dto));
                     }
-                    List<Suggestion> suggestions = new ArrayList<>();
-                    if (snapshots != null) {
-                        for (DocumentSnapshot doc : snapshots.getDocuments()) {
-                            Suggestion suggestion = Suggestion.fromSnapshot(doc);
-                            if (suggestion != null) {
-                                suggestions.add(suggestion);
-                            }
-                        }
-                    }
-                    callback.onSuccess(suggestions);
-                });
+                }
+                callback.onSuccess(items);
+            }
+            @Override public void onFailure(Call<List<ApiSuggestionResponse>> call, Throwable error) {
+                callback.onError(new Exception("Falha ao consultar sugestões da API operacional.", error));
+            }
+        });
+        return call::cancel;
     }
 }

@@ -20,9 +20,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GetTokenResult;
 import com.mottainai.operacional.R;
 import com.mottainai.operacional.databinding.FragmentChatAiBinding;
 import com.mottainai.operacional.adapters.ChatMessageAdapter;
@@ -47,8 +44,8 @@ import retrofit2.Response;
 /**
  * Conversa operacional com a Mottainai-IA.
  *
- * O app envia o ID token Firebase diretamente à IA. A IA verifica a assinatura
- * e resolve usuário, empresa e perfil no banco operacional oficial.
+ * O app envia à IA o access token operacional emitido pela API SQL. A IA
+ * verifica a assinatura e vincula o UID Firebase ao contexto RLS do banco.
  */
 public class ChatAiFragment extends Fragment {
 
@@ -229,26 +226,26 @@ public class ChatAiFragment extends Fragment {
     }
 
     private void requestAiAccessToken(RetryAction errorAction, AiTokenCallback callback) {
-        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (firebaseUser == null) {
-            showRequestError("Sua sessão expirou. Entre novamente para conversar com a IA.", errorAction);
+        if (sessionManager.getApiRefreshToken() == null || sessionManager.getApiRefreshToken().trim().isEmpty()) {
+            showRequestError("Sua sessão operacional expirou. Entre novamente para conversar com a IA.",
+                    errorAction);
             return;
         }
 
-        firebaseUser.getIdToken(false).addOnCompleteListener(task -> {
-            if (!isAdded()) return;
-            if (!task.isSuccessful() || task.getResult() == null || task.getResult().getToken() == null) {
-                showRequestError("Não foi possível validar sua sessão. Entre novamente e tente de novo.",
-                        errorAction);
-                return;
-            }
-
-            GetTokenResult tokenResult = task.getResult();
-            sessionManager.saveToken(tokenResult.getToken());
-            RetrofitClient.clear();
-
-            callback.onToken(tokenResult.getToken());
-        });
+        android.content.Context appContext = requireContext().getApplicationContext();
+        androidx.fragment.app.FragmentActivity activity = requireActivity();
+        new Thread(() -> {
+            String accessToken = RetrofitClient.refreshApiAccessToken(appContext);
+            activity.runOnUiThread(() -> {
+                if (!isAdded()) return;
+                if (accessToken == null || accessToken.trim().isEmpty()) {
+                    showRequestError("Não foi possível renovar sua sessão operacional. Tente entrar novamente.",
+                            errorAction);
+                    return;
+                }
+                callback.onToken(accessToken);
+            });
+        }, "ai-api-token-refresh").start();
     }
 
     private void retryLastRequest() {

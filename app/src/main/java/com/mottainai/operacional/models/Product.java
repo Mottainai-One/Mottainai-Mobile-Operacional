@@ -1,13 +1,10 @@
 package com.mottainai.operacional.models;
 
 import com.google.gson.annotations.SerializedName;
+import java.math.BigDecimal;
 
 /**
- * Modelo de domínio usado pela UI (lista/detalhe).
- * Campos sku, quantity, batch, expiry_date vêm de contrato pendente.
- * API atual (/api/v1/products) retorna apenas: id, categoryId, barcode, name, etc. (ver ProductResponse).
- * Campos de inventário (quantity, minQuantity, batch, expiryDate, storeId, imageUrl) são mockáveis
- * via MockProductRepository até /api/v1/inventory existir. Não simular sucesso em produção.
+ * Product catalog fields plus stock data populated from the operational API.
  */
 public class Product {
     @SerializedName("id")
@@ -39,6 +36,15 @@ public class Product {
 
     @SerializedName("store_id")
     private String storeId;
+
+    private Integer categoryId;
+    private Integer taxProfileId;
+    private String ncm;
+    private String cest;
+    private Integer version;
+    private boolean active = true;
+    private String unitMeasure;
+    private BigDecimal weight;
 
     @SerializedName("created_at")
     private String createdAt;
@@ -77,6 +83,22 @@ public class Product {
 
     public String getStoreId() { return storeId; }
     public void setStoreId(String storeId) { this.storeId = storeId; }
+    public Integer getCategoryId() { return categoryId; }
+    public void setCategoryId(Integer categoryId) { this.categoryId = categoryId; }
+    public Integer getTaxProfileId() { return taxProfileId; }
+    public void setTaxProfileId(Integer taxProfileId) { this.taxProfileId = taxProfileId; }
+    public String getNcm() { return ncm; }
+    public void setNcm(String ncm) { this.ncm = ncm; }
+    public String getCest() { return cest; }
+    public void setCest(String cest) { this.cest = cest; }
+    public Integer getVersion() { return version; }
+    public void setVersion(Integer version) { this.version = version; }
+    public boolean isActive() { return active; }
+    public void setActive(boolean active) { this.active = active; }
+    public String getUnitMeasure() { return unitMeasure; }
+    public void setUnitMeasure(String unitMeasure) { this.unitMeasure = unitMeasure; }
+    public BigDecimal getWeight() { return weight; }
+    public void setWeight(BigDecimal weight) { this.weight = weight; }
 
     public String getCreatedAt() { return createdAt; }
     public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }

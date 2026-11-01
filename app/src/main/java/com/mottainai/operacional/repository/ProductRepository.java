@@ -39,6 +39,14 @@ public class ProductRepository {
         Product p = new Product();
         if (dto.getId() != null) p.setId(String.valueOf(dto.getId()));
         p.setName(dto.getName());
+        p.setUnitMeasure(dto.getUnitMeasure());
+        p.setWeight(dto.getWeight());
+        p.setCategoryId(dto.getCategoryId());
+        p.setTaxProfileId(dto.getTaxProfileId());
+        p.setNcm(dto.getNcm());
+        p.setCest(dto.getCest());
+        p.setVersion(dto.getVersion());
+        p.setActive(Boolean.TRUE.equals(dto.getActive()));
         // SKU na UI = barcode da API (código escaneável). Campo barcode é a fonte pública.
         p.setSku(dto.getBarcode());
         // Campos de inventário não retornados por /api/v1/products.
@@ -48,8 +56,8 @@ public class ProductRepository {
         p.setSupplier(dto.getBrand());
         // storeId: deve ser derivado do Firebase ID token no backend, não enviado pelo cliente.
         // Não confiar em storeId livre; manter null até contrato confirmar filtro por loja.
-        // imageUrl, batch, expiryDate: sem contrato, permanecem null/vazio.
-        p.setImageUrl(null);
+        // Imagens vêm da imageUrl persistida pela API; lote e validade ainda não fazem parte deste contrato.
+        p.setImageUrl(dto.getImageUrl());
         p.setBatch(null);
         p.setExpiryDate(null);
         p.setStoreId(null);
@@ -66,22 +74,37 @@ public class ProductRepository {
         return out;
     }
 
-    /** Lista produtos. Backend pode retornar Page; convertemos para List para UI. */
+    /** Carrega o catálogo completo para a lista e sua busca local. */
     public void fetchProducts(String storeId, ProductListCallback callback) {
-        // storeId ignorado aqui porque API Spring deriva loja do token; ver contrato pendente.
-        apiService.getProductsPaged(0, 50).enqueue(new Callback<PageResponse<ProductResponse>>() {
+        fetchCatalogPage(0, new ArrayList<>(), callback);
+    }
+
+    private void fetchCatalogPage(int page, List<Product> products, ProductListCallback callback) {
+        apiService.getProducts(page, 50, "id,asc", null).enqueue(new Callback<PageResponse<ProductResponse>>() {
             @Override
             public void onResponse(Call<PageResponse<ProductResponse>> call, Response<PageResponse<ProductResponse>> response) {
-                if (response.isSuccessful() && response.body() != null && response.body().getContent() != null) {
-                    callback.onSuccess(mapList(response.body().getContent()));
-                } else {
+                PageResponse<ProductResponse> body = response.body();
+                if (!response.isSuccessful() || body == null || body.getContent() == null) {
                     callback.onError(mapHttpError(response.code()));
+                    return;
+                }
+                if (body.getNumber() != page) {
+                    callback.onError("A API retornou uma página de produtos inesperada.");
+                    return;
+                }
+                products.addAll(mapList(body.getContent()));
+                if (body.isLast() || page + 1 >= body.getTotalPages()) {
+                    callback.onSuccess(products);
+                } else if (body.getContent().isEmpty()) {
+                    callback.onError("A API retornou uma página vazia antes do fim do catálogo.");
+                } else {
+                    fetchCatalogPage(page + 1, products, callback);
                 }
             }
 
             @Override
             public void onFailure(Call<PageResponse<ProductResponse>> call, Throwable t) {
-                callback.onError("Erro de rede: " + t.getMessage());
+                callback.onError("Não foi possível carregar o catálogo completo. Tente novamente.");
             }
         });
     }
@@ -145,14 +168,14 @@ public class ProductRepository {
     /**
      * O modelo legado {@link Product} não representa todos os campos do contrato
      * de produto. Em particular, SKU e fornecedor não podem ser enviados como
-     * barcode e marca. As gravações na API devem usar ProductUpsertRequest.
+     * barcode e marca. As gravações usam ProductCreateRequest/ProductUpdateRequest.
      */
     @Deprecated
     public void createProduct(Product product, ProductCallback callback) {
-        callback.onError("Use ProductUpsertRequest para cadastrar produtos na API.");
+        callback.onError("Use ProductCreateRequest para cadastrar produtos na API.");
     }
 
-    public void createProduct(com.mottainai.operacional.models.ProductUpsertRequest request, ProductCallback callback) {
+    public void createProduct(com.mottainai.operacional.models.ProductCreateRequest request, ProductCallback callback) {
         apiService.createProduct(request).enqueue(new Callback<ProductResponse>() {
             @Override
             public void onResponse(Call<ProductResponse> call, Response<ProductResponse> response) {
@@ -170,13 +193,19 @@ public class ProductRepository {
         });
     }
 
+    /** Legacy mock-fixture contract. Real form code uses ProductCreateRequest. */
+    @Deprecated
+    public void createProduct(com.mottainai.operacional.models.ProductUpsertRequest request, ProductCallback callback) {
+        callback.onError("Use ProductCreateRequest para cadastrar produtos na API.");
+    }
+
     /** @see #createProduct(Product, ProductCallback) */
     @Deprecated
     public void updateProduct(String productId, Product product, ProductCallback callback) {
-        callback.onError("Use ProductUpsertRequest para editar produtos na API.");
+        callback.onError("Use ProductUpdateRequest para editar produtos na API.");
     }
 
-    public void updateProduct(String productId, com.mottainai.operacional.models.ProductUpsertRequest request, ProductCallback callback) {
+    public void updateProduct(String productId, com.mottainai.operacional.models.ProductUpdateRequest request, ProductCallback callback) {
         apiService.updateProduct(productId, request).enqueue(new Callback<ProductResponse>() {
             @Override
             public void onResponse(Call<ProductResponse> call, Response<ProductResponse> response) {
@@ -192,6 +221,12 @@ public class ProductRepository {
                 callback.onError("Erro de rede: " + t.getMessage());
             }
         });
+    }
+
+    /** Legacy mock-fixture contract. Real form code uses ProductUpdateRequest. */
+    @Deprecated
+    public void updateProduct(String productId, com.mottainai.operacional.models.ProductUpsertRequest request, ProductCallback callback) {
+        callback.onError("Use ProductUpdateRequest para editar produtos na API.");
     }
 
     private String mapHttpError(int code) {

@@ -1,0 +1,21 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "posApprovals",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "storeKey", "order": "ASCENDING" },
+        { "fieldPath": "status", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "posNotificationDevices",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "storeKey", "order": "ASCENDING" },
+        { "fieldPath": "role", "order": "ASCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}
