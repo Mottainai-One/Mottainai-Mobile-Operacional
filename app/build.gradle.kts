@@ -34,6 +34,12 @@ android {
         versionCode = 1
         versionName = "1.0"
 
+        buildConfigField(
+            "String",
+            "REDIS_API_BASE_URL",
+            "\"${localOrGradleProperty("redisApiBaseUrl", "http://127.0.0.1:18082/").trimEnd('/')}\""
+        )
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 

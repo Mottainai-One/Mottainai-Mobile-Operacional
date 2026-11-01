@@ -49,6 +49,24 @@ public class RetrofitClient {
         return retrofit;
     }
 
+    /** Redis uses the operational JWT; refresh remains on the SQL API. */
+    public static Retrofit getRedisClient(Context context) {
+        String url = BuildConfig.REDIS_API_BASE_URL;
+        if (url == null || url.trim().isEmpty()) {
+            throw new IllegalStateException("Servico de notificacoes nao configurado.");
+        }
+        okhttp3.HttpUrl parsed = okhttp3.HttpUrl.parse(url);
+        if (parsed == null || (!BuildConfig.DEBUG && !parsed.isHttps())) {
+            throw new IllegalStateException("Endereco do servico de notificacoes invalido.");
+        }
+        return new Retrofit.Builder().baseUrl(url.endsWith("/") ? url : url + "/")
+                .client(new OkHttpClient.Builder()
+                        .addInterceptor(new AuthInterceptor(context.getApplicationContext()))
+                        .connectTimeout(15, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS)
+                        .build())
+                .addConverterFactory(GsonConverterFactory.create()).build();
+    }
+
     /** Força recriação após troca de token/baseUrl (ex.: logout/login). */
     public static void clear() {
         retrofit = null;

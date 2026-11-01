@@ -77,7 +77,8 @@ public class MainActivity extends AppCompatActivity {
                     || destination.getId() == R.id.newSupplierFragment
                     || destination.getId() == R.id.editSupplierFragment
                     || destination.getId() == R.id.supplierSavedFragment;
-            boolean reportsFlow = destination.getId() == R.id.reportsFragment
+            boolean reportsFlow = destination.getId() == R.id.notificationInboxFragment
+                    || destination.getId() == R.id.reportsFragment
                     || destination.getId() == R.id.teamFragment
                     || destination.getId() == R.id.managerConferencesFragment
                     || destination.getId() == R.id.stockTasksFragment
@@ -90,8 +91,7 @@ public class MainActivity extends AppCompatActivity {
             binding.opLogo.setVisibility(home ? View.VISIBLE : View.GONE);
             binding.opHeaderTitle.setVisibility(home ? View.GONE : View.VISIBLE);
             binding.btnTheme.setVisibility(home || profile ? View.VISIBLE : View.GONE);
-            binding.btnPosApprovals.setVisibility(home && RoleHelper.canApprovePosRequests(session.getRole())
-                    ? View.VISIBLE : View.GONE);
+            binding.btnPosApprovals.setVisibility(home ? View.VISIBLE : View.GONE);
             binding.btnBack.setVisibility(accountFlow || supplierFlow || reportsFlow ? View.VISIBLE : View.GONE);
             binding.btnAssistant.setVisibility(accountFlow || supplierFlow || reportsFlow ? View.GONE : View.VISIBLE);
             if (destination.getId() == R.id.productsListFragment) {
@@ -106,7 +106,16 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView bottomNav = binding.bottomNav;
         NavigationUI.setupWithNavController(bottomNav, navController);
         binding.btnTheme.setOnClickListener(v -> ThemeSettings.toggle(this));
-        binding.btnPosApprovals.setOnClickListener(v -> navigateIfNeeded(R.id.posApprovalsFragment, null));
+        binding.btnPosApprovals.setOnClickListener(v -> {
+            if (RoleHelper.canApprovePosRequests(session.getRole())) {
+                new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                        .setItems(new String[]{"Notificações", "Aprovações do caixa"}, (dialog, which) ->
+                                navigateIfNeeded(which == 0 ? R.id.notificationInboxFragment : R.id.posApprovalsFragment, null))
+                        .show();
+            } else {
+                navigateIfNeeded(R.id.notificationInboxFragment, null);
+            }
+        });
         binding.btnBack.setOnClickListener(v -> {
             if (navController.getCurrentDestination() != null
                     && navController.getCurrentDestination().getId() == R.id.supplierSavedFragment) {

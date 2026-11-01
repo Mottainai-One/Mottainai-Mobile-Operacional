@@ -74,22 +74,37 @@ public class ProductRepository {
         return out;
     }
 
-    /** Lista produtos. Backend pode retornar Page; convertemos para List para UI. */
+    /** Carrega o catálogo completo para a lista e sua busca local. */
     public void fetchProducts(String storeId, ProductListCallback callback) {
-        // storeId ignorado aqui porque API Spring deriva loja do token; ver contrato pendente.
-        apiService.getProductsPaged(0, 50).enqueue(new Callback<PageResponse<ProductResponse>>() {
+        fetchCatalogPage(0, new ArrayList<>(), callback);
+    }
+
+    private void fetchCatalogPage(int page, List<Product> products, ProductListCallback callback) {
+        apiService.getProducts(page, 50, "id,asc", null).enqueue(new Callback<PageResponse<ProductResponse>>() {
             @Override
             public void onResponse(Call<PageResponse<ProductResponse>> call, Response<PageResponse<ProductResponse>> response) {
-                if (response.isSuccessful() && response.body() != null && response.body().getContent() != null) {
-                    callback.onSuccess(mapList(response.body().getContent()));
-                } else {
+                PageResponse<ProductResponse> body = response.body();
+                if (!response.isSuccessful() || body == null || body.getContent() == null) {
                     callback.onError(mapHttpError(response.code()));
+                    return;
+                }
+                if (body.getNumber() != page) {
+                    callback.onError("A API retornou uma página de produtos inesperada.");
+                    return;
+                }
+                products.addAll(mapList(body.getContent()));
+                if (body.isLast() || page + 1 >= body.getTotalPages()) {
+                    callback.onSuccess(products);
+                } else if (body.getContent().isEmpty()) {
+                    callback.onError("A API retornou uma página vazia antes do fim do catálogo.");
+                } else {
+                    fetchCatalogPage(page + 1, products, callback);
                 }
             }
 
             @Override
             public void onFailure(Call<PageResponse<ProductResponse>> call, Throwable t) {
-                callback.onError("Erro de rede: " + t.getMessage());
+                callback.onError("Não foi possível carregar o catálogo completo. Tente novamente.");
             }
         });
     }

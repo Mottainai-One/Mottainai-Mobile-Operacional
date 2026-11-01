@@ -415,4 +415,5 @@
     <string name="op_rules_local_note">Estas regras são guardadas neste dispositivo e ainda não alteram a automação da loja.</string>
     <string name="op_invite_unavailable">Convites ainda não estão disponíveis neste aplicativo.</string>
     <string name="op_team_edit_unavailable">Alterações na equipe ainda não estão disponíveis neste aplicativo.</string>
+    <string name="op_open_notifications">Abrir notificações</string>
 </resources>
