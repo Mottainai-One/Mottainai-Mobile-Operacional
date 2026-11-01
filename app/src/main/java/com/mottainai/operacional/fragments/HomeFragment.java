@@ -17,15 +17,23 @@ import com.mottainai.operacional.R;
 import com.mottainai.operacional.adapters.AlertAdapter;
 import com.mottainai.operacional.databinding.FragmentHomeBinding;
 import com.mottainai.operacional.models.Alert;
+import com.mottainai.operacional.models.SalesSummaryResponse;
 import com.mottainai.operacional.models.Suggestion;
 import com.mottainai.operacional.models.User;
+import com.mottainai.operacional.repository.SalesSummaryRepository;
 import com.mottainai.operacional.repository.UserRepository;
 import com.mottainai.operacional.utils.Constants;
 import com.mottainai.operacional.utils.RoleHelper;
 import com.mottainai.operacional.utils.SessionManager;
 import com.mottainai.operacional.viewmodels.HomeViewModel;
 
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /** Entrada por perfil da seção Mobile Operacional. Os dados visíveis vêm das fontes existentes. */
 public class HomeFragment extends Fragment {
@@ -35,6 +43,7 @@ public class HomeFragment extends Fragment {
     private NavController navController;
     private AlertAdapter stockAlerts;
     private AlertAdapter managerAlerts;
+    private Call<SalesSummaryResponse> salesSummaryCall;
 
     @Nullable
     @Override
@@ -90,6 +99,10 @@ public class HomeFragment extends Fragment {
         binding.managerTasks.value.setText(R.string.op_data_unavailable);
         binding.managerTeam.value.setText(R.string.op_data_unavailable);
 
+        if (Constants.ROLE_DONO.equals(role)) {
+            loadOwnerSales();
+        }
+
         if (Constants.ROLE_GERENTE.equals(role) && storeId != null && !storeId.trim().isEmpty()) {
             new UserRepository().listTeam(storeId, new UserRepository.TeamCallback() {
                 @Override public void onSuccess(List<User> users) {
@@ -113,6 +126,38 @@ public class HomeFragment extends Fragment {
         binding.rvStockAlerts.setAdapter(stockAlerts);
         binding.rvManagerAlerts.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.rvManagerAlerts.setAdapter(managerAlerts);
+    }
+
+    private void loadOwnerSales() {
+        binding.ownerSales.setText(R.string.op_sales_loading);
+        Integer storeId;
+        try {
+            storeId = Integer.valueOf(session.getStoreId());
+        } catch (RuntimeException error) {
+            binding.ownerSales.setText(R.string.op_data_unavailable);
+            return;
+        }
+        salesSummaryCall = new SalesSummaryRepository(requireContext()).getCurrentMonth(storeId);
+        salesSummaryCall.enqueue(new Callback<SalesSummaryResponse>() {
+            @Override
+            public void onResponse(Call<SalesSummaryResponse> call, Response<SalesSummaryResponse> response) {
+                if (binding == null) return;
+                SalesSummaryResponse summary = response.body();
+                if (!response.isSuccessful() || summary == null || summary.getTotalAmount() == null) {
+                    binding.ownerSales.setText(R.string.op_data_unavailable);
+                    return;
+                }
+                NumberFormat currency = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+                binding.ownerSales.setText(currency.format(summary.getTotalAmount()));
+            }
+
+            @Override
+            public void onFailure(Call<SalesSummaryResponse> call, Throwable error) {
+                if (binding != null && !call.isCanceled()) {
+                    binding.ownerSales.setText(R.string.op_data_unavailable);
+                }
+            }
+        });
     }
 
     private void setupActions() {
@@ -205,6 +250,10 @@ public class HomeFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
+        if (salesSummaryCall != null) {
+            salesSummaryCall.cancel();
+            salesSummaryCall = null;
+        }
         super.onDestroyView();
         binding = null;
     }

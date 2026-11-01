@@ -23,6 +23,10 @@ public interface ApiService {
     @GET("api/v1/auth/profile")
     Call<com.mottainai.operacional.models.ApiUserProfile> getOperationalProfile();
 
+    @GET("api/v1/sales/summary")
+    Call<com.mottainai.operacional.models.SalesSummaryResponse> getCurrentMonthSalesSummary(
+            @Query("storeId") Integer storeId);
+
     @POST("api/v1/auth/refresh")
     Call<com.mottainai.operacional.models.ApiTokenResponse> refreshOperationalToken(
             @Body com.mottainai.operacional.models.ApiRefreshRequest request);

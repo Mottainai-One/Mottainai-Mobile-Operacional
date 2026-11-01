@@ -160,7 +160,8 @@
     <string name="op_stock_attention">Atenção no estoque</string>
     <string name="op_month_sales">VENDAS DO MÊS</string>
     <string name="op_data_unavailable">—</string>
-    <string name="op_sales_not_connected">Dados de vendas ainda não conectados.</string>
+    <string name="op_sales_loading">Carregando vendas…</string>
+    <string name="op_sales_caption">Vendas concluídas neste mês</string>
     <string name="op_store_products">Produtos da sua loja</string>
     <string name="op_open_inventory">Ver inventário →</string>
     <string name="op_risk_summary">Risco e valor preservado\nConsultar resumo da loja →</string>
