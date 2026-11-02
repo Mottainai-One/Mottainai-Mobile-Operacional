@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.mottainai.operacional.R;
 import com.mottainai.operacional.network.RedisNotificationApi;
 import com.mottainai.operacional.network.RetrofitClient;
 import retrofit2.Call;
