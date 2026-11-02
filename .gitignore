@@ -14,6 +14,7 @@
 .cxx
 local.properties
 /functions/node_modules
+/functions/.env*
 
 # Firebase/Google service account keys (NUNCA commitar)
 *-firebase-adminsdk-*.json

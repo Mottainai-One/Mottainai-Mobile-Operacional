@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.mottainai.operacional.network.RedisNotificationApi;
 import com.mottainai.operacional.network.RetrofitClient;
@@ -92,9 +93,14 @@ public class NotificationInboxFragment extends Fragment {
     }
 
     private void open(RedisNotificationApi.Item item) {
-        detail = new MaterialAlertDialogBuilder(requireContext())
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(item.title).setMessage(item.body).setNegativeButton("Fechar", null)
-                .setPositiveButton("Marcar como lida", (dialog, which) -> markRead(item.id)).show();
+                .setPositiveButton("Marcar como lida", (dialog, which) -> markRead(item.id));
+        if (item.id.startsWith("pos-approval-")) {
+            builder.setNeutralButton("Abrir aprovações", (dialog, which) ->
+                    NavHostFragment.findNavController(this).navigate(R.id.posApprovalsFragment));
+        }
+        detail = builder.show();
     }
 
     private void markRead(String id) {

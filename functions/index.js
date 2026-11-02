@@ -7,6 +7,7 @@ const { defineSecret } = require('firebase-functions/params');
 admin.initializeApp();
 
 const posApprovalApiSecret = defineSecret('POS_APPROVAL_API_SECRET');
+const redisNotificationApiSecret = defineSecret('REDIS_NOTIFICATION_API_SECRET');
 
 // Normaliza role para MAIÚSCULAS (DONO, GERENTE, FUNCIONARIO, ...)
 function normalizeRole(role) {
@@ -89,6 +90,48 @@ function approvalMessage(request) {
   }
 }
 
+async function publishApprovalToRedis(request, recipients, secret) {
+  const endpoint = process.env.REDIS_NOTIFICATION_API_URL || '';
+  let parsed;
+  try { parsed = new URL(endpoint); } catch (_) { parsed = null; }
+  if (!parsed || parsed.protocol !== 'https:' || !secret) {
+    throw new Error('Redis notification API is not configured with HTTPS and a secret.');
+  }
+  if (!Array.isArray(recipients) || recipients.length === 0) {
+    throw new Error('No active manager recipients were supplied.');
+  }
+
+  const body = approvalMessage(request);
+  await Promise.all(recipients.map(async (recipient) => {
+    const companyId = Number(recipient.companyId);
+    const userId = Number(recipient.userId);
+    if (!Number.isSafeInteger(companyId) || companyId < 1
+        || !Number.isSafeInteger(userId) || userId < 1) {
+      throw new Error('Invalid manager notification recipient.');
+    }
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'X-Mottainai-Notification-Secret': secret
+      },
+      body: JSON.stringify({
+        companyId,
+        userId,
+        id: `pos-approval-${request.requestId}-${userId}`,
+        title: 'Autorização necessária no PDV',
+        body,
+        priority: 3
+      }),
+      signal: AbortSignal.timeout(10000)
+    });
+    if (!response.ok) {
+      throw new Error(`Redis notification API returned HTTP ${response.status}.`);
+    }
+  }));
+  return recipients.length;
+}
+
 async function sendApprovalToTokens(request, deviceSnapshots) {
   const devices = deviceSnapshots.filter((doc) => {
     const data = doc.data();
@@ -131,7 +174,7 @@ async function sendApprovalToTokens(request, deviceSnapshots) {
 }
 
 exports.posApprovalBridge = onRequest(
-  { region: 'southamerica-east1', secrets: [posApprovalApiSecret] },
+  { region: 'southamerica-east1', secrets: [posApprovalApiSecret, redisNotificationApiSecret] },
   async (req, res) => {
     if (req.method !== 'POST') return res.status(405).json({ error: 'method_not_allowed' });
     if (!sameSecret(req.get('X-Mottainai-Pos-Secret'), posApprovalApiSecret.value())) {
@@ -167,6 +210,7 @@ exports.posApprovalBridge = onRequest(
           && !(request.discountPercent > 0 && request.discountPercent <= 100))) {
         return res.status(400).json({ error: 'invalid_approval_details' });
       }
+      request.recipients = Array.isArray(body.recipients) ? body.recipients : [];
 
       const db = admin.firestore();
       const reference = db.collection('posApprovals').doc(request.requestId);
@@ -182,7 +226,8 @@ exports.posApprovalBridge = onRequest(
         transaction.create(reference, {
           ...request,
           createdAt: admin.firestore.FieldValue.serverTimestamp(),
-          notificationDeliveryPending: true
+          notificationDeliveryPending: true,
+          redisNotificationDeliveryPending: true
         });
         return 'PENDING';
       });
@@ -190,6 +235,13 @@ exports.posApprovalBridge = onRequest(
       if (existingStatus !== 'PENDING') {
         return res.status(200).json({ requestId, status: existingStatus, recipients: 0 });
       }
+
+      const redisRecipients = await publishApprovalToRedis(
+        request, request.recipients, redisNotificationApiSecret.value());
+      await reference.update({
+        redisNotificationDeliveryPending: false,
+        lastRedisNotificationAttemptAt: admin.firestore.FieldValue.serverTimestamp()
+      });
 
       const devices = await db.collection('posNotificationDevices')
         .where('storeKey', '==', request.storeKey)
@@ -200,7 +252,7 @@ exports.posApprovalBridge = onRequest(
         notificationDeliveryPending: recipients === 0,
         lastNotificationAttemptAt: admin.firestore.FieldValue.serverTimestamp()
       });
-      return res.status(200).json({ requestId, status: 'PENDING', recipients });
+      return res.status(200).json({ requestId, status: 'PENDING', recipients, redisRecipients });
     }
 
     if (body.operation === 'decisions') {
