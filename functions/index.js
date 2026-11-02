@@ -176,9 +176,14 @@ async function sendApprovalToTokens(request, deviceSnapshots) {
 function cashMovementMessage(request) {
   const label = request.movementType === 'SUPRIMENTO' ? 'Suprimento' : 'Sangria';
   const amount = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(request.amount);
+  const timestamp = new Intl.DateTimeFormat('pt-BR', {
+    dateStyle: 'short',
+    timeStyle: 'short',
+    timeZone: 'America/Sao_Paulo'
+  }).format(new Date(request.movementDate));
   return {
     title: label + ' registrado no PDV',
-    body: amount + '. Motivo: ' + request.reason
+    body: amount + '. Loja ' + request.storeID + '. ' + timestamp + '. Motivo: ' + request.reason
   };
 }
 
@@ -228,6 +233,9 @@ async function sendCashMovementToTokens(request, deviceSnapshots) {
       entityId: String(request.movementId),
       movementId: String(request.movementId),
       movementType: request.movementType,
+      amount: String(request.amount),
+      reason: request.reason,
+      movementDate: request.movementDate,
       storeID: request.storeID
     },
     android: { priority: 'high' }
