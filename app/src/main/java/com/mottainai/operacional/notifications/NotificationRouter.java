@@ -1,183 +1,40 @@
 package com.mottainai.operacional.notifications;
-
-import android.Manifest;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Build;
-
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.core.content.ContextCompat;
-
-import com.google.firebase.messaging.RemoteMessage;
-import com.mottainai.operacional.MainActivity;
-import com.mottainai.operacional.R;
-import com.mottainai.operacional.repository.NotificationRepository;
-import com.mottainai.operacional.utils.NotificationPreferences;
 import com.mottainai.operacional.utils.RoleHelper;
-import com.mottainai.operacional.utils.SessionManager;
-
 import java.util.Locale;
 import java.util.Map;
 
-/** Converts a validated FCM payload into one authorized in-app destination. */
+/** Authorized navigation for the real internal notification inbox. No FCM or system push. */
 public final class NotificationRouter {
-
-    public static final String EXTRA_DESTINATION = "notification_destination";
-    public static final String EXTRA_ENTITY_ID = "notification_entity_id";
-    public static final String EXTRA_NOTIFICATION_ID = "notification_id";
-
+    private NotificationRouter(){}
+    public static final String EXTRA_DESTINATION="notification_destination";
+    public static final String EXTRA_ENTITY_ID="notification_entity_id";
+    public static final String EXTRA_NOTIFICATION_ID="notification_id";
     public enum Destination {
-        HOME,
-        PRODUCT,
-        DAMAGE,
-        ALERT,
-        SUGGESTION,
-        INVENTORY,
-        POS_APPROVAL;
-
-        public static Destination fromPayload(Map<String, String> data) {
-            String value = firstNonBlank(data.get("notificationType"), data.get("type"), data.get("route"));
-            if (value == null) return HOME;
-
-            switch (value.trim().toLowerCase(Locale.ROOT)) {
-                case "product":
-                case "products":
-                    return PRODUCT;
-                case "damage":
-                case "damages":
-                case "avaria":
-                    return DAMAGE;
-                case "alert":
-                case "alerts":
-                case "ia/alerts":
-                    return ALERT;
-                case "suggestion":
-                case "suggestions":
-                case "ia/suggestions":
-                    return SUGGESTION;
-                case "inventory":
-                case "inventario":
-                    return INVENTORY;
-                case "pos_approval":
-                case "pos_approvals":
-                    return POS_APPROVAL;
-                default:
-                    return HOME;
+        HOME,PRODUCT,DAMAGE,ALERT,SUGGESTION,INVENTORY,POS_APPROVAL;
+        public static Destination fromPayload(Map<String,String> data){
+            String value=data.get("notificationType");if(value==null)value=data.get("type");if(value==null)value=data.get("route");
+            if(value==null)return HOME;
+            switch(value.trim().toLowerCase(Locale.ROOT)){
+                case "product":case "products":return PRODUCT;
+                case "damage":case "damages":case "avaria":return DAMAGE;
+                case "alert":case "alerts":case "ia/alerts":return ALERT;
+                case "suggestion":case "suggestions":case "ia/suggestions":return SUGGESTION;
+                case "inventory":case "inventario":return INVENTORY;
+                case "pos_approval":case "pos_approvals":return POS_APPROVAL;
+                default:return HOME;
             }
         }
     }
-
-    private final Context context;
-    private final SessionManager sessionManager;
-    private final NotificationRepository notificationRepository;
-    private final NotificationPreferences notificationPreferences;
-
-    public NotificationRouter(Context context) {
-        this.context = context.getApplicationContext();
-        sessionManager = new SessionManager(this.context);
-        notificationRepository = new NotificationRepository(this.context);
-        notificationPreferences = new NotificationPreferences(this.context);
+    public static Destination destinationFromIntent(Intent intent){
+        if(intent==null)return null;
+        String value=intent.getStringExtra(EXTRA_DESTINATION);if(value==null)return null;
+        try{return Destination.valueOf(value);}catch(IllegalArgumentException error){return null;}
     }
-
-    public void show(RemoteMessage message) {
-        if (!sessionManager.hasCompleteProfile()) return;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-                && ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
-                != PackageManager.PERMISSION_GRANTED) return;
-
-        Map<String, String> data = message.getData();
-        Destination destination = Destination.fromPayload(data);
-        if (!isDestinationAllowed(destination, sessionManager.getRole())) return;
-        if (!isDestinationEnabledByUser(destination)) return;
-
-        String notificationId = firstNonBlank(data.get("notificationId"), message.getMessageId());
-        if (!notificationRepository.registerNotificationIfNew(notificationId)) return;
-
-        NotificationChannelManager.ensureChannels(context);
-        RemoteMessage.Notification remoteNotification = message.getNotification();
-        String title = firstNonBlank(data.get("title"),
-                remoteNotification == null ? null : remoteNotification.getTitle(),
-                context.getString(R.string.notification_default_title));
-        String body = firstNonBlank(data.get("body"),
-                remoteNotification == null ? null : remoteNotification.getBody(),
-                context.getString(R.string.notification_default_body));
-
-        Intent intent = new Intent(context, MainActivity.class)
-                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                .putExtra(EXTRA_DESTINATION, destination.name())
-                .putExtra(EXTRA_ENTITY_ID, firstNonBlank(data.get("entityId"), data.get("id")))
-                .putExtra(EXTRA_NOTIFICATION_ID, notificationId);
-        int pendingIntentFlags = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE;
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, notificationRequestCode(notificationId),
-                intent, pendingIntentFlags);
-
-        NotificationCompat.Builder notification = new NotificationCompat.Builder(context,
-                NotificationChannelManager.channelFor(destination))
-                .setSmallIcon(R.drawable.ic_notification)
-                .setColor(ContextCompat.getColor(context, R.color.primary_green))
-                .setContentTitle(title)
-                .setContentText(body)
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
-                .setContentIntent(pendingIntent)
-                .setAutoCancel(true)
-                .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
-                .setCategory(NotificationCompat.CATEGORY_STATUS);
-
-        NotificationManagerCompat.from(context)
-                .notify(notificationRequestCode(notificationId), notification.build());
-    }
-
-    public static Destination destinationFromIntent(Intent intent) {
-        if (intent == null) return null;
-        String value = intent.getStringExtra(EXTRA_DESTINATION);
-        if (value == null) return null;
-        try {
-            return Destination.valueOf(value);
-        } catch (IllegalArgumentException ignored) {
-            return null;
-        }
-    }
-
-    public static boolean isDestinationAllowed(Destination destination, String role) {
-        if (role == null || role.trim().isEmpty()) return false;
-        if (destination == Destination.SUGGESTION) {
-            return RoleHelper.canViewSuggestions(role);
-        }
-        if (destination == Destination.INVENTORY) {
-            return RoleHelper.canRegisterProduct(role);
-        }
-        if (destination == Destination.POS_APPROVAL) {
-            return RoleHelper.canApprovePosRequests(role);
-        }
+    public static boolean isDestinationAllowed(Destination destination,String role){
+        if(destination==null||!RoleHelper.isKnownRole(role))return false;
+        if(destination==Destination.SUGGESTION)return RoleHelper.canViewSuggestions(role);
+        if(destination==Destination.POS_APPROVAL)return RoleHelper.canApprovePosRequests(role);
         return true;
-    }
-
-    private boolean isDestinationEnabledByUser(Destination destination) {
-        if (destination == Destination.ALERT) {
-            return notificationPreferences.isPushAlertsEnabled();
-        }
-        if (destination == Destination.SUGGESTION) {
-            return notificationPreferences.isPushSuggestionsEnabled();
-        }
-        if (destination == Destination.INVENTORY) {
-            return notificationPreferences.isPushInventoryEnabled();
-        }
-        return true;
-    }
-
-    private static int notificationRequestCode(String notificationId) {
-        return notificationId == null || notificationId.trim().isEmpty()
-                ? (int) (System.currentTimeMillis() & 0x7fffffff)
-                : notificationId.hashCode() & 0x7fffffff;
-    }
-
-    private static String firstNonBlank(String... values) {
-        for (String value : values) {
-            if (value != null && !value.trim().isEmpty()) return value;
-        }
-        return null;
     }
 }

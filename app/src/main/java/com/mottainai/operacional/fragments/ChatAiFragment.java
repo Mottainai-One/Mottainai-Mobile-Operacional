@@ -70,6 +70,18 @@ public class ChatAiFragment extends Fragment {
     private boolean requestInProgress;
     private RetryAction retryAction = RetryAction.NONE;
     private int composerBaseBottomMargin;
+    private com.mottainai.operacional.viewmodels.ChatScreenState screenState;
+    private int viewGeneration;
+    private String ownerKey;
+
+    private String currentOwner() {
+        return sessionManager.getUid() + ":" + sessionManager.getStoreId() + ":"
+                + com.mottainai.operacional.BuildConfig.IA_BASE_URL;
+    }
+
+    private boolean acceptsCallback(int generation) {
+        return isAdded() && binding != null && viewGeneration == generation && ownerKey.equals(currentOwner());
+    }
 
     @Nullable
     @Override
@@ -84,6 +96,19 @@ public class ChatAiFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         sessionManager = new SessionManager(requireContext());
+        viewGeneration++;
+        ownerKey = currentOwner();
+        screenState = new androidx.lifecycle.ViewModelProvider(this).get(
+                com.mottainai.operacional.viewmodels.ChatScreenState.class);
+        if (!ownerKey.equals(screenState.owner)) {
+            screenState.messages.clear();
+            screenState.draft = "";
+            screenState.pending = null;
+            screenState.owner = ownerKey;
+        }
+        messageAdapter.replaceMessages(screenState.messages);
+        pendingMessage = screenState.pending;
+        requestInProgress = false;
         sessionId = sessionManager.getAiChatSessionId();
         boolean hasSavedSession = sessionId != null && !sessionId.trim().isEmpty();
         if (!hasSavedSession) {
@@ -93,6 +118,7 @@ public class ChatAiFragment extends Fragment {
         messagesView = binding.rvChatMessages;
         emptyChatState = binding.emptyChatState;
         messageInput = binding.etChatMessage;
+        messageInput.setText(screenState.draft);
         sendButton = binding.btnChatSend;
         retryButton = binding.btnChatRetry;
         progressBar = binding.progressChat;
@@ -131,12 +157,15 @@ public class ChatAiFragment extends Fragment {
     }
 
     private void sendMessage(String message, boolean appendUserMessage) {
+        if (!ownerKey.equals(currentOwner())) return;
+        final int generation = viewGeneration;
         if (requestInProgress) {
             Toast.makeText(requireContext(), "Aguarde a resposta atual.", Toast.LENGTH_SHORT).show();
             return;
         }
 
         pendingMessage = message;
+        sessionManager.saveAiChatSessionId(sessionId);
         if (appendUserMessage) {
             messageAdapter.addMessage(new ChatMessage(message, true));
             messageInput.setText("");
@@ -152,7 +181,7 @@ public class ChatAiFragment extends Fragment {
                         @Override
                         public void onResponse(@NonNull Call<AiChatResponse> call,
                                                @NonNull Response<AiChatResponse> response) {
-                            if (!isAdded()) return;
+                            if (!acceptsCallback(generation)) return;
                             AiChatResponse body = response.body();
                             if (!response.isSuccessful() || body == null
                                     || body.getResponse() == null || body.getResponse().trim().isEmpty()) {
@@ -174,7 +203,7 @@ public class ChatAiFragment extends Fragment {
 
                         @Override
                         public void onFailure(@NonNull Call<AiChatResponse> call, @NonNull Throwable throwable) {
-                            if (!isAdded()) return;
+                            if (!acceptsCallback(generation)) return;
                             showRequestError("Não foi possível conectar à IA. Verifique a conexão e tente novamente.",
                                     RetryAction.SEND);
                         }
@@ -183,6 +212,7 @@ public class ChatAiFragment extends Fragment {
     }
 
     private void loadHistory() {
+        final int generation = viewGeneration;
         showLoading(getString(R.string.chat_loading_history));
         requestAiAccessToken(RetryAction.HISTORY, accessToken -> {
             AiApiService aiService = AiRetrofitClient.getClient().create(AiApiService.class);
@@ -191,7 +221,7 @@ public class ChatAiFragment extends Fragment {
                 @Override
                 public void onResponse(@NonNull Call<AiChatHistoryResponse> call,
                                        @NonNull Response<AiChatHistoryResponse> response) {
-                    if (!isAdded()) return;
+                    if (!acceptsCallback(generation)) return;
                     AiChatHistoryResponse body = response.body();
                     if (!response.isSuccessful() || body == null) {
                         showRequestError(httpMessage("Não foi possível carregar a conversa anterior.", response),
@@ -206,7 +236,7 @@ public class ChatAiFragment extends Fragment {
 
                 @Override
                 public void onFailure(@NonNull Call<AiChatHistoryResponse> call, @NonNull Throwable throwable) {
-                    if (!isAdded()) return;
+                    if (!acceptsCallback(generation)) return;
                     showRequestError("Não foi possível conectar para carregar a conversa anterior.",
                             RetryAction.HISTORY);
                 }
@@ -226,7 +256,8 @@ public class ChatAiFragment extends Fragment {
     }
 
     private void requestAiAccessToken(RetryAction errorAction, AiTokenCallback callback) {
-        if (sessionManager.getApiRefreshToken() == null || sessionManager.getApiRefreshToken().trim().isEmpty()) {
+        final int generation = viewGeneration;
+        if (!sessionManager.hasCompleteProfile() || com.google.firebase.auth.FirebaseAuth.getInstance().getCurrentUser() == null) {
             showRequestError("Sua sessão operacional expirou. Entre novamente para conversar com a IA.",
                     errorAction);
             return;
@@ -237,7 +268,7 @@ public class ChatAiFragment extends Fragment {
         new Thread(() -> {
             String accessToken = RetrofitClient.refreshApiAccessToken(appContext);
             activity.runOnUiThread(() -> {
-                if (!isAdded()) return;
+                if (!acceptsCallback(generation)) return;
                 if (accessToken == null || accessToken.trim().isEmpty()) {
                     showRequestError("Não foi possível renovar sua sessão operacional. Tente entrar novamente.",
                             errorAction);
@@ -301,7 +332,10 @@ public class ChatAiFragment extends Fragment {
 
     private void scrollToLatestMessage() {
         if (messageAdapter.getItemCount() > 0) {
-            messagesView.post(() -> messagesView.smoothScrollToPosition(messageAdapter.getItemCount() - 1));
+            final int generation = viewGeneration;
+            messagesView.post(() -> {
+                if (acceptsCallback(generation)) messagesView.smoothScrollToPosition(messageAdapter.getItemCount() - 1);
+            });
         }
     }
 
@@ -347,6 +381,15 @@ public class ChatAiFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
+        if (screenState != null && ownerKey.equals(currentOwner())) {
+            screenState.messages.clear();
+            screenState.messages.addAll(messageAdapter.snapshot());
+            screenState.pending = pendingMessage;
+            screenState.draft = messageInput == null || messageInput.getText() == null
+                    ? "" : messageInput.getText().toString();
+        }
+        viewGeneration++;
+        requestInProgress = false;
         super.onDestroyView();
         binding = null;
         messagesView = null;

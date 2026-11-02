@@ -45,6 +45,7 @@ android {
 
     buildTypes {
         debug {
+
             // Valores de desenvolvimento pertencem ao local.properties, ignorado pelo Git.
             buildConfigField(
                 "String",
@@ -103,8 +104,6 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:34.16.0"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-auth")
-    implementation("com.google.firebase:firebase-firestore")
-    implementation("com.google.firebase:firebase-messaging")
 
     //Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.11.0")

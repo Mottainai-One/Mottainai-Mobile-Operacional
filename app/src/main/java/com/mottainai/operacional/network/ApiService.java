@@ -15,12 +15,32 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface ApiService {
+    @GET("api/v1/pos-approvals")
+    Call<java.util.List<com.mottainai.operacional.models.PosApproval>> getPosApprovals(@Query("status") String status,@Query("limit") int limit);
+    @POST("api/v1/pos-approvals/{id}/decision")
+    Call<com.mottainai.operacional.models.PosApproval> decidePosApproval(@Path("id") String id,@Body com.mottainai.operacional.models.PosApprovalDecisionRequest decision);
 
-    @POST("api/v1/auth/login")
+    @GET("api/v1/suppliers")
+    Call<PageResponse<com.mottainai.operacional.models.ApiSupplierResponse>> getSuppliers(@Query("page") int page,@Query("size") int size);
+    @GET("api/v1/suppliers/{id}")
+    Call<com.mottainai.operacional.models.ApiSupplierResponse> getSupplier(@Path("id") String id);
+    @POST("api/v1/suppliers")
+    Call<com.mottainai.operacional.models.ApiSupplierResponse> createSupplier(@Body com.mottainai.operacional.models.SupplierWriteRequest request);
+    @PUT("api/v1/suppliers/{id}")
+    Call<com.mottainai.operacional.models.ApiSupplierResponse> updateSupplier(@Path("id") String id,@Body com.mottainai.operacional.models.SupplierWriteRequest request);
+    @DELETE("api/v1/suppliers/{id}")
+    Call<Void> deleteSupplier(@Path("id") String id);
+
+
+    // Store is resolved server-side from the operational JWT, never from a query parameter.
+    @GET("api/v1/employees-store")
+    Call<java.util.List<com.mottainai.operacional.models.TeamMemberResponse>> getStoreTeam();
+
+    @POST("api/v1/auth/firebase")
     Call<com.mottainai.operacional.models.ApiTokenResponse> exchangeFirebaseToken(
             @Body com.mottainai.operacional.models.ApiLoginRequest request);
 
-    @GET("api/v1/auth/profile")
+    @GET("api/v1/auth/mobile-profile")
     Call<com.mottainai.operacional.models.ApiUserProfile> getOperationalProfile();
 
     @GET("api/v1/sales/summary")

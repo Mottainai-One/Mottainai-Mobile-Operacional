@@ -9,7 +9,6 @@ import androidx.lifecycle.MutableLiveData;
 import com.mottainai.operacional.models.Product;
 import com.mottainai.operacional.models.ScannerUiState;
 import com.mottainai.operacional.repository.ProductRepository;
-import com.mottainai.operacional.repository.MockProductRepository;
 import com.mottainai.operacional.utils.Constants;
 
 import java.util.Locale;
@@ -26,10 +25,7 @@ public class ScannerViewModel extends AndroidViewModel {
 
     public ScannerViewModel(@NonNull Application application) {
         super(application);
-        boolean useMock = Constants.USE_MOCK_REPOSITORY;
-        repository = useMock
-                ? new MockProductRepository(application)
-                : new ProductRepository(application);
+        repository = new ProductRepository(application);
     }
 
     public MutableLiveData<ScannerUiState> getUiState() {

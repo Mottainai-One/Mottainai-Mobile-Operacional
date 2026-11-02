@@ -32,6 +32,8 @@ import com.mottainai.operacional.viewmodels.ProfileViewModel;
 
 /** Presents the authenticated identity without using the displayed data for authorization. */
 public class ProfileFragment extends Fragment {
+    private final com.mottainai.operacional.utils.ProfilePhoto photo =
+            new com.mottainai.operacional.utils.ProfilePhoto(this);
 
     private FragmentProfileBinding binding;
 
@@ -59,6 +61,7 @@ public class ProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         bindViews(view);
+        photo.bind(binding.tvAvatarInitials);
 
         ProfileViewModel viewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
         viewModel.getUiState().observe(getViewLifecycleOwner(), this::render);
@@ -105,6 +108,11 @@ public class ProfileFragment extends Fragment {
         tvStore = binding.tvProfileStore;
         tvStatus = binding.tvProfileStatus;
         btnLogout = binding.btnLogout;
+    }
+
+    @Override public void onResume() {
+        super.onResume();
+        photo.refresh();
     }
 
     private void renderThemeSelection() {
@@ -180,6 +188,7 @@ public class ProfileFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
+        photo.clearView();
         super.onDestroyView();
         binding = null;
         profileContent = null;

@@ -39,6 +39,12 @@ public class EditMemberFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        if (!com.mottainai.operacional.utils.RoleHelper.isOwner(
+                new com.mottainai.operacional.utils.SessionManager(requireContext()).getRole())) {
+            Navigation.findNavController(view).navigateUp();
+            return;
+        }
+
         Bundle args = getArguments();
         String name = args != null ? args.getString("member_name") : null;
         String role = args != null ? args.getString("member_role") : null;

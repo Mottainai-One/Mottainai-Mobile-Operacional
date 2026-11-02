@@ -21,7 +21,7 @@ import com.mottainai.operacional.utils.SessionManager;
 
 import java.util.List;
 
-/** Equipe lida da coleção users, limitada ao storeID da sessão. */
+/** Directory resolved by the authenticated SQL API, without listing Firebase users. */
 public class TeamFragment extends Fragment {
     private FragmentTeamBinding binding;
     private TeamAdapter adapter;
@@ -42,25 +42,25 @@ public class TeamFragment extends Fragment {
             NavHostFragment.findNavController(this).navigateUp();
             return;
         }
-        adapter = new TeamAdapter(owner, member -> {
-            Bundle args = new Bundle();
-            args.putString("member_name", member.getName());
-            args.putString("member_role", RoleHelper.roleToLabel(member.getRole()));
-            NavHostFragment.findNavController(this).navigate(R.id.editMemberFragment, args);
-        });
+        // Staff management is outside this MVP; the API directory remains read-only.
+        adapter = new TeamAdapter(false, member -> { });
         binding.rvTeam.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.rvTeam.setAdapter(adapter);
-        binding.btnTeamPrimary.setText(owner ? R.string.op_team_invite : R.string.op_team_alerts);
+        binding.btnTeamPrimary.setVisibility(owner ? View.GONE : View.VISIBLE);
+        binding.btnTeamPrimary.setText(R.string.op_team_alerts);
         binding.btnTeamPrimary.setOnClickListener(v -> {
-            if (owner) {
-                NavHostFragment.findNavController(this).navigate(R.id.inviteMemberFragment);
-            } else {
                 Bundle args = new Bundle();
                 args.putString(IaAlertsFragment.ARG_INITIAL_TAB, IaAlertsFragment.TAB_ALERTS);
                 NavHostFragment.findNavController(this).navigate(R.id.iaAlertsFragment, args);
-            }
         });
-        new UserRepository().listTeam(session.getStoreKey(), new UserRepository.TeamCallback() {
+        binding.tvTeamState.setOnClickListener(v -> loadTeam());
+        loadTeam();
+    }
+
+    private void loadTeam() {
+        binding.progressTeam.setVisibility(View.VISIBLE);
+        binding.tvTeamState.setVisibility(View.GONE);
+        new UserRepository().listTeam(requireContext(), new UserRepository.TeamCallback() {
             @Override public void onSuccess(List<User> users) {
                 if (binding == null) return;
                 binding.progressTeam.setVisibility(View.GONE);
@@ -71,7 +71,7 @@ public class TeamFragment extends Fragment {
             @Override public void onError(Exception error) {
                 if (binding == null) return;
                 binding.progressTeam.setVisibility(View.GONE);
-                binding.tvTeamState.setText(R.string.op_team_error);
+                binding.tvTeamState.setText(error.getMessage() + "\nToque para tentar novamente.");
                 binding.tvTeamState.setVisibility(View.VISIBLE);
             }
         });

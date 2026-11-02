@@ -15,15 +15,17 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import com.mottainai.operacional.R;
+import com.mottainai.operacional.utils.SupplierFormFields;
+import com.mottainai.operacional.models.SupplierAddress;
 import com.mottainai.operacional.databinding.FragmentSupplierFormBinding;
-import com.mottainai.operacional.repository.MockSupplierRepository;
+import com.mottainai.operacional.repository.SupplierRepository;
 import com.mottainai.operacional.models.Supplier;
 import com.mottainai.operacional.utils.SessionManager;
 import com.mottainai.operacional.utils.ValidationUtils;
 import com.mottainai.operacional.viewmodels.SupplierViewModel;
 
 /**
- * Edição e remoção local de fornecedor enquanto a API relacional não está ativa no app.
+ * Edição e desativação de fornecedor na API operacional.
  */
 public class EditSupplierFragment extends Fragment {
 
@@ -49,13 +51,14 @@ public class EditSupplierFragment extends Fragment {
         String supplierId = args == null ? null : args.getString("supplier_id");
         EditText etName = binding.etSupplierName;
         EditText etCnpj = binding.etSupplierCnpj;
+        etCnpj.setEnabled(false);
         EditText etContact = binding.etSupplierContact;
         SupplierViewModel viewModel = new ViewModelProvider(requireActivity()).get(SupplierViewModel.class);
         SessionManager session = new SessionManager(requireContext());
         viewModel.clearCompletion();
         if (supplierId == null) { Navigation.findNavController(view).popBackStack(); return; }
-        viewModel.find(session.getStoreId(), supplierId, new MockSupplierRepository.Callback<Supplier>() {
-            @Override public void onSuccess(Supplier supplier) { etName.setText(supplier.getTradeName()); etCnpj.setText(supplier.getCnpj()); etContact.setText(supplier.getContact()); }
+        viewModel.find(session.getStoreId(), supplierId, new SupplierRepository.Callback<Supplier>() {
+            @Override public void onSuccess(Supplier supplier) { etName.setText(supplier.getTradeName()); etCnpj.setText(supplier.getCnpj()); if(binding==null)return; SupplierFormFields.populate(binding.getRoot(),supplier); }
             @Override public void onError(String message) { Navigation.findNavController(view).popBackStack(); }
         });
         viewModel.getCompleted().observe(getViewLifecycleOwner(), completed -> { if (Boolean.TRUE.equals(completed)) Navigation.findNavController(view).popBackStack(); });
@@ -69,12 +72,14 @@ public class EditSupplierFragment extends Fragment {
             String contact = etContact.getText().toString().trim();
             if (name.isEmpty()) { etName.setError("Informe o nome da empresa"); return; }
             if (!ValidationUtils.isValidCnpj(cnpj)) { etCnpj.setError("CNPJ inválido"); return; }
-            if (!ValidationUtils.isValidSupplierContact(contact)) { etContact.setError(getString(R.string.op_supplier_invalid_contact)); return; }
-            viewModel.update(session.getStoreId(), supplierId, name, cnpj, contact);
+            if (!contact.isEmpty() && !ValidationUtils.isValidEmail(contact)) { etContact.setError(getString(R.string.op_supplier_invalid_contact)); return; }
+            SupplierAddress address=SupplierFormFields.read(binding.getRoot());
+            if(address==null)return;
+            viewModel.update(session.getStoreId(),supplierId,name,contact.isEmpty()?null:contact,SupplierFormFields.phone(binding.getRoot()),address);
         });
 
         binding.btnRemoveSupplier.setOnClickListener(v -> new MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Remover fornecedor?").setMessage("Esta ação remove o fornecedor salvo neste dispositivo.")
+                .setTitle("Remover fornecedor?").setMessage("Esta ação desativa o fornecedor na API operacional e afeta os demais usuários autorizados.")
                 .setNegativeButton("Cancelar", null).setPositiveButton("Remover", (dialog, which) -> viewModel.delete(session.getStoreId(), supplierId)).show());
     }
 

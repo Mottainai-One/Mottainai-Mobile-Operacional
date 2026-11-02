@@ -1,5 +1,24 @@
 # Mobile app against QA
 
+## Local USB stack — 2026-11-01
+
+The older QA example below uses a different stack. For the current local
+operational demonstration, SQL listens on 8080 and IA on 8000. With the physical
+device connected, use `adb reverse tcp:8080 tcp:8080` and
+`adb reverse tcp:8000 tcp:8000`, then ignored local.properties:
+
+```properties
+apiBaseUrl=http://127.0.0.1:8080/
+iaBaseUrl=http://127.0.0.1:8000/
+```
+
+Rebuild/reinstall the debug APK after changing these values. Port 8081 is the
+Client API, not Redis; 8082 is NoSQL, not a public mobile notification transport.
+The local stack may connect to a cloud database: do not use real sales for demos.
+See [delivery validation](DELIVERY-VALIDATION.md) for scope and pending evidence.
+
+## Shared QA example
+
 The Android app does not run inside Docker. It uses the API and IA services started by the shared QA Compose stack. The existing `debug` build already accepts `apiBaseUrl` and `iaBaseUrl` as Gradle or `local.properties` values; this QA check builds with the local emulator addresses.
 
 For an Android emulator running on the same computer as the QA Compose stack, put this in the ignored `local.properties` file:

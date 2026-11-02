@@ -14,7 +14,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.mottainai.operacional.R;
 import com.mottainai.operacional.databinding.FragmentSupplierDetailBinding;
 import com.mottainai.operacional.models.Supplier;
-import com.mottainai.operacional.repository.MockSupplierRepository;
+import com.mottainai.operacional.repository.SupplierRepository;
 import com.mottainai.operacional.utils.RoleHelper;
 import com.mottainai.operacional.utils.SessionManager;
 import com.mottainai.operacional.viewmodels.SupplierViewModel;
@@ -49,7 +49,7 @@ public class SupplierDetailFragment extends Fragment {
             NavHostFragment.findNavController(this).navigate(R.id.editSupplierFragment, args);
         });
         SupplierViewModel viewModel = new ViewModelProvider(requireActivity()).get(SupplierViewModel.class);
-        viewModel.find(session.getStoreId(), supplierId, new MockSupplierRepository.Callback<Supplier>() {
+        viewModel.find(session.getStoreId(), supplierId, new SupplierRepository.Callback<Supplier>() {
             @Override public void onSuccess(Supplier supplier) {
                 if (binding == null) return;
                 binding.tvSupplierName.setText(supplier.getTradeName());

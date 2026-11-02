@@ -44,7 +44,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Automação e governança da operação"
+            android:text="Equipe e notificações da operação"
             android:textColor="@color/op_muted"
             android:textSize="14sp" />
 
@@ -141,7 +141,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Quando o produto vence em até 3 dias"
+                                android:text="Regras automáticas ainda não disponíveis para configuração"
                                 android:textColor="@color/op_muted"
                                 android:textSize="12sp" />
                         </LinearLayout>
@@ -175,7 +175,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
-                            android:text="Ativa quando o produto vence no mesmo dia"
+                            android:text="Configuração indisponível nesta versão"
                             android:textColor="@color/op_muted"
                             android:textSize="12sp" />
                     </LinearLayout>

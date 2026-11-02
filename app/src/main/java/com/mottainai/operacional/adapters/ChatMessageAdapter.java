@@ -36,6 +36,8 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
         notifyItemInserted(messages.size() - 1);
     }
 
+    public List<ChatMessage> snapshot() { return new ArrayList<>(messages); }
+
     @NonNull
     @Override
     public ChatMessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

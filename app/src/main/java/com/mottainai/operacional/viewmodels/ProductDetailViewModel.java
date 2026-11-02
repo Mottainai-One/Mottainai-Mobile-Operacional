@@ -7,7 +7,6 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
 import com.mottainai.operacional.models.Product;
-import com.mottainai.operacional.repository.MockProductRepository;
 import com.mottainai.operacional.repository.ProductRepository;
 import com.mottainai.operacional.utils.Constants;
 
@@ -25,12 +24,7 @@ public class ProductDetailViewModel extends AndroidViewModel {
 
     public ProductDetailViewModel(@NonNull Application application) {
         super(application);
-        boolean useMock = Constants.USE_MOCK_REPOSITORY;
-        if (useMock) {
-            productRepository = new MockProductRepository(application);
-        } else {
-            productRepository = new ProductRepository(application);
-        }
+        productRepository = new ProductRepository(application);
     }
 
     public MutableLiveData<Boolean> getLoading() {

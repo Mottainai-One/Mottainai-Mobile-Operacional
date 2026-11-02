@@ -72,7 +72,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="@string/op_supplier_contact"
+            android:text="E-mail (opcional)"
             android:textColor="@color/op_text"
             android:textSize="13sp" />
         <EditText
@@ -82,7 +82,8 @@
             android:layout_marginTop="8dp"
             android:background="@drawable/op_input"
             android:hint="@string/op_supplier_contact_hint"
-            android:inputType="text"
+            android:inputType="textEmailAddress"
+            android:maxLength="150"
             android:paddingHorizontal="16dp"
             android:textColor="@color/op_text"
             android:textColorHint="@color/op_muted"
@@ -105,6 +106,54 @@
             android:text="@string/op_supplier_categories_pending"
             android:textColor="@color/op_muted"
             android:textSize="15sp" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="16dp" android:text="Telefone (opcional)" android:textColor="@color/op_text" android:labelFor="@id/et_supplier_phone" />
+        <EditText android:id="@+id/et_supplier_phone" android:layout_width="match_parent" android:layout_height="56dp"
+            android:layout_marginTop="8dp" android:background="@drawable/op_input" android:inputType="phone"
+            android:maxLength="20" android:singleLine="true" android:paddingHorizontal="16dp"
+            android:textColor="@color/op_text" android:textColorHint="@color/op_muted" android:textSize="17sp" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="16dp" android:text="CEP" android:textColor="@color/op_text" android:labelFor="@id/et_supplier_zip_code" />
+        <EditText android:id="@+id/et_supplier_zip_code" android:layout_width="match_parent" android:layout_height="56dp"
+            android:layout_marginTop="8dp" android:background="@drawable/op_input" android:inputType="number"
+            android:maxLength="9" android:singleLine="true" android:paddingHorizontal="16dp"
+            android:textColor="@color/op_text" android:textColorHint="@color/op_muted" android:textSize="17sp" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="16dp" android:text="Logradouro" android:textColor="@color/op_text" android:labelFor="@id/et_supplier_street" />
+        <EditText android:id="@+id/et_supplier_street" android:layout_width="match_parent" android:layout_height="56dp"
+            android:layout_marginTop="8dp" android:background="@drawable/op_input" android:inputType="textPostalAddress"
+            android:maxLength="150" android:singleLine="true" android:paddingHorizontal="16dp"
+            android:textColor="@color/op_text" android:textColorHint="@color/op_muted" android:textSize="17sp" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="16dp" android:text="Número" android:textColor="@color/op_text" android:labelFor="@id/et_supplier_number" />
+        <EditText android:id="@+id/et_supplier_number" android:layout_width="match_parent" android:layout_height="56dp"
+            android:layout_marginTop="8dp" android:background="@drawable/op_input" android:inputType="text"
+            android:maxLength="10" android:singleLine="true" android:paddingHorizontal="16dp"
+            android:textColor="@color/op_text" android:textColorHint="@color/op_muted" android:textSize="17sp" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="16dp" android:text="Complemento (opcional)" android:textColor="@color/op_text" android:labelFor="@id/et_supplier_complement" />
+        <EditText android:id="@+id/et_supplier_complement" android:layout_width="match_parent" android:layout_height="56dp"
+            android:layout_marginTop="8dp" android:background="@drawable/op_input" android:inputType="text"
+            android:maxLength="100" android:singleLine="true" android:paddingHorizontal="16dp"
+            android:textColor="@color/op_text" android:textColorHint="@color/op_muted" android:textSize="17sp" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="16dp" android:text="Bairro" android:textColor="@color/op_text" android:labelFor="@id/et_supplier_neighborhood" />
+        <EditText android:id="@+id/et_supplier_neighborhood" android:layout_width="match_parent" android:layout_height="56dp"
+            android:layout_marginTop="8dp" android:background="@drawable/op_input" android:inputType="textCapWords"
+            android:maxLength="100" android:singleLine="true" android:paddingHorizontal="16dp"
+            android:textColor="@color/op_text" android:textColorHint="@color/op_muted" android:textSize="17sp" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="16dp" android:text="Cidade" android:textColor="@color/op_text" android:labelFor="@id/et_supplier_city" />
+        <EditText android:id="@+id/et_supplier_city" android:layout_width="match_parent" android:layout_height="56dp"
+            android:layout_marginTop="8dp" android:background="@drawable/op_input" android:inputType="textCapWords"
+            android:maxLength="100" android:singleLine="true" android:paddingHorizontal="16dp"
+            android:textColor="@color/op_text" android:textColorHint="@color/op_muted" android:textSize="17sp" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="16dp" android:text="UF" android:textColor="@color/op_text" android:labelFor="@id/et_supplier_state" />
+        <EditText android:id="@+id/et_supplier_state" android:layout_width="match_parent" android:layout_height="56dp"
+            android:layout_marginTop="8dp" android:background="@drawable/op_input" android:inputType="textCapCharacters"
+            android:maxLength="2" android:singleLine="true" android:paddingHorizontal="16dp"
+            android:textColor="@color/op_text" android:textColorHint="@color/op_muted" android:textSize="17sp" />
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_save_supplier"
             android:layout_width="match_parent"

@@ -417,4 +417,9 @@
     <string name="op_invite_unavailable">Convites ainda não estão disponíveis neste aplicativo.</string>
     <string name="op_team_edit_unavailable">Alterações na equipe ainda não estão disponíveis neste aplicativo.</string>
     <string name="op_open_notifications">Abrir notificações</string>
+    <string name="product_image_source">Imagem complementar: Open Food Facts, CC BY-SA</string>
+    <string name="profile_photo_change">Alterar foto de perfil</string>
+    <string name="profile_photo_uploading">Enviando foto…</string>
+    <string name="profile_photo_saved">Foto de perfil atualizada neste aparelho.</string>
+    <string name="profile_photo_error">Não foi possível acessar a imagem. Escolha outra foto.</string>
 </resources>

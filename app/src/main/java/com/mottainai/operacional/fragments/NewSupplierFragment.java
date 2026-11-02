@@ -14,13 +14,15 @@ import androidx.navigation.Navigation;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.mottainai.operacional.R;
+import com.mottainai.operacional.utils.SupplierFormFields;
+import com.mottainai.operacional.models.SupplierAddress;
 import com.mottainai.operacional.databinding.FragmentSupplierFormBinding;
 import com.mottainai.operacional.utils.SessionManager;
 import com.mottainai.operacional.utils.ValidationUtils;
 import com.mottainai.operacional.viewmodels.SupplierViewModel;
 
 /**
- * Cadastro local de fornecedor enquanto a API relacional não está ativa no app.
+ * Cadastro de fornecedor na API operacional.
  */
 public class NewSupplierFragment extends Fragment {
 
@@ -68,11 +70,13 @@ public class NewSupplierFragment extends Fragment {
                 etCnpj.setError("CNPJ inválido");
                 return;
             }
-            if (!ValidationUtils.isValidSupplierContact(contact)) {
+            if (!contact.isEmpty() && !ValidationUtils.isValidEmail(contact)) {
                 etContact.setError(getString(R.string.op_supplier_invalid_contact));
                 return;
             }
-            viewModel.create(session.getStoreId(), name, cnpj, contact);
+            SupplierAddress address=SupplierFormFields.read(binding.getRoot());
+            if(address==null)return;
+            viewModel.create(session.getStoreId(),name,cnpj,contact.isEmpty()?null:contact,SupplierFormFields.phone(binding.getRoot()),address);
         });
     }
 

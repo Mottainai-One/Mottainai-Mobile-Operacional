@@ -11,7 +11,6 @@ import com.mottainai.operacional.models.Product;
 import com.mottainai.operacional.models.ProductForm;
 import com.mottainai.operacional.models.ProductResponse;
 import com.mottainai.operacional.repository.ProductRepository;
-import com.mottainai.operacional.repository.MockProductRepository;
 import com.mottainai.operacional.utils.Constants;
 
 import java.math.BigDecimal;
@@ -35,8 +34,7 @@ public class ProductFormViewModel extends AndroidViewModel {
 
     public ProductFormViewModel(@NonNull Application application) {
         super(application);
-        boolean useMock = Constants.USE_MOCK_REPOSITORY;
-        repository = useMock ? new MockProductRepository(application) : new ProductRepository(application);
+        repository = new ProductRepository(application);
     }
 
     public LiveData<Boolean> getLoading() { return loading; }

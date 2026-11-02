@@ -4,12 +4,16 @@ import com.google.gson.annotations.SerializedName;
 
 public class ApiUserProfile {
     @SerializedName("id") private Integer id;
+    @SerializedName("firebaseUid") private String firebaseUid;
+    @SerializedName("companyId") private Integer companyId;
     @SerializedName("name") private String name;
     @SerializedName("email") private String email;
     @SerializedName("role") private String role;
     @SerializedName("active") private Boolean active;
     @SerializedName("storeId") private Integer storeId;
     public Integer getId() { return id; }
+    public String getFirebaseUid() { return firebaseUid; }
+    public Integer getCompanyId() { return companyId; }
     public String getName() { return name; }
     public String getEmail() { return email; }
     public String getRole() { return role; }

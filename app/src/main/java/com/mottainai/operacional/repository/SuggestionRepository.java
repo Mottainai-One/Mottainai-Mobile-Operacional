@@ -1,7 +1,7 @@
 package com.mottainai.operacional.repository;
 
 import android.content.Context;
-import com.google.firebase.firestore.ListenerRegistration;
+import com.mottainai.operacional.utils.DataSubscription;
 import com.mottainai.operacional.models.ApiSuggestionResponse;
 import com.mottainai.operacional.models.Suggestion;
 import com.mottainai.operacional.network.ApiService;
@@ -17,7 +17,7 @@ public class SuggestionRepository {
     public interface SuggestionCallback { void onSuccess(List<Suggestion> suggestions); void onError(Exception e); }
     public SuggestionRepository(Context context) { api = RetrofitClient.getClient(context).create(ApiService.class); }
 
-    public ListenerRegistration listenSuggestions(String storeId, SuggestionCallback callback) {
+    public DataSubscription listenSuggestions(String storeId, SuggestionCallback callback) {
         final int numericStoreId;
         try { numericStoreId = Integer.parseInt(storeId); }
         catch (Exception error) { callback.onError(new IllegalArgumentException("Loja operacional inválida.")); return () -> {}; }

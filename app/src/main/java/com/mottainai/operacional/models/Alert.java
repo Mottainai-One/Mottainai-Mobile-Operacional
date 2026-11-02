@@ -1,7 +1,5 @@
 package com.mottainai.operacional.models;
 
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.Timestamp;
 
 public class Alert {
     private String id;
@@ -14,19 +12,7 @@ public class Alert {
 
     public Alert() {}
 
-    public static Alert fromSnapshot(DocumentSnapshot doc) {
-        Alert a = new Alert();
-        a.id = doc.getId();
-        a.title = doc.getString("title");
-        a.message = doc.getString("message");
-        a.severity = doc.getString("severity");
-a.storeId = doc.getString("storeID");
-        Long d = doc.getLong("days");
-        a.days = d != null ? d.intValue() : 0;
-        Timestamp ts = doc.getTimestamp("createdAt");
-        a.createdAt = ts != null ? ts.getSeconds() * 1000 : System.currentTimeMillis();
-        return a;
-    }
+
 
     public static Alert fromApi(ApiAlertResponse dto) {
         if (dto == null) return null;

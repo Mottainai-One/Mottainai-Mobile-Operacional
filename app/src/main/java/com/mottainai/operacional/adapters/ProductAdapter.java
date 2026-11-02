@@ -134,19 +134,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                     : itemView.getContext().getString(R.string.op_code_value, sku));
             tvProductStatus.setText(R.string.op_view_specifications);
 
-            if (product.getImageUrl() != null && !product.getImageUrl().isEmpty()) {
-                ivProductImage.setPadding(0, 0, 0, 0);
-                Glide.with(itemView)
-                        .load(product.getImageUrl())
-                        .placeholder(R.drawable.op_box)
-                        .error(R.drawable.op_box)
-                        .into(ivProductImage);
-            } else {
-                Glide.with(itemView).clear(ivProductImage);
-                int padding = Math.round(20 * itemView.getResources().getDisplayMetrics().density);
-                ivProductImage.setPadding(padding, padding, padding, padding);
-                ivProductImage.setImageResource(R.drawable.op_box);
-            }
+            com.mottainai.operacional.utils.ProductImages.load(ivProductImage, product);
 }
 }
 }

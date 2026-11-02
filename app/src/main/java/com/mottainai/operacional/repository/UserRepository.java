@@ -1,79 +1,50 @@
 package com.mottainai.operacional.repository;
 
-import androidx.annotation.NonNull;
-
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
-
 import com.mottainai.operacional.models.User;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class UserRepository {
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-    public interface UserCallback {
-        void onSuccess(User user);
-        void onError(Exception e);
-        void onNotFound();
-    }
-
     public interface TeamCallback {
         void onSuccess(List<User> users);
         void onError(Exception error);
     }
 
-    public void listTeam(String storeId, TeamCallback callback) {
-        if (storeId == null || storeId.trim().isEmpty()) {
-            callback.onError(new IllegalArgumentException("Loja não identificada"));
+    public void listTeam(android.content.Context context, TeamCallback callback) {
+        com.mottainai.operacional.utils.SessionManager session = new com.mottainai.operacional.utils.SessionManager(context);
+        String uid = session.getUid();
+        String storeId = session.getStoreId();
+        if (uid == null || storeId == null || !com.mottainai.operacional.utils.RoleHelper.canRegisterProduct(session.getRole())) {
+            callback.onError(new SecurityException("Sem permissão para consultar a equipe."));
             return;
         }
-        db.collection("users").whereEqualTo("storeID", storeId).get()
-                .addOnCompleteListener(task -> {
-                    if (!task.isSuccessful()) {
-                        callback.onError(task.getException());
-                        return;
-                    }
-                    List<User> members = new ArrayList<>();
-                    QuerySnapshot snapshot = task.getResult();
-                    if (snapshot != null) {
-                        for (DocumentSnapshot doc : snapshot.getDocuments()) {
-                            members.add(new User(doc.getId(), doc.getString("name"),
-                                    doc.getString("role"), doc.getString("storeID")));
+        com.mottainai.operacional.network.RetrofitClient.getClient(context)
+                .create(com.mottainai.operacional.network.ApiService.class).getStoreTeam()
+                .enqueue(new retrofit2.Callback<List<com.mottainai.operacional.models.TeamMemberResponse>>() {
+                    @Override public void onResponse(retrofit2.Call<List<com.mottainai.operacional.models.TeamMemberResponse>> call,
+                            retrofit2.Response<List<com.mottainai.operacional.models.TeamMemberResponse>> response) {
+                        if (!uid.equals(session.getUid()) || !storeId.equals(session.getStoreId())) return;
+                        if (!response.isSuccessful() || response.body() == null) {
+                            callback.onError(new IllegalStateException(response.code() == 403
+                                    ? "Seu perfil não tem acesso à equipe." : "Não foi possível consultar a equipe (HTTP " + response.code() + ")."));
+                            return;
                         }
+                        List<User> members = new ArrayList<>();
+                        for (com.mottainai.operacional.models.TeamMemberResponse member : response.body()) {
+                            if (member == null || member.storeId == null || !storeId.equals(String.valueOf(member.storeId))) {
+                                callback.onError(new SecurityException("A API retornou uma equipe fora da loja da sessão."));
+                                return;
+                            }
+                            members.add(new User(String.valueOf(member.employeeId), member.name, member.role, String.valueOf(member.storeId)));
+                        }
+                        callback.onSuccess(members);
                     }
-                    callback.onSuccess(members);
+                    @Override public void onFailure(retrofit2.Call<List<com.mottainai.operacional.models.TeamMemberResponse>> call, Throwable error) {
+                        if (!uid.equals(session.getUid()) || !storeId.equals(session.getStoreId())) return;
+                        callback.onError(new IllegalStateException("Sem conexão com a API de equipe. Tente novamente."));
+                    }
                 });
     }
 
-    public void getUserProfile(String uid, UserCallback callback) {
-        db.collection("users").document(uid)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (!task.isSuccessful()) {
-                            callback.onError(task.getException());
-                            return;
-                        }
-
-                        DocumentSnapshot doc = task.getResult();
-                        if (doc == null || !doc.exists()) {
-                            callback.onNotFound();
-                            return;
-                        }
-
-                        String name = doc.getString("name");
-                        String role = doc.getString("role");
-                        String storeId = doc.getString("storeID");
-
-                        User user = new User(uid, name, role, storeId);
-                        callback.onSuccess(user);
-                    }
-                });
-    }
 }

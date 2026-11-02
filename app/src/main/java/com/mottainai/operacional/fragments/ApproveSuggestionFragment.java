@@ -49,6 +49,12 @@ public class ApproveSuggestionFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        if (!com.mottainai.operacional.utils.RoleHelper.canViewSuggestions(
+                new com.mottainai.operacional.utils.SessionManager(requireContext()).getRole())) {
+            Navigation.findNavController(view).navigateUp();
+            return;
+        }
+
         Bundle args = getArguments();
         String title = args != null ? args.getString("suggestion_title") : null;
         String description = args != null ? args.getString("suggestion_description") : null;
@@ -91,6 +97,8 @@ public class ApproveSuggestionFragment extends Fragment {
     }
 
     private void decide(View view, Bundle args, String decision) {
+        if (binding == null || !com.mottainai.operacional.utils.RoleHelper.canViewSuggestions(
+                new com.mottainai.operacional.utils.SessionManager(requireContext()).getRole())) return;
         String id = args == null ? null : args.getString("suggestion_id");
         if (id == null || id.trim().isEmpty()) {
             Toast.makeText(requireContext(), "ID da sugestão ausente.", Toast.LENGTH_SHORT).show();
@@ -102,7 +110,7 @@ public class ApproveSuggestionFragment extends Fragment {
         api.decideSuggestion(id, new ApiSuggestionDecisionRequest(decision)).enqueue(new Callback<com.mottainai.operacional.models.ApiSuggestionResponse>() {
             @Override public void onResponse(Call<com.mottainai.operacional.models.ApiSuggestionResponse> call,
                     Response<com.mottainai.operacional.models.ApiSuggestionResponse> response) {
-                if (!isAdded()) return;
+                if (!isAdded() || binding == null || getView() != view) return;
                 if (response.isSuccessful() && response.body() != null) {
                     Toast.makeText(requireContext(), decision.equals("APPROVED") ? "Sugestão aprovada." : "Sugestão recusada.", Toast.LENGTH_SHORT).show();
                     androidx.navigation.Navigation.findNavController(view).popBackStack();
@@ -113,7 +121,7 @@ public class ApproveSuggestionFragment extends Fragment {
                 }
             }
             @Override public void onFailure(Call<com.mottainai.operacional.models.ApiSuggestionResponse> call, Throwable error) {
-                if (!isAdded()) return;
+                if (!isAdded() || binding == null || getView() != view) return;
                 binding.btnApprove.setEnabled(true);
                 binding.btnReject.setEnabled(true);
                 Toast.makeText(requireContext(), "Não foi possível salvar a decisão na API.", Toast.LENGTH_LONG).show();

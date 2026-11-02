@@ -48,7 +48,7 @@ public class ProfileViewModel extends AndroidViewModel {
             return;
         }
 
-        String name = firstNonBlank(user.getDisplayName(), sessionManager.getName(),
+        String name = firstNonBlank(sessionManager.getName(),
                 getApplication().getString(R.string.profile_name_fallback));
         String email = firstNonBlank(user.getEmail(),
                 getApplication().getString(R.string.profile_email_unavailable));

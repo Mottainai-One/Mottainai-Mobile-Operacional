@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,21 +17,10 @@ import com.google.android.material.tabs.TabLayout;
 
 import com.mottainai.operacional.R;
 import com.mottainai.operacional.databinding.FragmentConfigBinding;
-import com.mottainai.operacional.utils.NotificationPreferences;
 import com.mottainai.operacional.utils.RoleHelper;
 import com.mottainai.operacional.utils.SessionManager;
 
-/**
- * Configurações da operação: exclusiva do Dono (RoleHelper.isOwner).
- *
- * Não existe endpoint de configuração da loja ainda, então as preferências
- * são salvas localmente no dispositivo (NotificationPreferences) em vez de
- * simuladas — os 3 switches de push realmente controlam o que
- * NotificationRouter exibe. As regras de promoção/aprovação automáticas
- * dependem de lógica de IA que ainda roda só no backend, então ficam
- * salvas localmente mas sem efeito local até existir o endpoint. A equipe
- * é consultada na tela própria, com usuários filtrados pela loja.
- */
+/** Configuracoes do dono. Notificacoes reais ficam na caixa interna da API Redis. */
 public class ConfigFragment extends Fragment {
 
     private FragmentConfigBinding binding;
@@ -40,7 +28,6 @@ public class ConfigFragment extends Fragment {
     private View contentRules;
     private View contentNotifications;
     private View contentTeam;
-    private NotificationPreferences notificationPreferences;
 
     private SwitchMaterial switchAutoPromo;
     private SwitchMaterial switchRequireApproval;
@@ -84,29 +71,24 @@ public class ConfigFragment extends Fragment {
             @Override public void onTabReselected(TabLayout.Tab tab) {}
         });
 
-        notificationPreferences = new NotificationPreferences(requireContext());
-        switchAutoPromo = binding.switchAutoPromo;
-        switchRequireApproval = binding.switchRequireApproval;
-        switchPushAlerts = binding.switchPushAlerts;
-        switchPushSuggestions = binding.switchPushSuggestions;
-        switchPushInventory = binding.switchPushInventory;
+        // There is no persisted operational-rules contract yet. Do not report a local save as an operational change.
+        contentRules.setEnabled(false);
+        binding.switchAutoPromo.setEnabled(false);
+        binding.switchAutoPromo.setChecked(false);
+        binding.switchRequireApproval.setEnabled(false);
+        binding.switchRequireApproval.setChecked(false);
+        binding.btnSaveConfig.setEnabled(false);
+        binding.btnSaveConfig.setText("Configuração de regras indisponível");
 
-        switchAutoPromo.setChecked(notificationPreferences.isAutoPromoEnabled());
-        switchRequireApproval.setChecked(notificationPreferences.isApprovalRequired());
-        switchPushAlerts.setChecked(notificationPreferences.isPushAlertsEnabled());
-        switchPushSuggestions.setChecked(notificationPreferences.isPushSuggestionsEnabled());
-        switchPushInventory.setChecked(notificationPreferences.isPushInventoryEnabled());
-
-        binding.btnSaveConfig.setOnClickListener(v -> {
-            notificationPreferences.saveRulesPrefs(switchAutoPromo.isChecked(), switchRequireApproval.isChecked());
-            Toast.makeText(requireContext(), "Regras salvas neste dispositivo", Toast.LENGTH_SHORT).show();
-        });
-
-        binding.btnSaveNotifications.setOnClickListener(v -> {
-            notificationPreferences.saveNotificationPrefs(switchPushAlerts.isChecked(),
-                    switchPushSuggestions.isChecked(), switchPushInventory.isChecked());
-            Toast.makeText(requireContext(), "Notificações salvas neste dispositivo", Toast.LENGTH_SHORT).show();
-        });
+        ViewGroup notifications = (ViewGroup) contentNotifications;
+        for (int i = 0; i < notifications.getChildCount(); i++) {
+            notifications.getChildAt(i).setVisibility(View.GONE);
+        }
+        TextView description = new TextView(requireContext());
+        description.setText("As notificações da operação ficam na caixa interna. Toque no sino para consultar as mensagens da sua conta.");
+        description.setTextColor(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.op_text));
+        description.setTextSize(16);
+        notifications.addView(description);
 
         binding.btnInviteMember.setText(R.string.op_team_open);
         binding.btnInviteMember.setOnClickListener(v -> navController.navigate(R.id.teamFragment));

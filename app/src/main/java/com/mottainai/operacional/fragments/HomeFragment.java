@@ -104,7 +104,7 @@ public class HomeFragment extends Fragment {
         }
 
         if (Constants.ROLE_GERENTE.equals(role) && storeId != null && !storeId.trim().isEmpty()) {
-            new UserRepository().listTeam(storeId, new UserRepository.TeamCallback() {
+            new UserRepository().listTeam(requireContext(), new UserRepository.TeamCallback() {
                 @Override public void onSuccess(List<User> users) {
                     if (binding == null) return;
                     int count = users == null ? 0 : users.size();

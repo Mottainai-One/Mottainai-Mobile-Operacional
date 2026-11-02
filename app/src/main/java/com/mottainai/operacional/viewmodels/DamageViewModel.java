@@ -14,7 +14,6 @@ import com.mottainai.operacional.models.DamageUiState;
 import com.mottainai.operacional.models.Product;
 import com.mottainai.operacional.repository.DamageRepository;
 import com.mottainai.operacional.repository.ProductRepository;
-import com.mottainai.operacional.repository.MockProductRepository;
 import com.mottainai.operacional.storage.PhotoStorageRepository;
 import com.mottainai.operacional.utils.Constants;
 import com.mottainai.operacional.utils.SessionManager;
@@ -39,8 +38,7 @@ public class DamageViewModel extends AndroidViewModel {
 
     public DamageViewModel(@NonNull Application application) {
         super(application);
-        boolean useMock = Constants.USE_MOCK_REPOSITORY;
-        productRepository = useMock ? new MockProductRepository(application) : new ProductRepository(application);
+        productRepository = new ProductRepository(application);
         damageRepository = new DamageRepository(application);
         photoRepository = new PhotoStorageRepository();
         sessionManager = new SessionManager(application);

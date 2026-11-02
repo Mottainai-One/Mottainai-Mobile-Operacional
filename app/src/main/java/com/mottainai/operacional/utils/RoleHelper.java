@@ -24,7 +24,12 @@ public class RoleHelper {
 
     // Estoquista NÃO pode ver sugestões
     public static boolean canViewSuggestions(String role) {
-        return role == null || !Constants.ROLE_ESTOQUISTA.equals(normalize(role));
+        return canRegisterProduct(role);
+    }
+
+    public static boolean isKnownRole(String role) {
+        String value = normalize(role);
+        return Constants.ROLE_ESTOQUISTA.equals(value) || canRegisterProduct(value);
     }
 
     // Traduz o role em nome de exibição (vem do switch que está no Fragment)

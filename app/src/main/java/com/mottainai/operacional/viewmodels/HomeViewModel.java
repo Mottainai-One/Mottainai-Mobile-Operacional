@@ -7,7 +7,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.google.firebase.firestore.ListenerRegistration;
+import com.mottainai.operacional.utils.DataSubscription;
 
 import com.mottainai.operacional.models.Alert;
 import com.mottainai.operacional.models.Suggestion;
@@ -26,8 +26,8 @@ public class HomeViewModel extends AndroidViewModel {
     private final AlertRepository alertRepository;
     private final SuggestionRepository suggestionRepository;
 
-    private ListenerRegistration alertListener;
-    private ListenerRegistration suggestionListener;
+    private DataSubscription alertListener;
+    private DataSubscription suggestionListener;
 
     // Flags síncronas para saber quando cada fonte terminou de carregar.
     // Não confiar em getValue() logo após postValue(), que é assíncrono.

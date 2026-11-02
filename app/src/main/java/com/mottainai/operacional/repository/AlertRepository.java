@@ -1,7 +1,7 @@
 package com.mottainai.operacional.repository;
 
 import android.content.Context;
-import com.google.firebase.firestore.ListenerRegistration;
+import com.mottainai.operacional.utils.DataSubscription;
 import com.mottainai.operacional.models.Alert;
 import com.mottainai.operacional.models.ApiAlertResponse;
 import com.mottainai.operacional.network.ApiService;
@@ -17,7 +17,7 @@ public class AlertRepository {
     public interface AlertCallback { void onSuccess(List<Alert> alerts); void onError(Exception e); }
     public AlertRepository(Context context) { api = RetrofitClient.getClient(context).create(ApiService.class); }
 
-    public ListenerRegistration listenAlerts(String storeId, int days, AlertCallback callback) {
+    public DataSubscription listenAlerts(String storeId, int days, AlertCallback callback) {
         final int numericStoreId;
         try { numericStoreId = Integer.parseInt(storeId); }
         catch (Exception error) { callback.onError(new IllegalArgumentException("Loja operacional inválida.")); return () -> {}; }

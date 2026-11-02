@@ -79,7 +79,8 @@ public class SessionManager {
     }
 
     public String getApiAccessToken() {
-        return prefs.getString(KEY_API_ACCESS_TOKEN, prefs.getString(KEY_TOKEN, null));
+        // The legacy token could be a Firebase ID token, not an operational JWT.
+        return prefs.getString(KEY_API_ACCESS_TOKEN, null);
     }
 
     public void saveApiAccessToken(String token) {
@@ -99,11 +100,16 @@ public class SessionManager {
     }
 
     public String getAiChatSessionId() {
-        return prefs.getString(KEY_AI_CHAT_SESSION_ID, null);
+        return prefs.getString(chatSessionKey(), null);
     }
 
     public void saveAiChatSessionId(String sessionId) {
-        prefs.edit().putString(KEY_AI_CHAT_SESSION_ID, sessionId).apply();
+        prefs.edit().putString(chatSessionKey(), sessionId).remove(KEY_AI_CHAT_SESSION_ID).apply();
+    }
+
+    private String chatSessionKey() {
+        return KEY_AI_CHAT_SESSION_ID + ":" + getUid() + ":" + getStoreId() + ":"
+                + com.mottainai.operacional.BuildConfig.IA_BASE_URL;
     }
 
     public String getFcmToken() {

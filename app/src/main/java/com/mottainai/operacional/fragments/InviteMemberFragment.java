@@ -37,6 +37,12 @@ public class InviteMemberFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        if (!com.mottainai.operacional.utils.RoleHelper.isOwner(
+                new com.mottainai.operacional.utils.SessionManager(requireContext()).getRole())) {
+            Navigation.findNavController(view).navigateUp();
+            return;
+        }
+
         binding.btnBack.setOnClickListener(v ->
                 Navigation.findNavController(view).popBackStack());
 

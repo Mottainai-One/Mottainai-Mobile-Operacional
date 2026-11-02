@@ -23,6 +23,8 @@ public class OpenFoodFactsRepository {
     public OpenFoodFactsRepository() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
+                .client(new okhttp3.OkHttpClient.Builder().connectTimeout(10, java.util.concurrent.TimeUnit.SECONDS)
+                        .readTimeout(15, java.util.concurrent.TimeUnit.SECONDS).callTimeout(20, java.util.concurrent.TimeUnit.SECONDS).build())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         api = retrofit.create(OpenFoodFactsApiService.class);
@@ -41,7 +43,9 @@ public class OpenFoodFactsRepository {
         }
         api.getProductByBarcode(barcode.trim(), USER_AGENT).enqueue(new Callback<OpenFoodFactsResponse>() {
             @Override public void onResponse(Call<OpenFoodFactsResponse> call, Response<OpenFoodFactsResponse> response) {
-                if (response.isSuccessful() && response.body() != null && response.body().isFound()) {
+                if (response.code() == 404) {
+                    cb.onNotFound();
+                } else if (response.isSuccessful() && response.body() != null && response.body().isFound()) {
                     cb.onSuccess(response.body().getProduct());
                 } else if (response.isSuccessful() && response.body() != null && !response.body().isFound()) {
                     cb.onNotFound();

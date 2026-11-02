@@ -21,3 +21,5 @@ local.properties
 serviceAccount*.json
 service-account*.json
 *.service-account.json
+
+/local.test-accounts.json

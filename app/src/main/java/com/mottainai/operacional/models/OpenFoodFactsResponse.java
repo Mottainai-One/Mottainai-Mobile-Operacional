@@ -39,10 +39,15 @@ public class OpenFoodFactsResponse {
         @SerializedName("image_url")
         private String imageUrl;
 
+        @SerializedName("image_front_url")
+        private String imageFrontUrl;
+
         public String getProductName() { return productName; }
         public String getBrands() { return brands; }
         public String getQuantity() { return quantity; }
         public String getCategories() { return categories; }
-        public String getImageUrl() { return imageUrl; }
+        public String getImageUrl() {
+            return imageFrontUrl != null && !imageFrontUrl.isEmpty() ? imageFrontUrl : imageUrl;
+        }
     }
 }

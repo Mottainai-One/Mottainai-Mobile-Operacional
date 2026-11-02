@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.tabs.TabLayout;
-import com.google.firebase.firestore.ListenerRegistration;
+import com.mottainai.operacional.utils.DataSubscription;
 
 import com.mottainai.operacional.R;
 import com.mottainai.operacional.databinding.FragmentIaAlertsBinding;
@@ -61,8 +61,8 @@ public class IaAlertsFragment extends Fragment {
 
     private AlertRepository alertRepository;
     private SuggestionRepository suggestionRepository;
-    private ListenerRegistration alertsListener;
-    private ListenerRegistration suggestionsListener;
+    private DataSubscription alertsListener;
+    private DataSubscription suggestionsListener;
 
     private IntelligenceTab selectedTab = IntelligenceTab.ALERTS;
 

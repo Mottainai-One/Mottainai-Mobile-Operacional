@@ -17,8 +17,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.mottainai.operacional.activities.LoginActivity;
 import com.mottainai.operacional.databinding.ActivityMainBinding;
-import com.mottainai.operacional.notifications.NotificationChannelManager;
-import com.mottainai.operacional.notifications.NotificationPermissionManager;
 import com.mottainai.operacional.notifications.NotificationRouter;
 import com.mottainai.operacional.repository.NotificationRepository;
 import com.mottainai.operacional.utils.SessionManager;
@@ -42,9 +40,10 @@ public class MainActivity extends AppCompatActivity {
         // Centraliza aqui o guard de sessão: valida Firebase Auth + sessão local completa.
         session = new SessionManager(this);
 
-        boolean firebaseAuthed = FirebaseAuth.getInstance().getCurrentUser() != null;
+        com.google.firebase.auth.FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        boolean firebaseAuthed = firebaseUser != null && firebaseUser.getUid().equals(session.getUid());
         boolean sessionComplete = session.hasCompleteProfile()
-                && session.getApiAccessToken() != null && !session.getApiAccessToken().isEmpty();
+                && RoleHelper.isKnownRole(session.getRole());
 
         if (!firebaseAuthed || !sessionComplete) {
             if (!firebaseAuthed) {
@@ -133,9 +132,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         applyWindowInsets(bottomNav);
-        NotificationChannelManager.ensureChannels(this);
-        new NotificationRepository(this).captureCurrentDeviceToken();
-        NotificationPermissionManager.requestPermissionIfNeeded(this, session);
         handleNotificationIntent(getIntent());
     }
 

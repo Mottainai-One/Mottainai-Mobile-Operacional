@@ -20,7 +20,7 @@ import com.mottainai.operacional.utils.AuthErrorTranslator;
 import com.mottainai.operacional.utils.SessionManager;
 import com.mottainai.operacional.utils.ThemeSettings;
 import com.mottainai.operacional.utils.ValidationUtils;
-import com.mottainai.operacional.utils.FirebaseSessionUser;
+import com.mottainai.operacional.utils.OperationalSessionUser;
 import com.mottainai.operacional.utils.RoleHelper;
 import com.mottainai.operacional.models.User;
 import com.mottainai.operacional.repository.AuthRepository;
@@ -28,8 +28,6 @@ import com.mottainai.operacional.repository.NotificationRepository;
 import com.google.firebase.auth.FirebaseUser;
 import com.mottainai.operacional.network.ApiService;
 import com.mottainai.operacional.network.RetrofitClient;
-import com.mottainai.operacional.models.ApiLoginRequest;
-import com.mottainai.operacional.models.ApiTokenResponse;
 import com.mottainai.operacional.models.ApiUserProfile;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -46,7 +44,6 @@ public class LoginActivity extends AppCompatActivity {
     private Button btnLogin;
     private AuthRepository authRepository;
     private SessionManager session;
-    private String loginPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,23 +61,21 @@ public class LoginActivity extends AppCompatActivity {
         session = new SessionManager(this);
         authRepository = new AuthRepository();
 
-        if (session.isLoggedIn() && session.getApiAccessToken() != null
-                && session.getStoreId() != null && !session.getStoreId().isEmpty()
-                && session.getRole() != null && !session.getRole().isEmpty()) {
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(intent);
-            finish();
-            return;
+        // Revalidate SQL assignment on restored Firebase sessions before opening the app.
+        FirebaseUser restored = FirebaseAuth.getInstance().getCurrentUser();
+        if (session.hasCompleteProfile() && restored != null && restored.getUid().equals(session.getUid())) {
+            btnLogin.setEnabled(false);
+            refreshTokenAndProceed(restored.getUid());
         }
 
         btnLogin.setOnClickListener(v -> login());
+
     }
 
     private void login() {
         binding.loginStatus.setVisibility(android.view.View.GONE);
         String email = etEmail.getText().toString().trim();
-        String password = etPassword.getText().toString().trim();
-        loginPassword = password;
+        String password = etPassword.getText().toString();
 
         if (email.isEmpty() || password.isEmpty()) {
             showLoginStatus("Preencha e-mail e senha.");
@@ -130,16 +125,15 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<GetTokenResult>() {
                     @Override
                     public void onSuccess(@NonNull GetTokenResult result) {
-                        User user = FirebaseSessionUser.fromClaims(
-                                uid, firebaseUser.getEmail(), result.getClaims());
-                        if (user == null) {
+                        if (!isCurrentFirebaseUser(uid)) return;
+                        if (result.getToken() == null || result.getToken().trim().isEmpty()) {
                             resetLoginButton();
-                            showLoginStatus("Conta sem cargo ou loja válidos. Contate o administrador.");
+                            showLoginStatus("Não foi possível obter o token de autenticação.");
                             return;
                         }
+                        if (session.getUid() != null && !uid.equals(session.getUid())) session.clearSession();
                         session.saveFirebaseToken(result.getToken());
-                        session.saveStoreKey(user.getStoreId());
-                        exchangeOperationalToken(user, result.getToken());
+                        loadOperationalProfile(uid);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -151,43 +145,41 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
-    private void exchangeOperationalToken(User firebaseUser, String firebaseToken) {
+    private boolean isCurrentFirebaseUser(String uid) {
+        FirebaseUser current = FirebaseAuth.getInstance().getCurrentUser();
+        return !isFinishing() && !isDestroyed() && current != null && uid.equals(current.getUid());
+    }
+
+    private void loadOperationalProfile(String uid) {
         ApiService api = RetrofitClient.getClient(getApplicationContext()).create(ApiService.class);
-        api.exchangeFirebaseToken(new ApiLoginRequest(firebaseToken, loginPassword))
-                .enqueue(new Callback<ApiTokenResponse>() {
-                    @Override public void onResponse(Call<ApiTokenResponse> call, Response<ApiTokenResponse> response) {
-                        if (!response.isSuccessful() || response.body() == null
-                                || response.body().getAccessToken() == null
-                                || response.body().getRefreshToken() == null) {
-                            failOperationalLogin("A API operacional recusou a sessão (HTTP " + response.code() + ").");
-                            return;
-                        }
-                        session.saveApiAccessToken(response.body().getAccessToken());
-                        session.saveApiRefreshToken(response.body().getRefreshToken());
-                        api.getOperationalProfile().enqueue(new Callback<ApiUserProfile>() {
-                            @Override public void onResponse(Call<ApiUserProfile> call, Response<ApiUserProfile> profileResponse) {
-                                ApiUserProfile profile = profileResponse.body();
-                                if (!profileResponse.isSuccessful() || profile == null || !Boolean.TRUE.equals(profile.getActive())
-                                        || profile.getStoreId() == null || profile.getRole() == null
-                                        || !RoleHelper.normalize(profile.getRole()).equals(firebaseUser.getRole())) {
-                                    failOperationalLogin("O perfil da API está incompleto ou diverge do cargo autenticado.");
-                                    return;
-                                }
-                                session.saveSession(new User(firebaseUser.getUid(),
-                                        profile.getName() == null ? firebaseUser.getName() : profile.getName(),
-                                        RoleHelper.normalize(profile.getRole()), String.valueOf(profile.getStoreId())));
-                                new NotificationRepository(getApplicationContext()).captureCurrentDeviceToken();
-                                goToMain();
-                            }
-                            @Override public void onFailure(Call<ApiUserProfile> call, Throwable error) {
-                                failOperationalLogin("Não foi possível carregar o perfil operacional: " + error.getMessage());
-                            }
-                        });
-                    }
-                    @Override public void onFailure(Call<ApiTokenResponse> call, Throwable error) {
-                        failOperationalLogin("Não foi possível validar a conta na API operacional: " + error.getMessage());
-                    }
-                });
+        api.getOperationalProfile().enqueue(new Callback<ApiUserProfile>() {
+            @Override public void onResponse(Call<ApiUserProfile> call, Response<ApiUserProfile> response) {
+                if (!isCurrentFirebaseUser(uid)) return;
+                User user = OperationalSessionUser.fromProfile(uid, response.body());
+                if (!response.isSuccessful() || user == null) {
+                    failOperationalLogin(response.code() == 401 || response.code() == 403
+                            ? "A API não autorizou a conta. Confira o vínculo ativo do funcionário, cargo, loja e empresa no banco."
+                            : "Não foi possível carregar o perfil operacional (HTTP " + response.code() + ").");
+                    return;
+                }
+                FirebaseUser identity = FirebaseAuth.getInstance().getCurrentUser();
+                String name = identity.getDisplayName();
+                if (name == null || name.trim().isEmpty()) name = identity.getEmail();
+                if (name != null && !name.trim().isEmpty()) {
+                    user = new User(uid, name.trim(), user.getRole(), user.getStoreId());
+                }
+                // Old operational tokens are integration credentials only, never the SQL login.
+                session.saveApiAccessToken(null);
+                session.saveApiRefreshToken(null);
+                session.saveSession(user);
+                session.saveStoreKey(user.getStoreId());
+                goToMain();
+            }
+            @Override public void onFailure(Call<ApiUserProfile> call, Throwable error) {
+                if (!isCurrentFirebaseUser(uid)) return;
+                failOperationalLogin("Não foi possível conectar à API operacional. Confira a conexão e tente novamente.");
+            }
+        });
     }
 
     private void failOperationalLogin(String message) {

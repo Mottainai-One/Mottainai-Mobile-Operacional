@@ -20,6 +20,8 @@ import com.mottainai.operacional.utils.SessionManager;
 import java.util.Locale;
 
 public class AccountSettingsFragment extends Fragment {
+    private final com.mottainai.operacional.utils.ProfilePhoto photo =
+            new com.mottainai.operacional.utils.ProfilePhoto(this);
     private FragmentAccountSettingsBinding binding;
 
     @Nullable @Override
@@ -32,6 +34,7 @@ public class AccountSettingsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        photo.bind(binding.tvAccountInitials);
         SessionManager session = new SessionManager(requireContext());
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String name = session.getName() == null ? "" : session.getName().trim();
@@ -58,6 +61,7 @@ public class AccountSettingsFragment extends Fragment {
     }
 
     @Override public void onDestroyView() {
+        photo.clearView();
         super.onDestroyView();
         binding = null;
     }

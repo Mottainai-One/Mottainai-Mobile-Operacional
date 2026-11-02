@@ -31,7 +31,7 @@ public class DamageRepository {
     }
 
     public void createDamage(DamageRequest request, DamageCallback callback) {
-        if (sessionManager.getApiAccessToken() == null) {
+        if (!sessionManager.hasCompleteProfile() || com.google.firebase.auth.FirebaseAuth.getInstance().getCurrentUser() == null) {
             callback.onError("Entre novamente para enviar a avaria à API.");
             return;
         }

@@ -166,15 +166,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         tvProductSupplier.setText("Fornecedor: " + (product.getSupplier() != null ? product.getSupplier() : "—"));
         tvProductStore.setVisibility(View.GONE);
 
-        if (product.getImageUrl() != null && !product.getImageUrl().isEmpty()) {
-            Glide.with(this)
-                    .load(product.getImageUrl())
-                    .placeholder(R.drawable.op_box)
-                    .error(R.drawable.op_box)
-                    .into(ivProductImage);
-        } else {
-            ivProductImage.setImageResource(R.drawable.op_box);
-        }
+        com.mottainai.operacional.utils.ProductImages.load(ivProductImage, product);
     }
 
     private void showError(String message) {
