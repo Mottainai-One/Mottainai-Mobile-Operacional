@@ -21,4 +21,6 @@
    firebase deploy --only functions,firestore:rules,firestore:indexes
    ```
 
+A mesma ponte recebe também eventos de sangria e suprimento, registra a entrega de forma idempotente e publica o aviso na inbox Redis e por FCM para os gerentes ativos da loja. Os eventos são enviados depois que o movimento sincroniza com o banco operacional.
+
 O PDV continua configurado com `Firebase__PosApprovalFunctionUrl` e o segredo `POS_APPROVAL_API_SECRET`. O mesmo pedido pode ser reenviado com segurança: a notificação Redis usa um identificador estável por solicitação e gerente.
