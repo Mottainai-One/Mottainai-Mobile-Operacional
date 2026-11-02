@@ -15,10 +15,10 @@ import org.junit.Test;
 public class OperationalContractTest {
     private final Gson gson = new Gson();
 
-    @Test public void loginExchangeUsesFirebaseTokenAndStaffPasswordContract() {
-        String json = gson.toJson(new ApiLoginRequest("firebase-id-token", "staff-password"));
+    @Test public void loginExchangeUsesFirebaseTokenWithoutForwardingPassword() {
+        String json = gson.toJson(new ApiLoginRequest("firebase-id-token"));
         assertTrue(json.contains("\"firebaseIdToken\":\"firebase-id-token\""));
-        assertTrue(json.contains("\"password\":\"staff-password\""));
+        assertTrue(!json.contains("\"password\""));
     }
 
     @Test public void tokenResponseKeepsApiAccessAndRefreshTokensSeparate() {
