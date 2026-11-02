@@ -173,6 +173,84 @@ async function sendApprovalToTokens(request, deviceSnapshots) {
   return devices.length;
 }
 
+function cashMovementMessage(request) {
+  const label = request.movementType === 'SUPRIMENTO' ? 'Suprimento' : 'Sangria';
+  const amount = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(request.amount);
+  return {
+    title: label + ' registrado no PDV',
+    body: amount + '. Motivo: ' + request.reason
+  };
+}
+
+async function publishCashMovementToRedis(request, recipients, secret) {
+  const endpoint = process.env.REDIS_NOTIFICATION_API_URL || '';
+  let parsed;
+  try { parsed = new URL(endpoint); } catch (_) { parsed = null; }
+  if (!parsed || parsed.protocol !== 'https:' || !secret) {
+    throw new Error('Redis notification API is not configured with HTTPS and a secret.');
+  }
+  const message = cashMovementMessage(request);
+  await Promise.all(recipients.map(async (recipient) => {
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'X-Mottainai-Notification-Secret': secret
+      },
+      body: JSON.stringify({
+        companyId: Number(recipient.companyId),
+        userId: Number(recipient.userId),
+        id: 'pos-cash-' + request.eventId + '-' + Number(recipient.userId),
+        title: message.title,
+        body: message.body,
+        priority: 2
+      }),
+      signal: AbortSignal.timeout(10000)
+    });
+    if (!response.ok) throw new Error('Redis notification API returned HTTP ' + response.status + '.');
+  }));
+  return recipients.length;
+}
+
+async function sendCashMovementToTokens(request, deviceSnapshots) {
+  const devices = deviceSnapshots.filter((doc) => {
+    const data = doc.data();
+    return data && data.fcmToken && managerRoles.has(normalizeRole(data.role));
+  });
+  if (devices.length === 0) return 0;
+  const message = cashMovementMessage(request);
+  const payload = {
+    data: {
+      title: message.title,
+      body: message.body,
+      notificationType: 'cash_movement',
+      notificationId: request.eventId,
+      entityId: String(request.movementId),
+      movementId: String(request.movementId),
+      movementType: request.movementType,
+      storeID: request.storeID
+    },
+    android: { priority: 'high' }
+  };
+  for (let start = 0; start < devices.length; start += 500) {
+    const batch = devices.slice(start, start + 500);
+    const response = await admin.messaging().sendEachForMulticast({
+      ...payload,
+      tokens: batch.map((doc) => doc.data().fcmToken)
+    });
+    const invalid = [];
+    response.responses.forEach((result, index) => {
+      const code = result.error && result.error.code;
+      if (code === 'messaging/invalid-registration-token'
+          || code === 'messaging/registration-token-not-registered') {
+        invalid.push(batch[index].ref.delete());
+      }
+    });
+    if (invalid.length) await Promise.all(invalid);
+  }
+  return devices.length;
+}
+
 exports.posApprovalBridge = onRequest(
   { region: 'southamerica-east1', secrets: [posApprovalApiSecret, redisNotificationApiSecret] },
   async (req, res) => {
@@ -253,6 +331,77 @@ exports.posApprovalBridge = onRequest(
         lastNotificationAttemptAt: admin.firestore.FieldValue.serverTimestamp()
       });
       return res.status(200).json({ requestId, status: 'PENDING', recipients, redisRecipients });
+    }
+
+    if (body.operation === 'cash_movement') {
+      const eventId = String(body.eventId || '');
+      const storeID = String(body.storeID || '');
+      const employeeId = Number(body.employeeId);
+      const movementId = Number(body.movementId);
+      const movementType = String(body.movementType || '');
+      const amount = Number(body.amount);
+      const reason = String(body.reason || '').trim().slice(0, 200);
+      const movementDate = String(body.movementDate || '');
+      const recipients = Array.isArray(body.recipients) ? body.recipients : [];
+      if (!/^[0-9a-f-]{36}$/i.test(eventId)
+          || !/^\d+$/.test(storeID)
+          || !Number.isSafeInteger(employeeId) || employeeId < 1
+          || !Number.isSafeInteger(movementId) || movementId < 1
+          || !['SANGRIA', 'SUPRIMENTO'].includes(movementType)
+          || !Number.isFinite(amount) || amount <= 0
+          || !reason
+          || !Number.isFinite(Date.parse(movementDate))
+          || recipients.length < 1
+          || recipients.some((recipient) => !Number.isSafeInteger(Number(recipient.companyId))
+            || Number(recipient.companyId) < 1 || !Number.isSafeInteger(Number(recipient.userId))
+            || Number(recipient.userId) < 1)) {
+        return res.status(400).json({ error: 'invalid_cash_movement_notification' });
+      }
+      const request = { eventId, storeID, employeeId, movementId, movementType, amount, reason, movementDate };
+      const requestHash = crypto.createHash('sha256')
+        .update(JSON.stringify(request)).digest('hex');
+      const db = admin.firestore();
+      const reference = db.collection('posCashMovementNotifications').doc(eventId);
+      const state = await db.runTransaction(async (transaction) => {
+        const current = await transaction.get(reference);
+        if (current.exists) {
+          if (current.get('requestHash') !== requestHash) return 'CONFLICT';
+          return 'EXISTING';
+        }
+        transaction.create(reference, {
+          storeID,
+          requestHash,
+          redisNotificationDeliveryPending: true,
+          pushNotificationDeliveryPending: true,
+          createdAt: admin.firestore.FieldValue.serverTimestamp()
+        });
+        return 'CREATED';
+      });
+      if (state === 'CONFLICT') return res.status(409).json({ error: 'cash_movement_event_conflict' });
+
+      const current = await reference.get();
+      let redisRecipients = 0;
+      if (current.get('redisNotificationDeliveryPending')) {
+        redisRecipients = await publishCashMovementToRedis(
+          request, recipients, redisNotificationApiSecret.value());
+        await reference.update({
+          redisNotificationDeliveryPending: false,
+          lastRedisNotificationAttemptAt: admin.firestore.FieldValue.serverTimestamp()
+        });
+      }
+      let pushRecipients = 0;
+      if (current.get('pushNotificationDeliveryPending')) {
+        const devices = await db.collection('posNotificationDevices')
+          .where('storeKey', '==', storeID)
+          .where('role', 'in', ['GERENTE', 'DONO', 'MANAGER', 'OWNER'])
+          .get();
+        pushRecipients = await sendCashMovementToTokens(request, devices.docs);
+        await reference.update({
+          pushNotificationDeliveryPending: false,
+          lastPushNotificationAttemptAt: admin.firestore.FieldValue.serverTimestamp()
+        });
+      }
+      return res.status(200).json({ eventId, redisRecipients, pushRecipients });
     }
 
     if (body.operation === 'decisions') {
