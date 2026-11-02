@@ -12,6 +12,10 @@ public class ProductForm {
     private String name;
     private String description;
     private Integer categoryId;
+    private Integer taxProfileId;
+    private String ncm;
+    private String cest;
+    private String imageUrl;
     private String categoryName;
     private String brand;
     private String unitMeasure;
@@ -33,6 +37,14 @@ public class ProductForm {
     public void setDescription(String v) { description = v; }
     public Integer getCategoryId() { return categoryId; }
     public void setCategoryId(Integer v) { categoryId = v; }
+    public Integer getTaxProfileId() { return taxProfileId; }
+    public void setTaxProfileId(Integer v) { taxProfileId = v; }
+    public String getNcm() { return ncm; }
+    public void setNcm(String v) { ncm = v; }
+    public String getCest() { return cest; }
+    public void setCest(String v) { cest = v; }
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String v) { imageUrl = v; }
     public String getCategoryName() { return categoryName; }
     public void setCategoryName(String v) { categoryName = v; }
     public String getBrand() { return brand; }
@@ -64,6 +76,10 @@ public class ProductForm {
     public ProductUpsertRequest toUpsertRequest() {
         ProductUpsertRequest r = new ProductUpsertRequest();
         r.setCategoryId(categoryId);
+        r.setTaxProfileId(taxProfileId);
+        r.setNcm(ncm != null ? ncm.trim() : null);
+        r.setCest(cest != null && !cest.trim().isEmpty() ? cest.trim() : null);
+        r.setImageUrl(imageUrl);
         r.setBarcode(barcode != null ? barcode.trim() : null);
         r.setName(name != null ? name.trim() : null);
         r.setDescription(description != null && !description.trim().isEmpty() ? description.trim() : null);
@@ -73,5 +89,21 @@ public class ProductForm {
         r.setActive(active);
         r.setVersion(version);
         return r;
+    }
+
+    public ProductCreateRequest toCreateRequest() {
+        return new ProductCreateRequest(categoryId, taxProfileId, barcode == null ? null : barcode.trim(),
+                ncm == null ? null : ncm.trim(), cest == null || cest.trim().isEmpty() ? null : cest.trim(),
+                name == null ? null : name.trim(), description == null || description.trim().isEmpty() ? null : description.trim(),
+                brand == null || brand.trim().isEmpty() ? null : brand.trim(),
+                unitMeasure == null ? null : unitMeasure.trim(), getWeightAsBigDecimal(), imageUrl);
+    }
+
+    public ProductUpdateRequest toUpdateRequest() {
+        return new ProductUpdateRequest(categoryId, taxProfileId, ncm == null ? null : ncm.trim(),
+                cest == null || cest.trim().isEmpty() ? null : cest.trim(), name == null ? null : name.trim(),
+                description == null || description.trim().isEmpty() ? null : description.trim(),
+                brand == null || brand.trim().isEmpty() ? null : brand.trim(),
+                unitMeasure == null ? null : unitMeasure.trim(), getWeightAsBigDecimal(), active, version, imageUrl);
     }
 }

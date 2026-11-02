@@ -23,8 +23,8 @@ import java.util.List;
  */
 public class HomeViewModel extends AndroidViewModel {
 
-    private final AlertRepository alertRepository = new AlertRepository();
-    private final SuggestionRepository suggestionRepository = new SuggestionRepository();
+    private final AlertRepository alertRepository;
+    private final SuggestionRepository suggestionRepository;
 
     private ListenerRegistration alertListener;
     private ListenerRegistration suggestionListener;
@@ -42,6 +42,8 @@ public class HomeViewModel extends AndroidViewModel {
 
     public HomeViewModel(@NonNull Application application) {
         super(application);
+        alertRepository = new AlertRepository(application);
+        suggestionRepository = new SuggestionRepository(application);
     }
 
     public LiveData<Boolean> getLoading() {

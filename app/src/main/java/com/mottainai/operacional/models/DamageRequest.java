@@ -3,12 +3,12 @@ package com.mottainai.operacional.models;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Payload POST /api/v1/damages (contrato pendente - confirmar com backend).
+ * Payload POST /api/v1/damages.
  * Campos enviados: productId, reason, quantity, note, photoUrl.
- * storeId/userId derivados do Firebase ID token no backend, não digitados.
+ * Store and employee identity are derived by the authenticated API.
  */
 public class DamageRequest {
-    @SerializedName("productId") private String productId;
+    @SerializedName("productId") private Integer productId;
     @SerializedName("reason") private String reason;
     @SerializedName("quantity") private int quantity;
     @SerializedName("note") private String note;
@@ -16,9 +16,10 @@ public class DamageRequest {
 
     public DamageRequest() {}
     public DamageRequest(String productId, String reason, int quantity, String note, String photoUrl) {
-        this.productId = productId; this.reason = reason; this.quantity = quantity; this.note = note; this.photoUrl = photoUrl;
+        try { this.productId = Integer.valueOf(productId); } catch (Exception ignored) { this.productId = null; }
+        this.reason = reason; this.quantity = quantity; this.note = note; this.photoUrl = photoUrl;
     }
-    public String getProductId() { return productId; } public void setProductId(String v) { productId = v; }
+    public Integer getProductId() { return productId; } public void setProductId(Integer v) { productId = v; }
     public String getReason() { return reason; } public void setReason(String v) { reason = v; }
     public int getQuantity() { return quantity; } public void setQuantity(int v) { quantity = v; }
     public String getNote() { return note; } public void setNote(String v) { note = v; }

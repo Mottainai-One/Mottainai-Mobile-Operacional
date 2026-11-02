@@ -11,6 +11,10 @@ public class SessionManager {
     private static final String KEY_ROLE = "role";
     private static final String KEY_STORE_ID = "storeId";
     private static final String KEY_TOKEN = "token";
+    private static final String KEY_API_ACCESS_TOKEN = "apiAccessToken";
+    private static final String KEY_API_REFRESH_TOKEN = "apiRefreshToken";
+    private static final String KEY_FIREBASE_TOKEN = "firebaseToken";
+    private static final String KEY_STORE_KEY = "storeKey";
     private static final String KEY_AI_CHAT_SESSION_ID = "aiChatSessionId";
     private static final String KEY_FCM_TOKEN = "fcmToken";
     private static final String KEY_FCM_TOKEN_PENDING_SYNC = "fcmTokenPendingSync";
@@ -29,6 +33,12 @@ public class SessionManager {
                 .putString(KEY_STORE_ID, user.getStoreId())
                 .apply();
     }
+
+    public void saveStoreKey(String storeKey) {
+        prefs.edit().putString(KEY_STORE_KEY, storeKey).apply();
+    }
+
+    public String getStoreKey() { return prefs.getString(KEY_STORE_KEY, null); }
 
     public String getUid() {
         return prefs.getString(KEY_UID, null);
@@ -61,11 +71,31 @@ public class SessionManager {
     }
 
     public String getToken() {
-        return prefs.getString(KEY_TOKEN, null);
+        return getApiAccessToken();
     }
 
     public void saveToken(String token) {
-        prefs.edit().putString(KEY_TOKEN, token).apply();
+        saveApiAccessToken(token);
+    }
+
+    public String getApiAccessToken() {
+        return prefs.getString(KEY_API_ACCESS_TOKEN, prefs.getString(KEY_TOKEN, null));
+    }
+
+    public void saveApiAccessToken(String token) {
+        prefs.edit().putString(KEY_API_ACCESS_TOKEN, token).remove(KEY_TOKEN).apply();
+    }
+
+    public String getApiRefreshToken() { return prefs.getString(KEY_API_REFRESH_TOKEN, null); }
+
+    public void saveApiRefreshToken(String token) {
+        prefs.edit().putString(KEY_API_REFRESH_TOKEN, token).apply();
+    }
+
+    public String getFirebaseToken() { return prefs.getString(KEY_FIREBASE_TOKEN, null); }
+
+    public void saveFirebaseToken(String token) {
+        prefs.edit().putString(KEY_FIREBASE_TOKEN, token).apply();
     }
 
     public String getAiChatSessionId() {

@@ -35,7 +35,8 @@ public final class NotificationRouter {
         DAMAGE,
         ALERT,
         SUGGESTION,
-        INVENTORY;
+        INVENTORY,
+        POS_APPROVAL;
 
         public static Destination fromPayload(Map<String, String> data) {
             String value = firstNonBlank(data.get("notificationType"), data.get("type"), data.get("route"));
@@ -60,6 +61,9 @@ public final class NotificationRouter {
                 case "inventory":
                 case "inventario":
                     return INVENTORY;
+                case "pos_approval":
+                case "pos_approvals":
+                    return POS_APPROVAL;
                 default:
                     return HOME;
             }
@@ -144,6 +148,9 @@ public final class NotificationRouter {
         }
         if (destination == Destination.INVENTORY) {
             return RoleHelper.canRegisterProduct(role);
+        }
+        if (destination == Destination.POS_APPROVAL) {
+            return RoleHelper.canApprovePosRequests(role);
         }
         return true;
     }

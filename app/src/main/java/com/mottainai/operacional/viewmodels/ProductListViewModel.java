@@ -21,8 +21,7 @@ import java.util.List;
 
 /**
  * ViewModel para lista de produtos.
- * O modo mock é controlado por Constants.USE_MOCK_REPOSITORY.
- * Em produção, deve ser false para usar a API real.
+ * Loads the operational product API and keeps a labeled offline snapshot on network loss.
  */
 public class ProductListViewModel extends AndroidViewModel {
 
@@ -38,7 +37,6 @@ public class ProductListViewModel extends AndroidViewModel {
 
     public ProductListViewModel(@NonNull Application application) {
         super(application);
-        // Modo mock controlado por constante - alterar para false quando API estiver pronta
         boolean useMock = Constants.USE_MOCK_REPOSITORY;
         if (useMock) {
             productRepository = new MockProductRepository(application);

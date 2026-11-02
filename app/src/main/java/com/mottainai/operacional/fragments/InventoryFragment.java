@@ -27,7 +27,7 @@ import com.mottainai.operacional.models.InventorySession;
 import com.mottainai.operacional.utils.SessionManager;
 import com.mottainai.operacional.viewmodels.InventoryViewModel;
 
-/** Conteúdo da aba Inventário no modo de demonstração local. */
+/** Real store inventory-count flow persisted by the operational API. */
 public class InventoryFragment extends Fragment {
 
     private FragmentInventoryBinding binding;
@@ -164,8 +164,8 @@ public class InventoryFragment extends Fragment {
         }
 
         new MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Finalizar contagem local?")
-                .setMessage("A edição ficará bloqueada nesta sessão. As quantidades não serão enviadas ao estoque da loja.")
+                .setTitle("Finalizar contagem?")
+                .setMessage("As divergências conferidas serão aplicadas ao estoque da loja pela API operacional.")
                 .setNegativeButton("Cancelar", null)
                 .setPositiveButton("Finalizar", (dialog, which) -> viewModel.finish())
                 .show();
@@ -189,12 +189,12 @@ public class InventoryFragment extends Fragment {
         boolean finalized = session.getStatus() == InventorySession.Status.FINALIZED;
         if (finalized) {
             tvState.setText("Contagem finalizada");
-            tvInfo.setText("Contagem local finalizada. O estoque da loja não foi alterado.");
+            tvInfo.setText("Contagem enviada. Os ajustes foram aplicados ao estoque da loja.");
             btnStart.setVisibility(View.GONE);
             btnFinish.setVisibility(View.GONE);
         } else {
             tvState.setText("Contagem em andamento");
-            tvInfo.setText("Rascunho salvo neste aparelho. O estoque da loja não foi alterado.");
+            tvInfo.setText("Rascunho e itens conferidos estão sincronizados com a API operacional.");
             btnStart.setVisibility(View.GONE);
             btnFinish.setVisibility(View.VISIBLE);
             ((TextView) btnFinish).setText("Finalizar inventário (" + counted + "/" + total + ")");
@@ -231,7 +231,7 @@ public class InventoryFragment extends Fragment {
         tvState.setText("Inventário não iniciado");
         tvMeta.setText("Inicie uma contagem para conferir o estoque físico.");
         tvProgress.setText("A contagem ainda não começou");
-        tvInfo.setText("Esta contagem usa os produtos de demonstração do aplicativo.");
+        tvInfo.setText("A próxima contagem carregará os itens de estoque cadastrados para sua loja.");
         cardDivergences.setVisibility(View.GONE);
         progressInventory.setVisibility(View.INVISIBLE);
         progressInventory.setProgress(0);

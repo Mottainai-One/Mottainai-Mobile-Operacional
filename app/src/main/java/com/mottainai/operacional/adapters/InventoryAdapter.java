@@ -99,7 +99,7 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.Inve
                 public void afterTextChanged(Editable editable) {
                     if (boundItem == null || !etCount.hasFocus()) return;
                     Integer quantity = parseQuantity(editable.toString());
-                    listener.onCountChanged(boundItem.getProductId(), quantity);
+                    listener.onCountChanged(boundItem.getInventoryId(), quantity);
                     renderResult(boundItem.withCountedQuantity(quantity));
                 }
             };
@@ -107,7 +107,7 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.Inve
                 @Override
                 public void afterTextChanged(Editable editable) {
                     if (boundItem == null || !etObservation.hasFocus()) return;
-                    listener.onObservationChanged(boundItem.getProductId(), editable.toString().trim());
+                    listener.onObservationChanged(boundItem.getInventoryId(), editable.toString().trim());
                 }
             };
             etCount.addTextChangedListener(countWatcher);

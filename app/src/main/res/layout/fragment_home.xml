@@ -304,7 +304,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="@string/op_sales_not_connected"
+                        android:text="@string/op_sales_caption"
                         android:textColor="@color/op_on_brand"
                         android:textSize="13sp" />
                 </LinearLayout>

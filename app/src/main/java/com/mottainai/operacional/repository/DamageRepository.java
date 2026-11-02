@@ -6,25 +6,19 @@ import com.mottainai.operacional.models.Damage;
 import com.mottainai.operacional.models.DamageRequest;
 import com.mottainai.operacional.network.ApiService;
 import com.mottainai.operacional.network.RetrofitClient;
-import com.mottainai.operacional.utils.Constants;
 import com.mottainai.operacional.utils.SessionManager;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * Repository mockável. Se USE_MOCK_DAMAGE=true, simula POST /api/v1/damages localmente.
- * Quando backend existir, usar ApiService.postDamage.
+ * Persists damage reports through the authenticated operational API.
  */
 public class DamageRepository {
     private final ApiService apiService;
     private final SessionManager sessionManager;
-    private static final List<Damage> mockDamages = new ArrayList<>();
 
     public interface DamageCallback {
         void onSuccess(Damage damage);
@@ -37,30 +31,8 @@ public class DamageRepository {
     }
 
     public void createDamage(DamageRequest request, DamageCallback callback) {
-        if (Constants.USE_MOCK_DAMAGE) {
-            new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
-                // Validação servidor simulada
-                if (request.getProductId() == null) { callback.onError("Produto inválido"); return; }
-                String storeId = sessionManager.getStoreId();
-                String userId = sessionManager.getUid();
-                if (isBlank(storeId) || isBlank(userId)) {
-                    callback.onError("Sessão sem loja ou usuário. Faça login novamente.");
-                    return;
-                }
-                Damage d = new Damage();
-                d.setId(UUID.randomUUID().toString());
-                d.setProductId(request.getProductId());
-                d.setStoreId(storeId);
-                d.setUserId(userId);
-                d.setReason(request.getReason());
-                d.setQuantity(request.getQuantity());
-                d.setNote(request.getNote());
-                d.setPhotoUrl(request.getPhotoUrl());
-                d.setStatus("registered");
-                d.setCreatedAt(java.time.Instant.now().toString());
-                mockDamages.add(d);
-                callback.onSuccess(d);
-            }, 900);
+        if (sessionManager.getApiAccessToken() == null) {
+            callback.onError("Entre novamente para enviar a avaria à API.");
             return;
         }
         apiService.createDamage(request).enqueue(new Callback<Damage>() {
@@ -82,7 +54,4 @@ public class DamageRepository {
         return "Erro: " + code;
     }
 
-    private boolean isBlank(String value) {
-        return value == null || value.trim().isEmpty();
-    }
 }

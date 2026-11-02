@@ -29,6 +29,18 @@ public class Suggestion {
         return s;
     }
 
+    public static Suggestion fromApi(ApiSuggestionResponse dto) {
+        if (dto == null) return null;
+        Suggestion suggestion = new Suggestion();
+        suggestion.id = dto.id == null ? null : String.valueOf(dto.id);
+        suggestion.title = dto.actionType == null ? "Sugestão" : dto.actionType.replace('_', ' ');
+        suggestion.description = dto.description;
+        suggestion.status = dto.status == null ? null : dto.status.toLowerCase(java.util.Locale.ROOT);
+        suggestion.storeId = dto.alertId == null ? null : String.valueOf(dto.alertId);
+        suggestion.createdAt = Alert.parseApiDate(dto.generatedAt);
+        return suggestion;
+    }
+
     public String getId() { return id; }
     public String getTitle() { return title; }
     public String getDescription() { return description; }

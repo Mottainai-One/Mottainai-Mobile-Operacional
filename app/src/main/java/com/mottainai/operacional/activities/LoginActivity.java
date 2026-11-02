@@ -20,10 +20,20 @@ import com.mottainai.operacional.utils.AuthErrorTranslator;
 import com.mottainai.operacional.utils.SessionManager;
 import com.mottainai.operacional.utils.ThemeSettings;
 import com.mottainai.operacional.utils.ValidationUtils;
+import com.mottainai.operacional.utils.FirebaseSessionUser;
+import com.mottainai.operacional.utils.RoleHelper;
 import com.mottainai.operacional.models.User;
 import com.mottainai.operacional.repository.AuthRepository;
 import com.mottainai.operacional.repository.NotificationRepository;
-import com.mottainai.operacional.repository.UserRepository;
+import com.google.firebase.auth.FirebaseUser;
+import com.mottainai.operacional.network.ApiService;
+import com.mottainai.operacional.network.RetrofitClient;
+import com.mottainai.operacional.models.ApiLoginRequest;
+import com.mottainai.operacional.models.ApiTokenResponse;
+import com.mottainai.operacional.models.ApiUserProfile;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -35,8 +45,8 @@ public class LoginActivity extends AppCompatActivity {
     private EditText etPassword;
     private Button btnLogin;
     private AuthRepository authRepository;
-    private UserRepository userRepository;
     private SessionManager session;
+    private String loginPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,9 +63,8 @@ public class LoginActivity extends AppCompatActivity {
 
         session = new SessionManager(this);
         authRepository = new AuthRepository();
-        userRepository = new UserRepository();
 
-        if (session.isLoggedIn()
+        if (session.isLoggedIn() && session.getApiAccessToken() != null
                 && session.getStoreId() != null && !session.getStoreId().isEmpty()
                 && session.getRole() != null && !session.getRole().isEmpty()) {
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
@@ -71,6 +80,7 @@ public class LoginActivity extends AppCompatActivity {
         binding.loginStatus.setVisibility(android.view.View.GONE);
         String email = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
+        loginPassword = password;
 
         if (email.isEmpty() || password.isEmpty()) {
             showLoginStatus("Preencha e-mail e senha.");
@@ -88,7 +98,7 @@ public class LoginActivity extends AppCompatActivity {
         authRepository.login(email, password, new AuthRepository.AuthCallback() {
             @Override
             public void onSuccess(String uid) {
-                loadUserProfile(uid);
+                refreshTokenAndProceed(uid);
             }
 
             @Override
@@ -107,69 +117,88 @@ public class LoginActivity extends AppCompatActivity {
         binding.loginStatus.setVisibility(android.view.View.VISIBLE);
     }
 
-    private void loadUserProfile(String uid) {
-        userRepository.getUserProfile(uid, new UserRepository.UserCallback() {
-            @Override
-            public void onSuccess(User user) {
-                if (user.getStoreId() == null || user.getStoreId().isEmpty()
-                        || user.getRole() == null || user.getRole().isEmpty()) {
-                    btnLogin.setEnabled(true);
-                    btnLogin.setText("Entrar");
-                    Toast.makeText(LoginActivity.this,
-                            "Usuário sem loja ou perfil configurado. Contate o administrador.",
-                            Toast.LENGTH_LONG).show();
-                    return;
-                }
-                refreshTokenAndProceed(user);
-            }
-
-            @Override
-            public void onError(Exception e) {
-                btnLogin.setEnabled(true);
-                btnLogin.setText("Entrar");
-                Toast.makeText(LoginActivity.this, AuthErrorTranslator.toUserMessage(e), Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onNotFound() {
-                btnLogin.setEnabled(true);
-                btnLogin.setText("Entrar");
-                Toast.makeText(LoginActivity.this, "Perfil não encontrado no Firestore", Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
-    private void refreshTokenAndProceed(User user) {
-        FirebaseAuth.getInstance().getCurrentUser()
-                .getIdToken(true)
+    private void refreshTokenAndProceed(String uid) {
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (firebaseUser == null || !uid.equals(firebaseUser.getUid())) {
+            resetLoginButton();
+            showLoginStatus("Não foi possível validar a sessão. Tente entrar novamente.");
+            return;
+        }
+        // signInWithEmailAndPassword acabou de obter um token atual; não force
+        // uma segunda renovação de rede antes de abrir a sessão.
+        firebaseUser.getIdToken(false)
                 .addOnSuccessListener(new OnSuccessListener<GetTokenResult>() {
                     @Override
                     public void onSuccess(@NonNull GetTokenResult result) {
-                        Object storeID = result.getClaims().get("storeID");
-                        Object role = result.getClaims().get("role");
-                        if (storeID == null || role == null) {
-                            btnLogin.setEnabled(true);
-                            btnLogin.setText("Entrar");
-                            Toast.makeText(LoginActivity.this,
-                                    "Token sem storeID/role. Logout e login novamente.",
-                                    Toast.LENGTH_LONG).show();
+                        User user = FirebaseSessionUser.fromClaims(
+                                uid, firebaseUser.getEmail(), result.getClaims());
+                        if (user == null) {
+                            resetLoginButton();
+                            showLoginStatus("Conta sem cargo ou loja válidos. Contate o administrador.");
                             return;
                         }
-                        session.saveSession(user);
-                        session.saveToken(result.getToken());
-                        new NotificationRepository(getApplicationContext()).captureCurrentDeviceToken();
-                        goToMain();
+                        session.saveFirebaseToken(result.getToken());
+                        session.saveStoreKey(user.getStoreId());
+                        exchangeOperationalToken(user, result.getToken());
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        btnLogin.setEnabled(true);
-                        btnLogin.setText("Entrar");
-                        Toast.makeText(LoginActivity.this,
-                                "Erro ao renovar sessão: " + AuthErrorTranslator.toUserMessage(e), Toast.LENGTH_LONG).show();
+                        resetLoginButton();
+                        showLoginStatus("Erro ao validar a sessão: " + AuthErrorTranslator.toUserMessage(e));
                     }
                 });
+    }
+
+    private void exchangeOperationalToken(User firebaseUser, String firebaseToken) {
+        ApiService api = RetrofitClient.getClient(getApplicationContext()).create(ApiService.class);
+        api.exchangeFirebaseToken(new ApiLoginRequest(firebaseToken, loginPassword))
+                .enqueue(new Callback<ApiTokenResponse>() {
+                    @Override public void onResponse(Call<ApiTokenResponse> call, Response<ApiTokenResponse> response) {
+                        if (!response.isSuccessful() || response.body() == null
+                                || response.body().getAccessToken() == null
+                                || response.body().getRefreshToken() == null) {
+                            failOperationalLogin("A API operacional recusou a sessão (HTTP " + response.code() + ").");
+                            return;
+                        }
+                        session.saveApiAccessToken(response.body().getAccessToken());
+                        session.saveApiRefreshToken(response.body().getRefreshToken());
+                        api.getOperationalProfile().enqueue(new Callback<ApiUserProfile>() {
+                            @Override public void onResponse(Call<ApiUserProfile> call, Response<ApiUserProfile> profileResponse) {
+                                ApiUserProfile profile = profileResponse.body();
+                                if (!profileResponse.isSuccessful() || profile == null || !Boolean.TRUE.equals(profile.getActive())
+                                        || profile.getStoreId() == null || profile.getRole() == null
+                                        || !RoleHelper.normalize(profile.getRole()).equals(firebaseUser.getRole())) {
+                                    failOperationalLogin("O perfil da API está incompleto ou diverge do cargo autenticado.");
+                                    return;
+                                }
+                                session.saveSession(new User(firebaseUser.getUid(),
+                                        profile.getName() == null ? firebaseUser.getName() : profile.getName(),
+                                        RoleHelper.normalize(profile.getRole()), String.valueOf(profile.getStoreId())));
+                                new NotificationRepository(getApplicationContext()).captureCurrentDeviceToken();
+                                goToMain();
+                            }
+                            @Override public void onFailure(Call<ApiUserProfile> call, Throwable error) {
+                                failOperationalLogin("Não foi possível carregar o perfil operacional: " + error.getMessage());
+                            }
+                        });
+                    }
+                    @Override public void onFailure(Call<ApiTokenResponse> call, Throwable error) {
+                        failOperationalLogin("Não foi possível validar a conta na API operacional: " + error.getMessage());
+                    }
+                });
+    }
+
+    private void failOperationalLogin(String message) {
+        session.clearSession();
+        resetLoginButton();
+        showLoginStatus(message);
+    }
+
+    private void resetLoginButton() {
+        btnLogin.setEnabled(true);
+        btnLogin.setText(R.string.op_login_button);
     }
 
     private void goToMain() {

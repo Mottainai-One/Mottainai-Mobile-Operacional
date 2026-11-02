@@ -60,7 +60,7 @@ public class TeamFragment extends Fragment {
                 NavHostFragment.findNavController(this).navigate(R.id.iaAlertsFragment, args);
             }
         });
-        new UserRepository().listTeam(session.getStoreId(), new UserRepository.TeamCallback() {
+        new UserRepository().listTeam(session.getStoreKey(), new UserRepository.TeamCallback() {
             @Override public void onSuccess(List<User> users) {
                 if (binding == null) return;
                 binding.progressTeam.setVisibility(View.GONE);

@@ -19,6 +19,10 @@ import com.mottainai.operacional.utils.RoleHelper;
 import com.mottainai.operacional.utils.SessionManager;
 import com.mottainai.operacional.utils.ThemeSettings;
 import com.mottainai.operacional.viewmodels.ProductFormViewModel;
+import android.net.Uri;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import com.mottainai.operacional.storage.PhotoStorageRepository;
 
 public class ProductFormActivity extends AppCompatActivity {
 
@@ -28,12 +32,15 @@ public class ProductFormActivity extends AppCompatActivity {
     private SessionManager sessionManager;
     private OpenFoodFactsRepository offRepo;
 
-    private TextInputEditText etBarcode, etName, etDescription, etCategory, etBrand, etUnit, etWeight, etQuantity, etMinQuantity, etBatch, etSupplier, etExpiry;
+    private TextInputEditText etBarcode, etName, etDescription, etCategory, etTaxProfile, etNcm, etCest, etBrand, etUnit, etWeight, etQuantity, etMinQuantity, etBatch, etSupplier, etExpiry;
     private SwitchMaterial swActive;
     private View progress;
     private View tvFormError;
-    private android.widget.TextView tvErrorBarcode, tvErrorName, tvErrorCategory, tvErrorBrand, tvErrorUnit, tvErrorWeight, tvErrorQuantity, tvErrorMinQuantity, tvErrorExpiry, tvOffInfo;
+    private android.widget.TextView tvErrorBarcode, tvErrorName, tvErrorCategory, tvErrorTaxProfile, tvErrorNcm, tvErrorCest, tvErrorBrand, tvErrorUnit, tvErrorWeight, tvErrorQuantity, tvErrorMinQuantity, tvErrorExpiry, tvOffInfo;
     private com.google.android.material.button.MaterialButton btnSearchOff, btnSave;
+    private ActivityResultLauncher<String> imagePicker;
+    private Uri selectedImageUri;
+    private PhotoStorageRepository photoStorageRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +55,15 @@ public class ProductFormActivity extends AppCompatActivity {
         }
         binding = ActivityProductFormBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        photoStorageRepository = new PhotoStorageRepository();
+        imagePicker = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
+            if (uri != null) {
+                selectedImageUri = uri;
+                binding.ivProductImagePreview.setImageURI(uri);
+                binding.ivProductImagePreview.setVisibility(View.VISIBLE);
+            }
+        });
+        binding.btnChooseProductImage.setOnClickListener(v -> imagePicker.launch("image/*"));
         binding.btnBack.setOnClickListener(v -> finish());
         android.widget.TextView tvTitle = binding.tvTitle;
 
@@ -75,6 +91,9 @@ public class ProductFormActivity extends AppCompatActivity {
         etName = binding.etName;
         etDescription = binding.etDescription;
         etCategory = binding.etCategory;
+        etTaxProfile = binding.etTaxProfile;
+        etNcm = binding.etNcm;
+        etCest = binding.etCest;
         etBrand = binding.etBrand;
         etUnit = binding.etUnit;
         etWeight = binding.etWeight;
@@ -89,6 +108,9 @@ public class ProductFormActivity extends AppCompatActivity {
         tvErrorBarcode = binding.tvErrorBarcode;
         tvErrorName = binding.tvErrorName;
         tvErrorCategory = binding.tvErrorCategory;
+        tvErrorTaxProfile = binding.tvErrorTaxProfile;
+        tvErrorNcm = binding.tvErrorNcm;
+        tvErrorCest = binding.tvErrorCest;
         tvErrorBrand = binding.tvErrorBrand;
         tvErrorUnit = binding.tvErrorUnit;
         tvErrorWeight = binding.tvErrorWeight;
@@ -116,6 +138,9 @@ public class ProductFormActivity extends AppCompatActivity {
             showFieldError(tvErrorBarcode, errors.get("barcode"));
             showFieldError(tvErrorName, errors.get("name"));
             showFieldError(tvErrorCategory, errors.get("categoryId"));
+            showFieldError(tvErrorTaxProfile, errors.get("taxProfileId"));
+            showFieldError(tvErrorNcm, errors.get("ncm"));
+            showFieldError(tvErrorCest, errors.get("cest"));
             showFieldError(tvErrorBrand, errors.get("brand"));
             showFieldError(tvErrorUnit, errors.get("unitMeasure"));
             showFieldError(tvErrorWeight, errors.get("weight"));
@@ -160,6 +185,13 @@ public class ProductFormActivity extends AppCompatActivity {
         if (!equalsText(etName, f.getName())) etName.setText(f.getName());
         if (!equalsText(etDescription, f.getDescription())) etDescription.setText(f.getDescription());
         if (!equalsText(etCategory, f.getCategoryId() != null ? String.valueOf(f.getCategoryId()) : null)) etCategory.setText(f.getCategoryId() != null ? String.valueOf(f.getCategoryId()) : "");
+        if (!equalsText(etTaxProfile, f.getTaxProfileId() != null ? String.valueOf(f.getTaxProfileId()) : null)) etTaxProfile.setText(f.getTaxProfileId() != null ? String.valueOf(f.getTaxProfileId()) : "");
+        if (!equalsText(etNcm, f.getNcm())) etNcm.setText(f.getNcm());
+        if (!equalsText(etCest, f.getCest())) etCest.setText(f.getCest());
+        if (selectedImageUri == null && f.getImageUrl() != null && !f.getImageUrl().isEmpty()) {
+            com.bumptech.glide.Glide.with(this).load(f.getImageUrl()).into(binding.ivProductImagePreview);
+            binding.ivProductImagePreview.setVisibility(View.VISIBLE);
+        }
         if (!equalsText(etBrand, f.getBrand())) etBrand.setText(f.getBrand());
         if (!equalsText(etUnit, f.getUnitMeasure())) etUnit.setText(f.getUnitMeasure());
         if (!equalsText(etWeight, f.getWeight())) etWeight.setText(f.getWeight());
@@ -187,6 +219,10 @@ public class ProductFormActivity extends AppCompatActivity {
         f.setName(text(etName));
         f.setDescription(text(etDescription));
         try { f.setCategoryId(etCategory.getText()!=null && !TextUtils.isEmpty(etCategory.getText().toString()) ? Integer.parseInt(etCategory.getText().toString().trim()) : null); } catch (NumberFormatException e){ f.setCategoryId(null); }
+        try { f.setTaxProfileId(etTaxProfile.getText()!=null && !TextUtils.isEmpty(etTaxProfile.getText().toString()) ? Integer.parseInt(etTaxProfile.getText().toString().trim()) : null); } catch (NumberFormatException e){ f.setTaxProfileId(null); }
+        f.setNcm(text(etNcm));
+        f.setCest(text(etCest));
+        f.setImageUrl(viewModel.getForm().getValue() == null ? null : viewModel.getForm().getValue().getImageUrl());
         f.setBrand(text(etBrand));
         f.setUnitMeasure(text(etUnit));
         f.setWeight(text(etWeight));
@@ -203,6 +239,28 @@ public class ProductFormActivity extends AppCompatActivity {
 
     private void onSave() {
         ProductForm f = collectForm();
+        if (selectedImageUri != null) {
+            btnSave.setEnabled(false);
+            photoStorageRepository.uploadPhoto(this, selectedImageUri, sessionManager.getStoreId(), "products",
+                    new PhotoStorageRepository.PhotoCallback() {
+                        @Override public void onSuccess(String url) {
+                            runOnUiThread(() -> {
+                                f.setImageUrl(url);
+                                viewModel.updateForm(f);
+                                btnSave.setEnabled(true);
+                                viewModel.submit();
+                            });
+                        }
+                        @Override public void onError(String message) {
+                            runOnUiThread(() -> {
+                                btnSave.setEnabled(true);
+                                binding.tvFormError.setText(message);
+                                binding.tvFormError.setVisibility(View.VISIBLE);
+                            });
+                        }
+                    });
+            return;
+        }
         viewModel.updateForm(f);
         viewModel.submit();
     }
@@ -211,6 +269,9 @@ public class ProductFormActivity extends AppCompatActivity {
         if (errors.containsKey("barcode")) etBarcode.requestFocus();
         else if (errors.containsKey("name")) etName.requestFocus();
         else if (errors.containsKey("categoryId")) etCategory.requestFocus();
+        else if (errors.containsKey("taxProfileId")) etTaxProfile.requestFocus();
+        else if (errors.containsKey("ncm")) etNcm.requestFocus();
+        else if (errors.containsKey("cest")) etCest.requestFocus();
         else if (errors.containsKey("brand")) etBrand.requestFocus();
         else if (errors.containsKey("unitMeasure")) etUnit.requestFocus();
         else if (errors.containsKey("weight")) etWeight.requestFocus();

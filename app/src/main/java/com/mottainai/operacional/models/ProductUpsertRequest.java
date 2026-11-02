@@ -5,7 +5,8 @@ import java.math.BigDecimal;
 
 /**
  * Payload enviado para POST /api/v1/products e PUT /api/v1/products/{id}.
- * Mapeia exatamente CreateProductRequest / UpdateProductRequest do backend.
+ * Legacy model retained only by the dormant mock fixture. Real API calls use
+ * ProductCreateRequest and ProductUpdateRequest to match each record exactly.
  * Campos de inventário (quantity, minQuantity, batch, expiryDate, supplier) NÃO são enviados
  * aqui — pendentes em /api/v1/inventory (documentado em Product.java).
  */
@@ -13,6 +14,18 @@ public class ProductUpsertRequest {
 
     @SerializedName("categoryId")
     private Integer categoryId;
+
+    @SerializedName("taxProfileId")
+    private Integer taxProfileId;
+
+    @SerializedName("ncm")
+    private String ncm;
+
+    @SerializedName("cest")
+    private String cest;
+
+    @SerializedName("imageUrl")
+    private String imageUrl;
 
     @SerializedName("barcode")
     private String barcode;
@@ -44,6 +57,14 @@ public class ProductUpsertRequest {
     // Getters/Setters
     public Integer getCategoryId() { return categoryId; }
     public void setCategoryId(Integer categoryId) { this.categoryId = categoryId; }
+    public Integer getTaxProfileId() { return taxProfileId; }
+    public void setTaxProfileId(Integer taxProfileId) { this.taxProfileId = taxProfileId; }
+    public String getNcm() { return ncm; }
+    public void setNcm(String ncm) { this.ncm = ncm; }
+    public String getCest() { return cest; }
+    public void setCest(String cest) { this.cest = cest; }
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
     public String getBarcode() { return barcode; }
     public void setBarcode(String barcode) { this.barcode = barcode; }
     public String getName() { return name; }

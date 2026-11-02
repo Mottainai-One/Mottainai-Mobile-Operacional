@@ -28,6 +28,27 @@ a.storeId = doc.getString("storeID");
         return a;
     }
 
+    public static Alert fromApi(ApiAlertResponse dto) {
+        if (dto == null) return null;
+        Alert alert = new Alert();
+        alert.id = dto.id == null ? null : String.valueOf(dto.id);
+        alert.title = dto.title;
+        alert.message = dto.description;
+        String priority = dto.priority == null ? "" : dto.priority.toUpperCase(java.util.Locale.ROOT);
+        alert.severity = priority.contains("CRIT") ? "CRITICO"
+                : priority.equals("HIGH") || priority.equals("ALTA") ? "ATENCAO" : "MONITOR";
+        alert.storeId = dto.storeId == null ? null : String.valueOf(dto.storeId);
+        alert.createdAt = parseApiDate(dto.generatedAt);
+        long age = System.currentTimeMillis() - alert.createdAt;
+        alert.days = Math.max(0, (int) (age / 86_400_000L));
+        return alert;
+    }
+
+    static long parseApiDate(String value) {
+        try { return java.time.LocalDateTime.parse(value).atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli(); }
+        catch (Exception ignored) { return System.currentTimeMillis(); }
+    }
+
     public String getId() { return id; }
     public String getTitle() { return title; }
     public String getMessage() { return message; }

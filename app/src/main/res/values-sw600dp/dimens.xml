@@ -3,6 +3,4 @@
     <!-- Tablets: mais respiro nas laterais -->
     <dimen name="screen_padding">40dp</dimen>
     <dimen name="screen_padding_vertical">32dp</dimen>
-    <dimen name="login_padding_horizontal">80dp</dimen>
-    <dimen name="login_padding_vertical">32dp</dimen>
 </resources>
